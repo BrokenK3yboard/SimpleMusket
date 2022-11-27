@@ -65,7 +65,7 @@ public class SimpleMusket
     public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<net.minecraft.world.item.Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
     public static final RegistryObject<net.minecraft.world.item.Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 2));
-    public static final RegistryObject<net.minecraft.world.item.Item> GOLD_BULLET = ITEMS.register("golden_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 3));
+    public static final RegistryObject<net.minecraft.world.item.Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 3));
     public static final RegistryObject<net.minecraft.world.item.Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 4));
 
     public static final RegistryObject<Enchantment> FIREPOWER = ENCHANTMENTS.register("firepower", () -> new FirepowerEnchantment(
