@@ -1,0 +1,71 @@
+{
+  "advancements": [
+    {
+      "conditions": [
+        {
+          "type": "simplemusket:copper_enabled"
+        }
+      ],
+      "advancement": {
+        "parent": "minecraft:recipes/root",
+        "rewards": {
+          "recipes": [
+            "simplemusket:copper_bullet"
+          ]
+        },
+        "criteria": {
+          "has_copper_ingot": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "minecraft:copper_ingot"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_gunpowder": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "minecraft:gunpowder"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_paper": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "minecraft:paper"
+                  ]
+                }
+              ]
+            }
+          },
+          "has_the_recipe": {
+            "trigger": "minecraft:recipe_unlocked",
+            "conditions": {
+              "recipe": "simplemusket:copper_bullet"
+            }
+          }
+        },
+        "requirements": [
+          [
+            "has_copper_ingot",
+            "has_gunpowder",
+            "has_paper",
+            "has_the_recipe"
+          ]
+        ]
+      }
+    }
+  ]
+}

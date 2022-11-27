@@ -1,0 +1,25 @@
+{
+  "type": "musket:musket_mod_loot",
+  "conditions": [
+    {
+      "condition": "minecraft:alternative",
+      "terms": [
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/bastion_other"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/bastion_hoglin_stable"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/bastion_treasure"
+        }
+      ]
+    }
+  ],
+  "min": 1,
+  "max": 4,
+  "chance": 0.6
+}

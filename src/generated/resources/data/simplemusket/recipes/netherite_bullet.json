@@ -1,0 +1,35 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "simplemusket:netherite_enabled"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " C ",
+          " G ",
+          " P "
+        ],
+        "key": {
+          "C": {
+            "item": "minecraft:netherite_ingot"
+          },
+          "G": {
+            "item": "minecraft:gunpowder"
+          },
+          "P": {
+            "item": "minecraft:paper"
+          }
+        },
+        "result": {
+          "item": "simplemusket:netherite_bullet",
+          "count": 4
+        }
+      }
+    }
+  ]
+}

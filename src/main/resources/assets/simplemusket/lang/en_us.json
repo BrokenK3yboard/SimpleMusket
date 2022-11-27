@@ -1,0 +1,16 @@
+{
+  "item.simplemusket.musket": "Musket",
+  "item.simplemusket.copper_bullet": "Copper Bullet",
+  "item.simplemusket.iron_bullet": "Iron Bullet",
+  "item.simplemusket.golden_bullet": "Golden Bullet",
+  "item.simplemusket.netherite_bullet": "Netherite Bullet",
+  "item.simplemusket.generic_bullet": "Bullet",
+  "enchantment.simplemusket.firepower": "Firepower",
+  "enchantment.simplemusket.deadeye": "Deadeye",
+  "enchantment.simplemusket.repeating": "Repeating",
+  "enchantment.simplemusket.longshot": "Longshot",
+  "enchantment.simplemusket.firepower.desc": "Increases the armor piercing of bullets fired from a musket by 10% per level.",
+  "enchantment.simplemusket.deadeye.desc": "Decreases the aim and reload time of a musket by 10% per level.",
+  "enchantment.simplemusket.repeating.desc": "Allows the musket to fire an extra round per reload.",
+  "enchantment.simplemusket.longshot.desc": "Bullets fired from a musket deal more damage the further they travel."
+}

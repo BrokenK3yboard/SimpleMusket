@@ -1,0 +1,15 @@
+{
+    "parent": "simplemusket:item/musket",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [ 0, 0, 75 ],
+            "translation": [ 0, 1.6, -0.96],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [ 180, 0, 105 ],
+            "translation": [ 0, 1.6, -0.96],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        }
+    }
+}
