@@ -47,7 +47,7 @@ import java.util.function.BiFunction;
 public class SimpleMusket
 {
     public static final String MOD_ID = "simplemusket";
-    public static final DeferredRegister<net.minecraft.world.item.Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MOD_ID);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MOD_ID);
     public static final DeferredRegister<GlobalLootModifierSerializer<?>> GLM = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
@@ -63,10 +63,10 @@ public class SimpleMusket
 
     public static final RegistryObject<ModLootSerializer> ModLoot = GLM.register("musket_mod_loot", ModLootSerializer::new);
     public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
-    public static final RegistryObject<net.minecraft.world.item.Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
-    public static final RegistryObject<net.minecraft.world.item.Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 2));
-    public static final RegistryObject<net.minecraft.world.item.Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 3));
-    public static final RegistryObject<net.minecraft.world.item.Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 4));
+    public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
+    public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 2));
+    public static final RegistryObject<Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 3));
+    public static final RegistryObject<Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 4));
 
     public static final RegistryObject<Enchantment> FIREPOWER = ENCHANTMENTS.register("firepower", () -> new FirepowerEnchantment(
             Enchantment.Rarity.COMMON, FIREARM, EquipmentSlot.MAINHAND));
@@ -131,14 +131,13 @@ public class SimpleMusket
                         new ResourceLocation(MOD_ID, "aiming"),
                         (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
                                 && MusketItem.isReady(stack) ? 1.0F : 0.0F);
-
-
             });
         }
     }
 
     @Mod.EventBusSubscriber(Dist.CLIENT)
     public static class ClientEvents {
+
         @SubscribeEvent
         public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
             if (!(event.getEntity() instanceof Player player)) return;

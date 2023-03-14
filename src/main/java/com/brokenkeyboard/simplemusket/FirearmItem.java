@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class FirearmItem extends net.minecraft.world.item.Item {
+public abstract class FirearmItem extends Item {
 
     protected abstract boolean isAmmo(ItemStack itemstack);
     protected abstract int getReload(ItemStack stack);
@@ -96,8 +97,7 @@ public abstract class FirearmItem extends net.minecraft.world.item.Item {
                 ammoStack.shrink(1);
                 if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
-            entityLiving.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK,
-                    SoundSource.PLAYERS, 1F, 1.1F);
+            entityLiving.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
         }
     }
 

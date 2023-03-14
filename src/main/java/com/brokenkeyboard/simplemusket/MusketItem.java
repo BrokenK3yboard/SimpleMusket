@@ -29,12 +29,14 @@ public class MusketItem extends FirearmItem {
 
     @Override
     protected int getReload(ItemStack stack) {
-        return (int) (Config.MUSKET_RELOAD_TIME.get() - (Config.MUSKET_RELOAD_TIME.get() * 0.1 * EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack)));
+        double coeff = 1 - (EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack) * 0.1);
+        return (int) (Config.MUSKET_RELOAD_TIME.get() * coeff);
     }
 
     @Override
     protected int getAim(ItemStack stack) {
-        return (int) (Config.MUSKET_AIM_TIME.get() - (Config.MUSKET_AIM_TIME.get() * 0.1 * EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack)));
+        double coeff = 1 - (EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack) * 0.1);
+        return (int) (Config.MUSKET_AIM_TIME.get() * coeff);
     }
 
     @Override
