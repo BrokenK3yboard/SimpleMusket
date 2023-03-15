@@ -21,9 +21,4 @@ public class CopperCondition implements ICondition {
     public boolean test(IContext context) {
         return Config.CRAFT_COPPER_BULLETS.get();
     }
-
-    @Override
-    public boolean test() {
-        return false;
-    }
 }

@@ -21,9 +21,4 @@ public class GoldCondition implements ICondition {
     public boolean test(IContext context) {
         return Config.CRAFT_GOLD_BULLETS.get();
     }
-
-    @Override
-    public boolean test() {
-        return false;
-    }
 }

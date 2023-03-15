@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "I  ",
-    "PIF",
-    " PI"
-  ],
   "key": {
-    "I": {
-      "tag": "forge:ingots/iron"
-    },
     "F": {
       "item": "minecraft:flint_and_steel"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
     },
     "P": {
       "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "I  ",
+    "PIF",
+    " PI"
+  ],
   "result": {
     "item": "simplemusket:musket"
   }

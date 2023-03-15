@@ -1,21 +1,10 @@
 {
   "advancements": [
     {
-      "conditions": [
-        {
-          "type": "simplemusket:gold_enabled"
-        }
-      ],
       "advancement": {
         "parent": "minecraft:recipes/root",
-        "rewards": {
-          "recipes": [
-            "simplemusket:gold_bullet"
-          ]
-        },
         "criteria": {
           "has_gold_ingot": {
-            "trigger": "minecraft:inventory_changed",
             "conditions": {
               "items": [
                 {
@@ -24,10 +13,10 @@
                   ]
                 }
               ]
-            }
+            },
+            "trigger": "minecraft:inventory_changed"
           },
           "has_gunpowder": {
-            "trigger": "minecraft:inventory_changed",
             "conditions": {
               "items": [
                 {
@@ -36,10 +25,10 @@
                   ]
                 }
               ]
-            }
+            },
+            "trigger": "minecraft:inventory_changed"
           },
           "has_paper": {
-            "trigger": "minecraft:inventory_changed",
             "conditions": {
               "items": [
                 {
@@ -48,13 +37,14 @@
                   ]
                 }
               ]
-            }
+            },
+            "trigger": "minecraft:inventory_changed"
           },
           "has_the_recipe": {
-            "trigger": "minecraft:recipe_unlocked",
             "conditions": {
               "recipe": "simplemusket:gold_bullet"
-            }
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
         },
         "requirements": [
@@ -64,8 +54,18 @@
             "has_paper",
             "has_the_recipe"
           ]
-        ]
-      }
+        ],
+        "rewards": {
+          "recipes": [
+            "simplemusket:gold_bullet"
+          ]
+        }
+      },
+      "conditions": [
+        {
+          "type": "simplemusket:gold_enabled"
+        }
+      ]
     }
   ]
 }

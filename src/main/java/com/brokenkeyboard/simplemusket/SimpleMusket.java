@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
+import com.brokenkeyboard.simplemusket.datagen.ModLoot;
 import com.brokenkeyboard.simplemusket.datagen.conditions.CopperCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.GoldCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.NetheriteCondition;
@@ -7,7 +8,7 @@ import com.brokenkeyboard.simplemusket.enchantment.DeadeyeEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.FirepowerEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.LongshotEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.RepeatingEnchantment;
-import com.brokenkeyboard.simplemusket.datagen.ModLoot.ModLootSerializer;
+import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -19,7 +20,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.api.distmarker.Dist;
@@ -27,8 +27,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -39,6 +38,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.BiFunction;
@@ -48,9 +48,9 @@ public class SimpleMusket
 {
     public static final String MOD_ID = "simplemusket";
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MOD_ID);
-    public static final DeferredRegister<GlobalLootModifierSerializer<?>> GLM = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
+    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MOD_ID);
 
     public static final EnchantmentCategory FIREARM = EnchantmentCategory.create("FIREARM", item -> item instanceof MusketItem);
 
@@ -61,7 +61,7 @@ public class SimpleMusket
             .setUpdateInterval(5)
             .build("bullet_entity"));
 
-    public static final RegistryObject<ModLootSerializer> ModLoot = GLM.register("musket_mod_loot", ModLootSerializer::new);
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> MOD_LOOT = GLM.register("musket_mod_loot", ModLoot.CODEC);
     public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
     public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 2));
@@ -108,7 +108,8 @@ public class SimpleMusket
         }
 
         @SubscribeEvent
-        public static void registerSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
+        public static void registerSerializers(RegisterEvent event) {
+            if (!(event.getRegistryKey() == ForgeRegistries.Keys.RECIPE_SERIALIZERS)) return;
             CraftingHelper.register(CopperCondition.SERIALIZER);
             CraftingHelper.register(GoldCondition.SERIALIZER);
             CraftingHelper.register(NetheriteCondition.SERIALIZER);

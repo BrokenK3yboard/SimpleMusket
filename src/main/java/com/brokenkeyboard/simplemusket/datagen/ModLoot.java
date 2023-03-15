@@ -1,59 +1,52 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.Config;
-import com.brokenkeyboard.simplemusket.SimpleMusket;
-import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import com.google.common.base.Suppliers;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class ModLoot extends LootModifier {
-    private final int min;
-    private final int max;
-    private final double chance;
+    public static final Supplier<Codec<ModLoot>> CODEC = Suppliers.memoize(()
+            -> RecordCodecBuilder.create(inst -> codecStart(inst).and(ForgeRegistries.ITEMS.getCodec()
+            .fieldOf("item").forGetter(m -> m.item)).apply(inst, ModLoot::new)));
 
-    public ModLoot(LootItemCondition[] conditionsIn, final int min, final int max, final double chance) {
+    private final Item item;
+
+    public ModLoot(LootItemCondition[] conditionsIn, Item item) {
         super(conditionsIn);
-        this.min = min;
-        this.max = max;
-        this.chance = chance;
+        this.item = item;
     }
 
-    @NotNull
     @Override
-    protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+    protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         if (!Config.FIND_NETHERITE_BULLETS.get()) return generatedLoot;
+
+        int max = Config.MAX_NETHERITE_BULLETS.get();
+        int min = (int)Math.ceil((double)max / 2);
 
         Random rand = new Random();
         double rng = rand.nextDouble();
-        if(rng <= chance) {
+
+        if (rng < 0.3) {
             int stackCount = rand.nextInt(max - min + 1) + min;
-            generatedLoot.add(new ItemStack(SimpleMusket.NETHERITE_BULLET.get(), stackCount));
+            generatedLoot.add(new ItemStack(item, stackCount));
         }
         return generatedLoot;
     }
 
-    public static class ModLootSerializer extends GlobalLootModifierSerializer<ModLoot> {
-
-        @Override
-        public ModLoot read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition) {
-            final int min = GsonHelper.getAsInt(object, "min");
-            final int max = GsonHelper.getAsInt(object, "max");
-            final double chance = GsonHelper.getAsDouble(object, "chance");
-            return new ModLoot(ailootcondition, min, max, chance);
-        }
-
-        @Override
-        public JsonObject write(ModLoot instance) {
-            return new JsonObject();
-        }
+    @Override
+    public Codec<? extends IGlobalLootModifier> codec() {
+        return CODEC.get();
     }
 }

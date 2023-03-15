@@ -1,7 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -119,7 +118,7 @@ public abstract class FirearmItem extends Item {
         if (!isLoaded(stack)) return;
         String name = BulletType.values()[getAmmoType(stack)].toString().toLowerCase() + "_bullet";
         String displayName = "item." + SimpleMusket.MOD_ID + "." + name;
-        components.add((new TranslatableComponent("item.minecraft.crossbow.projectile")).append(" [").append(new TranslatableComponent(displayName)).append("]"));
+        components.add(Component.translatable("item.minecraft.crossbow.projectile").append(" [").append(Component.translatable(displayName)).append("]"));
     }
 
     private static void setAmmoType(ItemStack stack, int value) {
@@ -158,7 +157,7 @@ public abstract class FirearmItem extends Item {
         return 72000;
     }
 
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return 1;
     }
 }

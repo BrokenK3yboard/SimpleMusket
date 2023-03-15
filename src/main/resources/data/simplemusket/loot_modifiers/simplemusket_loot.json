@@ -1,5 +1,5 @@
 {
-  "type": "musket:musket_mod_loot",
+  "type": "simplemusket:musket_mod_loot",
   "conditions": [
     {
       "condition": "minecraft:alternative",
@@ -15,11 +15,13 @@
         {
           "condition": "forge:loot_table_id",
           "loot_table_id": "minecraft:chests/bastion_treasure"
+        },
+        {
+          "condition": "forge:loot_table_id",
+          "loot_table_id": "minecraft:chests/bastion_bridge"
         }
       ]
     }
   ],
-  "min": 1,
-  "max": 4,
-  "chance": 0.6
+  "item": "simplemusket:netherite_bullet"
 }

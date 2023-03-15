@@ -9,11 +9,6 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
-        "pattern": [
-          " C ",
-          " G ",
-          " P "
-        ],
         "key": {
           "C": {
             "item": "minecraft:netherite_ingot"
@@ -25,9 +20,14 @@
             "item": "minecraft:paper"
           }
         },
+        "pattern": [
+          " C ",
+          " G ",
+          " P "
+        ],
         "result": {
-          "item": "simplemusket:netherite_bullet",
-          "count": 4
+          "count": 4,
+          "item": "simplemusket:netherite_bullet"
         }
       }
     }

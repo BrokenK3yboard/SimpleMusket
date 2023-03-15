@@ -21,9 +21,4 @@ public class NetheriteCondition implements ICondition {
     public boolean test(IContext context) {
         return Config.CRAFT_NETHERITE_BULLETS.get();
     }
-
-    @Override
-    public boolean test() {
-        return false;
-    }
 }
