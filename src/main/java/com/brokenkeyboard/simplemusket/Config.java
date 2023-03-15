@@ -12,9 +12,10 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue CRAFT_COPPER_BULLETS;
     public static ForgeConfigSpec.BooleanValue CRAFT_GOLD_BULLETS;
     public static ForgeConfigSpec.BooleanValue CRAFT_NETHERITE_BULLETS;
+    public static ForgeConfigSpec.BooleanValue FIND_NETHERITE_BULLETS;
+    public static ForgeConfigSpec.IntValue MAX_NETHERITE_BULLETS;
 
     public static ForgeConfigSpec.BooleanValue CONSECRATION_COMPAT;
-    public static ForgeConfigSpec.BooleanValue FIND_NETHERITE_BULLETS;
 
     public static void registerConfig() {
         ForgeConfigSpec.Builder CONFIG_BUILDER = new ForgeConfigSpec.Builder();
@@ -39,13 +40,17 @@ public class Config {
                 .comment("If enabled, netherite bullets are craftable.")
                 .define("Craftable netherite bullets", false);
 
-        CONSECRATION_COMPAT = CONFIG_BUILDER
-                .comment("If enabled while consecration is installed, change golden bullet behavior to remove undead protection")
-                .define("Gold bullet damage bonus", true);
-
         FIND_NETHERITE_BULLETS = CONFIG_BUILDER
                 .comment("If enabled, netherite bullets can be found in chest loot.")
                 .define("Netherite bullets", true);
+
+        MAX_NETHERITE_BULLETS = CONFIG_BUILDER
+                .comment("The maximum number of netherite bullets that can be found in chest loot. The minimum will be half, rounded up.")
+                .defineInRange("Maximum Netherite bullet loot", 8, 1, 16);
+
+        CONSECRATION_COMPAT = CONFIG_BUILDER
+                .comment("If enabled while consecration is installed, change golden bullet behavior to remove undead protection")
+                .define("Gold bullet damage bonus", true);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG_BUILDER.build());
     }

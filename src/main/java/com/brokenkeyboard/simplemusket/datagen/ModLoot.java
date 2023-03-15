@@ -16,15 +16,9 @@ import java.util.List;
 import java.util.Random;
 
 public class ModLoot extends LootModifier {
-    private final int min;
-    private final int max;
-    private final double chance;
 
-    public ModLoot(LootItemCondition[] conditionsIn, final int min, final int max, final double chance) {
+    public ModLoot(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
-        this.min = min;
-        this.max = max;
-        this.chance = chance;
     }
 
     @NotNull
@@ -32,9 +26,13 @@ public class ModLoot extends LootModifier {
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
         if (!Config.FIND_NETHERITE_BULLETS.get()) return generatedLoot;
 
+        int max = Config.MAX_NETHERITE_BULLETS.get();
+        int min = (int)Math.ceil((double)max / 2);
+
         Random rand = new Random();
         double rng = rand.nextDouble();
-        if(rng <= chance) {
+
+        if (rng < 0.3) {
             int stackCount = rand.nextInt(max - min + 1) + min;
             generatedLoot.add(new ItemStack(SimpleMusket.NETHERITE_BULLET.get(), stackCount));
         }
@@ -45,10 +43,7 @@ public class ModLoot extends LootModifier {
 
         @Override
         public ModLoot read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition) {
-            final int min = GsonHelper.getAsInt(object, "min");
-            final int max = GsonHelper.getAsInt(object, "max");
-            final double chance = GsonHelper.getAsDouble(object, "chance");
-            return new ModLoot(ailootcondition, min, max, chance);
+            return new ModLoot(ailootcondition);
         }
 
         @Override
