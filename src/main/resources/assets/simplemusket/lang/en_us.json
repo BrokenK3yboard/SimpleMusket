@@ -12,7 +12,8 @@
   "enchantment.simplemusket.firepower.desc": "Increases the armor piercing of bullets fired from a musket by 10% per level.",
   "enchantment.simplemusket.deadeye.desc": "Decreases the aim and reload time of a musket by 10% per level.",
   "enchantment.simplemusket.repeating.desc": "Allows the musket to fire an extra round per reload.",
-  "enchantment.simplemusket.longshot.desc": "Bullets fired from a musket deal more damage the further they travel."
+  "enchantment.simplemusket.longshot.desc": "Bullets fired from a musket deal more damage the further they travel.",
+  "entity.simplemusket.musket_pillager": "Pillager",
   "death.attack.bullet": "%1$s was shot by %2$s",
   "death.attack.bullet.item": "%1$s was shot by %2$s using %3$s"
 }
