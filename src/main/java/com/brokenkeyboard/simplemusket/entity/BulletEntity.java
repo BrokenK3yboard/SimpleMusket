@@ -1,5 +1,8 @@
-package com.brokenkeyboard.simplemusket;
+package com.brokenkeyboard.simplemusket.entity;
 
+import com.brokenkeyboard.simplemusket.BulletType;
+import com.brokenkeyboard.simplemusket.Config;
+import com.brokenkeyboard.simplemusket.SimpleMusket;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.damagesource.DamageSource;
@@ -93,6 +96,8 @@ public class BulletEntity extends Projectile {
 
         if (bulletType == BulletType.COPPER)
             target.invulnerableTime = 0;
+
+        this.discard();
     }
 
     @Override

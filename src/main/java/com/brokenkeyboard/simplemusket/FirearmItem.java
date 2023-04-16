@@ -21,12 +21,12 @@ import java.util.List;
 
 public abstract class FirearmItem extends Item {
 
-    protected abstract boolean isAmmo(ItemStack itemstack);
-    protected abstract int getReload(ItemStack stack);
-    protected abstract int getAim(ItemStack stack);
-    protected abstract float getDeviation(ItemStack stack);
-    protected abstract SoundEvent getFireSound();
-    protected abstract void createProjectile(Player player, Level Level, ItemStack stack, float deviation);
+    public abstract boolean isAmmo(ItemStack stack);
+    public abstract int getReload(ItemStack stack);
+    public abstract int getAim(ItemStack stack);
+    public abstract float getDeviation(ItemStack stack);
+    public abstract SoundEvent getFireSound();
+    public abstract void createProjectile(LivingEntity entity, Level Level, ItemStack stack, float deviation);
 
     public FirearmItem(Properties properties) {
         super(properties);
@@ -42,7 +42,7 @@ public abstract class FirearmItem extends Item {
         } else if (hasAmmo || isLoaded(stack)) {
             if(isLoaded(stack) && !isReady(stack)) {
                 setReady(stack, true);
-                int extraAmmo = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
+                int extraAmmo = EnchantmentHelper.getTagEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
                 setExtraAmmo(stack, extraAmmo);
             }
             player.startUsingItem(hand);
@@ -52,10 +52,10 @@ public abstract class FirearmItem extends Item {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof Player player)) return;
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
+        if (!(entity instanceof Player player)) return;
 
-        int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
+        int repeatingLevel = EnchantmentHelper.getTagEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
 
         if (isLoaded(stack) && isReady(stack)) {
             double coefficient = Math.min(((double) (getUseDuration(stack) - timeLeft) / getAim(stack)), 1.0);
@@ -79,8 +79,8 @@ public abstract class FirearmItem extends Item {
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof Player player)) return;
+    public void onUsingTick(ItemStack stack, LivingEntity entity, int timeLeft) {
+        if (!(entity instanceof Player player)) return;
 
         if (getUseDuration(stack) - timeLeft >= getReload(stack) && !isLoaded(stack)) {
             ItemStack ammoStack = findAmmo(player);
@@ -96,15 +96,15 @@ public abstract class FirearmItem extends Item {
                 ammoStack.shrink(1);
                 if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
-            entityLiving.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
+            entity.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
         }
     }
 
     private ItemStack findAmmo(Player player) {
         for (int i = 0; i != player.getInventory().getContainerSize(); ++i) {
-            ItemStack itemstack = player.getInventory().getItem(i);
-            if (isAmmo(itemstack))
-                return itemstack;
+            ItemStack stack = player.getInventory().getItem(i);
+            if (isAmmo(stack))
+                return stack;
         }
         return ItemStack.EMPTY;
     }
@@ -121,7 +121,7 @@ public abstract class FirearmItem extends Item {
         components.add(Component.translatable("item.minecraft.crossbow.projectile").append(" [").append(Component.translatable(displayName)).append("]"));
     }
 
-    private static void setAmmoType(ItemStack stack, int value) {
+    public static void setAmmoType(ItemStack stack, int value) {
         stack.getOrCreateTag().putInt("ammotype", value);
     }
 
@@ -129,7 +129,7 @@ public abstract class FirearmItem extends Item {
         return stack.getOrCreateTag().getInt("ammotype");
     }
 
-    private static void setExtraAmmo(ItemStack stack, int value) {
+    public static void setExtraAmmo(ItemStack stack, int value) {
         stack.getOrCreateTag().putInt("extraammo", value);
     }
 
@@ -137,7 +137,7 @@ public abstract class FirearmItem extends Item {
         return stack.getOrCreateTag().getInt("extraammo");
     }
 
-    private static void setReady(ItemStack stack, boolean value) {
+    public static void setReady(ItemStack stack, boolean value) {
         stack.getOrCreateTag().putBoolean("ready", value);
     }
 

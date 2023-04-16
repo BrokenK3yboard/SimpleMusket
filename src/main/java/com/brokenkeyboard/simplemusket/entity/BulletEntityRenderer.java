@@ -1,5 +1,6 @@
-package com.brokenkeyboard.simplemusket;
+package com.brokenkeyboard.simplemusket.entity;
 
+import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
