@@ -22,12 +22,12 @@ import java.util.List;
 
 public abstract class FirearmItem extends Item {
 
-    protected abstract boolean isAmmo(ItemStack itemstack);
-    protected abstract int getReload(ItemStack stack);
-    protected abstract int getAim(ItemStack stack);
-    protected abstract float getDeviation(ItemStack stack);
-    protected abstract SoundEvent getFireSound();
-    protected abstract void createProjectile(Player player, Level Level, ItemStack stack, float deviation);
+    public abstract boolean isAmmo(ItemStack stack);
+    public abstract int getReload(ItemStack stack);
+    public abstract int getAim(ItemStack stack);
+    public abstract float getDeviation(ItemStack stack);
+    public abstract SoundEvent getFireSound();
+    public abstract void createProjectile(LivingEntity entity, Level Level, ItemStack stack, float deviation);
 
     public FirearmItem(Properties properties) {
         super(properties);
@@ -54,7 +54,6 @@ public abstract class FirearmItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof Player player)) return;
 
         int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
 
@@ -63,13 +62,13 @@ public abstract class FirearmItem extends Item {
             float accuracy = (float) (coefficient * getDeviation(stack));
             float deviation = getDeviation(stack) - accuracy;
 
-            createProjectile(player, level, stack, deviation);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), getFireSound(), SoundSource.PLAYERS, 0.8F, 1F);
+            createProjectile(entityLiving, level, stack, deviation);
+            level.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), getFireSound(), SoundSource.PLAYERS, 1F, 1F);
 
             if(repeatingLevel > 0 && getExtraAmmo(stack) > 0) {
                 setExtraAmmo(stack, getExtraAmmo(stack) - 1);
             } else {
-                player.stopUsingItem();
+                entityLiving.stopUsingItem();
                 setReady(stack, false);
                 setAmmoType(stack, 0);
             }
@@ -103,9 +102,9 @@ public abstract class FirearmItem extends Item {
 
     private ItemStack findAmmo(Player player) {
         for (int i = 0; i != player.getInventory().getContainerSize(); ++i) {
-            ItemStack itemstack = player.getInventory().getItem(i);
-            if (isAmmo(itemstack))
-                return itemstack;
+            ItemStack stack = player.getInventory().getItem(i);
+            if (isAmmo(stack))
+                return stack;
         }
         return ItemStack.EMPTY;
     }
@@ -122,7 +121,7 @@ public abstract class FirearmItem extends Item {
         components.add((new TranslatableComponent("item.minecraft.crossbow.projectile")).append(" [").append(new TranslatableComponent(displayName)).append("]"));
     }
 
-    private static void setAmmoType(ItemStack stack, int value) {
+    public static void setAmmoType(ItemStack stack, int value) {
         stack.getOrCreateTag().putInt("ammotype", value);
     }
 
@@ -130,7 +129,7 @@ public abstract class FirearmItem extends Item {
         return stack.getOrCreateTag().getInt("ammotype");
     }
 
-    private static void setExtraAmmo(ItemStack stack, int value) {
+    public static void setExtraAmmo(ItemStack stack, int value) {
         stack.getOrCreateTag().putInt("extraammo", value);
     }
 
@@ -138,7 +137,7 @@ public abstract class FirearmItem extends Item {
         return stack.getOrCreateTag().getInt("extraammo");
     }
 
-    private static void setReady(ItemStack stack, boolean value) {
+    public static void setReady(ItemStack stack, boolean value) {
         stack.getOrCreateTag().putBoolean("ready", value);
     }
 
