@@ -1,51 +1,26 @@
 package com.brokenkeyboard.simplemusket;
 
 import com.brokenkeyboard.simplemusket.datagen.ModLoot.ModLootSerializer;
-import com.brokenkeyboard.simplemusket.datagen.conditions.CopperCondition;
-import com.brokenkeyboard.simplemusket.datagen.conditions.GoldCondition;
-import com.brokenkeyboard.simplemusket.datagen.conditions.NetheriteCondition;
 import com.brokenkeyboard.simplemusket.enchantment.DeadeyeEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.FirepowerEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.LongshotEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.RepeatingEnchantment;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
-import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
-import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.PatrollingMonster;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -125,94 +100,5 @@ public class SimpleMusket
         }
         SpawnPlacements.register(MUSKET_PILLAGER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
         Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), intArray);
-    }
-
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus=Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-
-        @SubscribeEvent
-        public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(BULLET_ENTITY.get(), BulletEntityRenderer::new);
-            event.registerEntityRenderer(MUSKET_PILLAGER.get(), MusketPillagerRenderer::new);
-        }
-
-        @SubscribeEvent
-        public static void registerSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
-            if (!(event.getRegistry().getRegistryKey() == ForgeRegistries.Keys.RECIPE_SERIALIZERS)) return;
-            CraftingHelper.register(CopperCondition.SERIALIZER);
-            CraftingHelper.register(GoldCondition.SERIALIZER);
-            CraftingHelper.register(NetheriteCondition.SERIALIZER);
-        }
-
-        @SubscribeEvent
-        public static void setup(final FMLClientSetupEvent event) {
-            event.enqueueWork(() ->
-            {
-                ItemProperties.register(MUSKET.get(),
-                        new ResourceLocation(MOD_ID, "loading"),
-                        (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                                && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
-
-                ItemProperties.register(MUSKET.get(),
-                        new ResourceLocation(MOD_ID, "loaded"),
-                        (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
-
-                ItemProperties.register(MUSKET.get(),
-                        new ResourceLocation(MOD_ID, "aiming"),
-                        (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                                && MusketItem.isReady(stack) ? 1.0F : 0.0F);
-            });
-        }
-
-        @SubscribeEvent
-        public static void onAttributeCreate(EntityAttributeCreationEvent event) {
-            event.put(MUSKET_PILLAGER.get(), MusketPillager.createAttributes().build());
-        }
-    }
-
-    @Mod.EventBusSubscriber(modid = MOD_ID)
-    public static class CommonEvents {
-
-        @SubscribeEvent
-        public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
-            Entity entity = event.getEntity();
-            if (entity instanceof Mob mob) {
-                if (mob instanceof AbstractVillager villager) {
-                    villager.goalSelector.addGoal(1, new AvoidEntityGoal<>(villager, MusketPillager.class, 8.0F, 0.6D, 0.6D));
-                }
-            }
-        }
-    }
-
-    @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
-    public static class ClientEvents {
-
-        @SubscribeEvent
-        public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
-            if (!(event.getEntity() instanceof Player player)) return;
-            InteractionHand hand = player.getUsedItemHand();
-            if (player.getItemInHand(hand).getItem() instanceof MusketItem && player.isUsingItem() && !MusketItem.isLoaded(player.getItemInHand(hand))) {
-                HumanoidModel<Player> model = event.getRenderer().getModel();
-                if (hand == InteractionHand.MAIN_HAND) {
-                    model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                } else {
-                    model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                }
-            }
-        }
-
-        @SubscribeEvent
-        public static void renderHandEvent(RenderHandEvent event) {
-            Player player = Minecraft.getInstance().player;
-            if (player == null) return;
-            InteractionHand hand = player.getUsedItemHand();
-            if (player.getItemInHand(hand).getItem() instanceof MusketItem) {
-                if (event.getHand() == InteractionHand.OFF_HAND && hand == InteractionHand.MAIN_HAND && player.isUsingItem()) {
-                    event.setCanceled(true);
-                } else if (event.getHand() == InteractionHand.MAIN_HAND && hand == InteractionHand.OFF_HAND && player.isUsingItem()) {
-                    event.setCanceled(true);
-                }
-            }
-        }
     }
 }
