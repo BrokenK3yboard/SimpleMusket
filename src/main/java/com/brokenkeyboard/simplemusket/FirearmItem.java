@@ -53,7 +53,8 @@ public abstract class FirearmItem extends Item {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
+        if (!(entity instanceof Player player)) return;
 
         int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
 
@@ -62,13 +63,13 @@ public abstract class FirearmItem extends Item {
             float accuracy = (float) (coefficient * getDeviation(stack));
             float deviation = getDeviation(stack) - accuracy;
 
-            createProjectile(entityLiving, level, stack, deviation);
-            level.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), getFireSound(), SoundSource.PLAYERS, 1F, 1F);
+            createProjectile(player, level, stack, deviation);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), getFireSound(), SoundSource.PLAYERS, 0.8F, 1F);
 
             if(repeatingLevel > 0 && getExtraAmmo(stack) > 0) {
                 setExtraAmmo(stack, getExtraAmmo(stack) - 1);
             } else {
-                entityLiving.stopUsingItem();
+                player.stopUsingItem();
                 setReady(stack, false);
                 setAmmoType(stack, 0);
             }
