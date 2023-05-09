@@ -6,6 +6,7 @@ import com.brokenkeyboard.simplemusket.datagen.conditions.NetheriteCondition;
 import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -16,8 +17,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -26,10 +32,13 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.List;
 
 public class Events {
 
@@ -87,6 +96,16 @@ public class Events {
                     villager.goalSelector.addGoal(1, new AvoidEntityGoal<>(villager, MusketPillager.class, 8.0F, 0.6D, 0.6D));
                 }
             }
+        }
+
+        @SubscribeEvent
+        public static void addTrades(VillagerTradesEvent event) {
+            if(event.getType() != VillagerProfession.WEAPONSMITH) return;
+            Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 5), new ItemStack(SimpleMusket.MUSKET.get()), 3, 10, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(SimpleMusket.COPPER_BULLET.get(), 4), 16, 1, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(SimpleMusket.IRON_BULLET.get(), 4), 16, 1, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(SimpleMusket.GOLD_BULLET.get(),4 ), 16, 1, 0.05F));
         }
     }
 
