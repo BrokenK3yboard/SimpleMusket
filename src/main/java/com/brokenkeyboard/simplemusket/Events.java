@@ -108,12 +108,20 @@ public class Events {
         public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
             if (!(event.getEntity() instanceof Player player)) return;
             InteractionHand hand = player.getUsedItemHand();
-            if (player.getItemInHand(hand).getItem() instanceof MusketItem && player.isUsingItem() && !MusketItem.isLoaded(player.getItemInHand(hand))) {
+            if (player.getItemInHand(hand).getItem() instanceof MusketItem) {
                 HumanoidModel<Player> model = event.getRenderer().getModel();
-                if (hand == InteractionHand.MAIN_HAND) {
-                    model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                } else {
-                    model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
+                if (MusketItem.isLoaded(player.getItemInHand(hand))) {
+                    if (hand == InteractionHand.MAIN_HAND) {
+                        model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+                    } else {
+                        model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+                    }
+                } else if (player.isUsingItem() && !MusketItem.isLoaded(player.getItemInHand(hand))) {
+                    if (hand == InteractionHand.MAIN_HAND) {
+                        model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
+                    } else {
+                        model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
+                    }
                 }
             }
         }
