@@ -76,14 +76,14 @@ public class BulletEntity extends Projectile {
     protected void onHitEntity(EntityHitResult hitResult) {
         if (!(hitResult.getEntity() instanceof LivingEntity target)) return;
 
+        if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get() && this.isMagicBullet() && target.getMobType() == MobType.UNDEAD) {
+            damage += 7.0F;
+        }
+
         if (longshot > 0) {
             double distance = Math.sqrt(target.distanceToSqr(initialPos));
             double coefficient = (Math.min((distance / 50) * (0.25 * longshot), (0.25 * longshot)));
             damage *= (1 + coefficient);
-        }
-
-        if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get() && this.isMagicBullet() && target.getMobType() == MobType.UNDEAD) {
-            damage += 7.0F;
         }
 
         double armor = (target.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR)).getValue() : 0);
