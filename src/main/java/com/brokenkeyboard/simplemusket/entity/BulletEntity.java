@@ -41,9 +41,9 @@ public class BulletEntity extends Projectile {
     public BulletEntity(Level level, Vec3 initalPos, BulletType bulletType, int firepowerLevel, int longshotLevel) {
         super(SimpleMusket.BULLET_ENTITY.get(), level);
         this.bulletType = bulletType;
-        this.damage = getDamage(this.bulletType);
-        this.lifespan = getLifespan(this.bulletType);
-        this.piercing = Math.min(getArmorPiercing(this.bulletType) + (firepowerLevel * 0.1), 1.0);
+        this.damage = bulletType.getDamage();
+        this.lifespan = bulletType.getLifespan();
+        this.piercing = Math.min(bulletType.getPiercing() + (firepowerLevel * 0.1), 1.0);
         this.longshot = longshotLevel;
         this.initialPos = initalPos;
         this.isInvisible();
@@ -115,32 +115,6 @@ public class BulletEntity extends Projectile {
     private SimpleParticleType getParticle() {
         if (this.isInWater()) return ParticleTypes.BUBBLE;
         return ParticleTypes.SMOKE;
-    }
-
-    private float getDamage(BulletType type) {
-        return switch (type) {
-            case COPPER -> 4.0F;
-            case GOLD -> 9.0F;
-            case NETHERITE -> 18.0F;
-            default -> 16.0F;
-        };
-    }
-
-    private double getArmorPiercing(BulletType type) {
-        return switch (type) {
-            case COPPER, GOLD -> 0;
-            case NETHERITE -> 1.0;
-            default -> 0.5;
-        };
-    }
-
-    private int getLifespan(BulletType type) {
-        return switch (type) {
-            case COPPER -> 20;
-            case GOLD -> 30;
-            case NETHERITE -> 60;
-            default -> 40;
-        };
     }
 
     public void setMagicBullet(int level) {
