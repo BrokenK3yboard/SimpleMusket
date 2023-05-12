@@ -16,14 +16,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Random;
 import java.util.function.Supplier;
 
-public class ModLoot extends LootModifier {
-    public static final Supplier<Codec<ModLoot>> CODEC = Suppliers.memoize(()
+public class BastionLoot extends LootModifier {
+    public static final Supplier<Codec<BastionLoot>> CODEC = Suppliers.memoize(()
             -> RecordCodecBuilder.create(inst -> codecStart(inst).and(ForgeRegistries.ITEMS.getCodec()
-            .fieldOf("item").forGetter(m -> m.item)).apply(inst, ModLoot::new)));
+            .fieldOf("item").forGetter(m -> m.item)).apply(inst, BastionLoot::new)));
 
     private final Item item;
 
-    public ModLoot(LootItemCondition[] conditionsIn, Item item) {
+    public BastionLoot(LootItemCondition[] conditionsIn, Item item) {
         super(conditionsIn);
         this.item = item;
     }

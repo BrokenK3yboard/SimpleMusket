@@ -1,5 +1,5 @@
 {
-  "type": "simplemusket:musket_mod_loot",
+  "type": "simplemusket:bastion_loot",
   "conditions": [
     {
       "condition": "minecraft:alternative",

@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
-import com.brokenkeyboard.simplemusket.datagen.ModLoot;
+import com.brokenkeyboard.simplemusket.datagen.BastionLoot;
 import com.brokenkeyboard.simplemusket.datagen.PiglinBarter;
 import com.brokenkeyboard.simplemusket.enchantment.DeadeyeEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.FirepowerEnchantment;
@@ -56,7 +56,7 @@ public class SimpleMusket {
             .clientTrackingRange(8)
             .build("musket_pillager"));
 
-    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> LOOT = GLM.register("musket_mod_loot", ModLoot.CODEC);
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
     public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
