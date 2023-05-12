@@ -6,15 +6,14 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class Config {
 
-
     public static ForgeConfigSpec.IntValue MUSKET_RELOAD_TIME;
     public static ForgeConfigSpec.IntValue MUSKET_AIM_TIME;
-
     public static ForgeConfigSpec.BooleanValue CRAFT_COPPER_BULLETS;
     public static ForgeConfigSpec.BooleanValue CRAFT_GOLD_BULLETS;
     public static ForgeConfigSpec.BooleanValue CRAFT_NETHERITE_BULLETS;
     public static ForgeConfigSpec.BooleanValue FIND_NETHERITE_BULLETS;
     public static ForgeConfigSpec.IntValue MAX_NETHERITE_BULLETS;
+    public static ForgeConfigSpec.BooleanValue BARTER_NETHERITE_BULLETS;
     public static ForgeConfigSpec.BooleanValue REDUCE_PILLAGER_DAMAGE;
     public static ForgeConfigSpec.BooleanValue CONSECRATION_COMPAT;
 
@@ -48,6 +47,10 @@ public class Config {
         MAX_NETHERITE_BULLETS = CONFIG_BUILDER
                 .comment("The maximum number of netherite bullets that can be found in chest loot. The minimum will be half, rounded up.")
                 .defineInRange("Maximum Netherite bullet loot", 8, 1, 16);
+
+        BARTER_NETHERITE_BULLETS = CONFIG_BUILDER
+                .comment("If enabled, netherite bullets can be obtained by bartering with piglins")
+                .define("Barter netherite bullets", true);
 
         REDUCE_PILLAGER_DAMAGE = CONFIG_BUILDER
                 .comment("If enabled, the amount of damage dealt by Pillagers armed with muskets is reduced by 25%.")

@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
+import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
@@ -31,6 +32,8 @@ public class PiglinBarter extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        if(!Config.BARTER_NETHERITE_BULLETS.get()) return generatedLoot;
+
         Random rand = new Random();
         double rng = rand.nextDouble();
         if (generatedLoot.size() == 1 && generatedLoot.get(0).getItem() == Items.SPECTRAL_ARROW && rng < 0.25) {
