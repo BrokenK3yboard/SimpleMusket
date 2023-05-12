@@ -90,6 +90,7 @@ public class MusketItem extends FirearmItem {
             bullet.setPos(initialPos);
 
             if (entity instanceof MusketPillager musketAttackMob) {
+                bullet.setDamageScaling(Config.REDUCE_PILLAGER_DAMAGE.get() ? 0.75 : 1);
                 musketAttackMob.shootBullet(entity, musketAttackMob.getTarget(), bullet, 4F);
             } else {
                 bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, deviation);

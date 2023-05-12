@@ -15,7 +15,7 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue CRAFT_NETHERITE_BULLETS;
     public static ForgeConfigSpec.BooleanValue FIND_NETHERITE_BULLETS;
     public static ForgeConfigSpec.IntValue MAX_NETHERITE_BULLETS;
-
+    public static ForgeConfigSpec.BooleanValue REDUCE_PILLAGER_DAMAGE;
     public static ForgeConfigSpec.BooleanValue CONSECRATION_COMPAT;
 
     public static void registerConfig() {
@@ -48,6 +48,10 @@ public class Config {
         MAX_NETHERITE_BULLETS = CONFIG_BUILDER
                 .comment("The maximum number of netherite bullets that can be found in chest loot. The minimum will be half, rounded up.")
                 .defineInRange("Maximum Netherite bullet loot", 8, 1, 16);
+
+        REDUCE_PILLAGER_DAMAGE = CONFIG_BUILDER
+                .comment("If enabled, the amount of damage dealt by Pillagers armed with muskets is reduced by 25%.")
+                .define("Reduced Pillager bullet damage", false);
 
         CONSECRATION_COMPAT = CONFIG_BUILDER
                 .comment("If enabled while consecration is installed, change golden bullet behavior to remove undead protection.")

@@ -117,6 +117,12 @@ public class BulletEntity extends Projectile {
         return ParticleTypes.SMOKE;
     }
 
+    public void setDamageScaling(double multiplier) {
+        System.out.println("DAMAGE: " + damage);
+        damage *= multiplier * (1 - ((3 - this.level.getDifficulty().getId()) * 0.25));
+        System.out.println("FINAL DAMAGE: " + damage);
+    }
+
     public void setMagicBullet(int level) {
         enchanted = true;
         if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get()) return;
