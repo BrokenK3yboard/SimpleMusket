@@ -118,9 +118,7 @@ public class BulletEntity extends Projectile {
     }
 
     public void setDamageScaling(double multiplier) {
-        System.out.println("DAMAGE: " + damage);
         damage *= multiplier * (1 - ((3 - this.level.getDifficulty().getId()) * 0.25));
-        System.out.println("FINAL DAMAGE: " + damage);
     }
 
     public void setMagicBullet(int level) {
