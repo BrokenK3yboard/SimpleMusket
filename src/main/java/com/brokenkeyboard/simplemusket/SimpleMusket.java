@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
-import com.brokenkeyboard.simplemusket.datagen.ModLoot.ModLootSerializer;
+import com.brokenkeyboard.simplemusket.datagen.BastionLoot.BastionLootSerializer;
 import com.brokenkeyboard.simplemusket.datagen.PiglinBarter.PiglinBarterSerializer;
 import com.brokenkeyboard.simplemusket.enchantment.DeadeyeEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.FirepowerEnchantment;
@@ -55,7 +55,7 @@ public class SimpleMusket
             .clientTrackingRange(8)
             .build("musket_pillager"));
 
-    public static final RegistryObject<ModLootSerializer> LOOT = GLM.register("musket_mod_loot", ModLootSerializer::new);
+    public static final RegistryObject<BastionLootSerializer> BASTION_LOOT = GLM.register("bastion_loot", BastionLootSerializer::new);
     public static final RegistryObject<PiglinBarterSerializer> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarterSerializer::new);
     public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));

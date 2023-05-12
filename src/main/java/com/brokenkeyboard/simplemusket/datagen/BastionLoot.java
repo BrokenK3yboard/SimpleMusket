@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 
-public class ModLoot extends LootModifier {
+public class BastionLoot extends LootModifier {
 
-    public ModLoot(LootItemCondition[] conditionsIn) {
+    public BastionLoot(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
 
@@ -38,15 +38,15 @@ public class ModLoot extends LootModifier {
         return generatedLoot;
     }
 
-    public static class ModLootSerializer extends GlobalLootModifierSerializer<ModLoot> {
+    public static class BastionLootSerializer extends GlobalLootModifierSerializer<BastionLoot> {
 
         @Override
-        public ModLoot read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition) {
-            return new ModLoot(ailootcondition);
+        public BastionLoot read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition) {
+            return new BastionLoot(ailootcondition);
         }
 
         @Override
-        public JsonObject write(ModLoot instance) {
+        public JsonObject write(BastionLoot instance) {
             return new JsonObject();
         }
     }
