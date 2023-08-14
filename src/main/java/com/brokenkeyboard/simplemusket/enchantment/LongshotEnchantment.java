@@ -4,6 +4,7 @@ import com.brokenkeyboard.simplemusket.SimpleMusket;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import org.jetbrains.annotations.NotNull;
 
 public class LongshotEnchantment extends Enchantment {
     public LongshotEnchantment(Rarity rarity, EnchantmentCategory type, EquipmentSlot... slots) {
@@ -22,7 +23,7 @@ public class LongshotEnchantment extends Enchantment {
         return 2;
     }
 
-    public boolean checkCompatibility(Enchantment enchantment) {
+    public boolean checkCompatibility(@NotNull Enchantment enchantment) {
         return super.checkCompatibility(enchantment) && enchantment != SimpleMusket.FIREPOWER.get();
     }
 }

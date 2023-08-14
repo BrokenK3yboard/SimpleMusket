@@ -45,6 +45,7 @@ import java.util.List;
 
 import static com.brokenkeyboard.simplemusket.SimpleMusket.MUSKET_PILLAGER;
 
+@SuppressWarnings("unused")
 public class Events {
 
     @Mod.EventBusSubscriber(modid = SimpleMusket.MOD_ID, bus=Mod.EventBusSubscriber.Bus.MOD)

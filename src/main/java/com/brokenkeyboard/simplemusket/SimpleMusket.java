@@ -34,6 +34,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.BiFunction;
 
+@SuppressWarnings("unused")
 @Mod(SimpleMusket.MOD_ID)
 public class SimpleMusket {
     public static final String MOD_ID = "simplemusket";
