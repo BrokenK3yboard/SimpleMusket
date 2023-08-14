@@ -21,6 +21,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class BulletEntity extends Projectile {
@@ -108,7 +109,7 @@ public class BulletEntity extends Projectile {
     protected void defineSynchedData() {
     }
 
-    protected DamageSource causeBulletDamage(BulletEntity bullet, Entity attacker) {
+    protected DamageSource causeBulletDamage(BulletEntity bullet, @Nullable Entity attacker) {
         return (new IndirectEntityDamageSource("bullet", bullet, attacker)).setProjectile().bypassArmor();
     }
 

@@ -18,6 +18,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -28,7 +29,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
 
         ShapedRecipeBuilder.shaped(SimpleMusket.MUSKET.get())
                 .define('I', Tags.Items.INGOTS_IRON)
