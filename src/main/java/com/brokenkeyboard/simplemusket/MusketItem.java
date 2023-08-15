@@ -43,7 +43,7 @@ public class MusketItem extends FirearmItem {
     }
 
     @Override
-    public float getDeviation(ItemStack stack) {
+    public float getDeviation() {
         return 12.0F;
     }
 
@@ -67,7 +67,6 @@ public class MusketItem extends FirearmItem {
                 for (int i = 0; i < 5; i++) {
                     projectiles.add(new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
                 }
-                deviation = getDeviation(stack);
             }
             case GOLD -> {
                 projectiles.add(0, new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
