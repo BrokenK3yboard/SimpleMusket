@@ -15,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MusketItem extends FirearmItem {
 
@@ -91,7 +92,7 @@ public class MusketItem extends FirearmItem {
 
             if (entity instanceof MusketPillager musketAttackMob) {
                 bullet.setDamageScaling(Config.REDUCE_PILLAGER_DAMAGE.get() ? 0.75 : 1);
-                musketAttackMob.shootBullet(entity, musketAttackMob.getTarget(), bullet, 4F);
+                musketAttackMob.shootBullet(entity, Objects.requireNonNull(musketAttackMob.getTarget()), bullet, 4F);
             } else {
                 bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, deviation);
             }

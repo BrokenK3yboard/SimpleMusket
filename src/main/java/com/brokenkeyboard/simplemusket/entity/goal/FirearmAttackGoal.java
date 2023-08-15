@@ -1,7 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
 import com.brokenkeyboard.simplemusket.FirearmItem;
-import com.brokenkeyboard.simplemusket.MusketItem;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -17,7 +16,7 @@ import java.util.Objects;
 public class FirearmAttackGoal extends Goal {
 
     public static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(1, 2);
-    private FirearmAttackGoal.MusketState musketState = FirearmAttackGoal.MusketState.UNLOADED;
+    private FirearmState firearmState = FirearmState.UNLOADED;
     private final MusketPillager mob;
     private final float speedModifier;
     private final float attackRadiusSqr;
@@ -92,33 +91,33 @@ public class FirearmAttackGoal extends Goal {
             }
 
             this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
-            if (this.musketState == FirearmAttackGoal.MusketState.UNLOADED) {
+            if (this.firearmState == FirearmState.UNLOADED) {
                 if (!flag2) {
-                    this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof MusketItem));
-                    this.musketState = FirearmAttackGoal.MusketState.LOADING;
+                    this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof FirearmItem));
+                    this.firearmState = FirearmState.LOADING;
                     this.mob.setReloading(true);
                 }
-            } else if (this.musketState == FirearmAttackGoal.MusketState.LOADING) {
+            } else if (this.firearmState == FirearmState.LOADING) {
                 if (!this.mob.isUsingItem()) {
-                    this.musketState = FirearmAttackGoal.MusketState.UNLOADED;
+                    this.firearmState = FirearmState.UNLOADED;
                 }
 
                 int i = this.mob.getTicksUsingItem();
                 ItemStack stack = this.mob.getUseItem();
                 if (stack.getItem() instanceof FirearmItem firearm && i >= firearm.getReload(stack)) {
                     this.mob.releaseUsingItem();
-                    this.musketState = FirearmAttackGoal.MusketState.LOADED;
+                    this.firearmState = FirearmState.LOADED;
                     this.attackDelay = 50 + this.mob.getRandom().nextInt(30);
                     this.mob.setReloading(false);
                     FirearmItem.setAmmoType(stack, 1);
                     FirearmItem.setReady(stack, true);
                 }
-            } else if (this.musketState == FirearmAttackGoal.MusketState.LOADED) {
+            } else if (this.firearmState == FirearmState.LOADED) {
                 --this.attackDelay;
                 if (this.attackDelay == 0) {
-                    this.musketState = FirearmAttackGoal.MusketState.READY;
+                    this.firearmState = FirearmState.READY;
                 }
-            } else if (this.musketState == FirearmAttackGoal.MusketState.READY && flag) {
+            } else if (this.firearmState == FirearmState.READY && flag) {
                 ItemStack stack = this.mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof FirearmItem));
                 if(stack.getItem() instanceof FirearmItem) {
                     LivingEntity target = this.mob.getTarget();
@@ -129,16 +128,16 @@ public class FirearmAttackGoal extends Goal {
                     FirearmItem.setAmmoType(stack, 0);
                     FirearmItem.setReady(stack, false);
                 }
-                this.musketState = FirearmAttackGoal.MusketState.UNLOADED;
+                this.firearmState = FirearmState.UNLOADED;
             }
         }
     }
 
     private boolean canRun() {
-        return this.musketState == FirearmAttackGoal.MusketState.UNLOADED;
+        return this.firearmState == FirearmState.UNLOADED;
     }
 
-    enum MusketState {
+    enum FirearmState {
         UNLOADED,
         LOADING,
         LOADED,
