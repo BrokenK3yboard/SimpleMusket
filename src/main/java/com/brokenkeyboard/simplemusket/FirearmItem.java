@@ -25,7 +25,7 @@ public abstract class FirearmItem extends Item {
     public abstract boolean isAmmo(ItemStack stack);
     public abstract int getReload(ItemStack stack);
     public abstract int getAim(ItemStack stack);
-    public abstract float getDeviation(ItemStack stack);
+    public abstract float getDeviation();
     public abstract SoundEvent getFireSound();
     public abstract void createProjectile(LivingEntity entity, Level Level, ItemStack stack, float deviation);
 
@@ -60,8 +60,8 @@ public abstract class FirearmItem extends Item {
 
         if (isLoaded(stack) && isReady(stack)) {
             double coefficient = Math.min(((double) (getUseDuration(stack) - timeLeft) / getAim(stack)), 1.0);
-            float accuracy = (float) (coefficient * getDeviation(stack));
-            float deviation = getDeviation(stack) - accuracy;
+            float accuracy = (float) (coefficient * getDeviation());
+            float deviation = getDeviation() - accuracy;
 
             createProjectile(player, level, stack, deviation);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), getFireSound(), SoundSource.PLAYERS, 0.8F, 1F);
