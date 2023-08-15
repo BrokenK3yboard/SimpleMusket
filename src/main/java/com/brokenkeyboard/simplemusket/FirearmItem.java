@@ -4,7 +4,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,6 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -37,7 +37,7 @@ public abstract class FirearmItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         boolean hasAmmo = !findAmmo(player).isEmpty() || player.isCreative();
 
-        if (player.isEyeInFluid(FluidTags.WATER) && !player.isCreative()) {
+        if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) && !player.isCreative()) {
             return InteractionResultHolder.fail(stack);
         } else if (hasAmmo || isLoaded(stack)) {
             if(isLoaded(stack) && !isReady(stack)) {
