@@ -29,7 +29,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractIllager;
-import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +51,7 @@ import java.util.Map;
 
 public class MusketPillager extends AbstractIllager implements InventoryCarrier {
 
-    private static final EntityDataAccessor<Boolean> RELOADING = SynchedEntityData.defineId(Pillager.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> RELOADING = SynchedEntityData.defineId(MusketPillager.class, EntityDataSerializers.BOOLEAN);
     private final SimpleContainer inventory = new SimpleContainer(5);
 
     public MusketPillager(EntityType<? extends MusketPillager> type, Level level) {
@@ -238,6 +237,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     public void applyRaidBuffs(int value, boolean bool) {
         Raid raid = this.getCurrentRaid();
+        if (raid == null) return;
         boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
         if (flag) {
             ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
