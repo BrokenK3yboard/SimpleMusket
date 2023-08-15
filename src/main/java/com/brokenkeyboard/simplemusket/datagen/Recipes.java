@@ -47,7 +47,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
         bulletRecipe((BulletItem) SimpleMusket.IRON_BULLET.get(), Items.IRON_INGOT, 4, consumer);
         bulletRecipe((BulletItem) SimpleMusket.COPPER_BULLET.get(), Items.COPPER_INGOT, 4, consumer);
         bulletRecipe((BulletItem) SimpleMusket.GOLD_BULLET.get(), Items.GOLD_INGOT, 4, consumer);
-        bulletRecipe((BulletItem) SimpleMusket.NETHERITE_BULLET.get(), Items.NETHERITE_INGOT, 4, consumer);
+        bulletRecipe((BulletItem) SimpleMusket.NETHERITE_BULLET.get(), Items.NETHERITE_INGOT, 8, consumer);
     }
 
     private void bulletRecipe(BulletItem bulletItem, Item ingredient, int amount, Consumer<FinishedRecipe> consumer) {
