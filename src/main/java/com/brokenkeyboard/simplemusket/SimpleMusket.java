@@ -8,6 +8,8 @@ import com.brokenkeyboard.simplemusket.enchantment.LongshotEnchantment;
 import com.brokenkeyboard.simplemusket.enchantment.RepeatingEnchantment;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
+import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.mojang.serialization.Codec;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;

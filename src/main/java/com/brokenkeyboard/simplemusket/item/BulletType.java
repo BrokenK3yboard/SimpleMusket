@@ -1,4 +1,4 @@
-package com.brokenkeyboard.simplemusket;
+package com.brokenkeyboard.simplemusket.item;
 
 public enum BulletType {
     NONE(0, 0, 0),

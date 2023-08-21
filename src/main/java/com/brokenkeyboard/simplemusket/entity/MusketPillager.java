@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.FirearmItem;
+import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.goal.FirearmAttackGoal;
 import com.google.common.collect.Maps;

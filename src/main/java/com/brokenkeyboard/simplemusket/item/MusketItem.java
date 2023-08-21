@@ -1,5 +1,7 @@
-package com.brokenkeyboard.simplemusket;
+package com.brokenkeyboard.simplemusket.item;
 
+import com.brokenkeyboard.simplemusket.Config;
+import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import net.minecraft.nbt.ListTag;
