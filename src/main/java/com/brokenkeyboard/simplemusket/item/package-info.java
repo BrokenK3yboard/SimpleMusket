@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-package com.brokenkeyboard.simplemusket;
+package com.brokenkeyboard.simplemusket.item;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

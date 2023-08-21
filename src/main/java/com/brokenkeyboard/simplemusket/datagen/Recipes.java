@@ -1,7 +1,7 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
-import com.brokenkeyboard.simplemusket.BulletItem;
-import com.brokenkeyboard.simplemusket.BulletType;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
+import com.brokenkeyboard.simplemusket.item.BulletType;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.datagen.conditions.CopperCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.GoldCondition;

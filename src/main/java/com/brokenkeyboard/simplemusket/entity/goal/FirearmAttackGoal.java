@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
-import com.brokenkeyboard.simplemusket.FirearmItem;
+import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;

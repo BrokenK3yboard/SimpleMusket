@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.BulletType;
+import com.brokenkeyboard.simplemusket.item.BulletType;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import net.minecraft.core.particles.ParticleTypes;

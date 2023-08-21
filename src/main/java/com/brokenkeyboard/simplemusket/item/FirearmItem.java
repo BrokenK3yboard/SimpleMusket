@@ -1,5 +1,6 @@
-package com.brokenkeyboard.simplemusket;
+package com.brokenkeyboard.simplemusket.item;
 
+import com.brokenkeyboard.simplemusket.SimpleMusket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
