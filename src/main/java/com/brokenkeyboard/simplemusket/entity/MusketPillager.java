@@ -196,14 +196,14 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
 
     public void useFirearm(ItemStack stack) {
         FirearmItem firearm = (FirearmItem) stack.getItem();
-        firearm.createProjectile(this, level, stack, 0.0F);
-        level.playSound(null, getX(), getY(), getZ(), firearm.getFireSound(), SoundSource.HOSTILE, 1F, 1F);
+        firearm.createProjectile(this, level(), stack, 0.0F);
+        level().playSound(null, getX(), getY(), getZ(), firearm.getFireSound(), SoundSource.HOSTILE, 1F, 1F);
     }
 
     public void shootBullet(LivingEntity entity, LivingEntity target, Projectile projectile, float speed) {
         Vec3 direction = new Vec3(target.getX() - getX(), target.getBoundingBox().minY + target.getBbHeight() * 0.7f - getY() - getEyeHeight(),
                 target.getZ() - getZ()).normalize();
-        projectile.shoot(direction.x(), direction.y(), direction.z(), speed, (float)(8 - entity.level.getDifficulty().getId() * 2));
+        projectile.shoot(direction.x(), direction.y(), direction.z(), speed, (float)(8 - entity.level().getDifficulty().getId() * 2));
     }
 
     public SimpleContainer getInventory() {

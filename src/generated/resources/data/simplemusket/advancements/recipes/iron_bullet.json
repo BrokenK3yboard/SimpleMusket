@@ -59,7 +59,8 @@
           "recipes": [
             "simplemusket:iron_bullet"
           ]
-        }
+        },
+        "sends_telemetry_event": false
       },
       "conditions": [
         {

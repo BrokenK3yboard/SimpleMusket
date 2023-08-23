@@ -1,6 +1,6 @@
 modLoader="javafml"
-loaderVersion="[43,)"
-license="MIT License"
+loaderVersion="${loader_version_range}"
+license="GPLv3"
 
 [[mods]]
 modId="simplemusket"
@@ -14,13 +14,13 @@ description='''Adds a musket and four types of ammo to Minecraft.'''
 [[dependencies.simplemusket]]
 modId="forge"
 mandatory=true
-versionRange="[43.2.0,)"
+versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.simplemusket]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19.2]"
+versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"

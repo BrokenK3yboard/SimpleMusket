@@ -9,6 +9,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "equipment",
         "key": {
           "C": {
             "item": "minecraft:netherite_ingot"
@@ -26,9 +27,10 @@
           " P "
         ],
         "result": {
-          "count": 4,
+          "count": 8,
           "item": "simplemusket:netherite_bullet"
-        }
+        },
+        "show_notification": true
       }
     }
   ]

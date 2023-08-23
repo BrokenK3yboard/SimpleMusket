@@ -80,7 +80,7 @@ public abstract class FirearmItem extends Item {
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity entity, int timeLeft) {
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int timeLeft) {
         if (!(entity instanceof Player player)) return;
 
         if (getUseDuration(stack) - timeLeft >= getReload(stack) && !isLoaded(stack)) {
@@ -97,7 +97,7 @@ public abstract class FirearmItem extends Item {
                 ammoStack.shrink(1);
                 if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
-            entity.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
         }
     }
 

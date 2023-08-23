@@ -1,13 +1,14 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
-import com.brokenkeyboard.simplemusket.item.BulletItem;
-import com.brokenkeyboard.simplemusket.item.BulletType;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.datagen.conditions.CopperCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.GoldCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.NetheriteCondition;
-import net.minecraft.data.DataGenerator;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
+import com.brokenkeyboard.simplemusket.item.BulletType;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -24,14 +25,14 @@ import java.util.function.Consumer;
 
 public class Recipes extends RecipeProvider implements IConditionBuilder {
 
-    public Recipes(DataGenerator generator) {
-        super(generator);
+    public Recipes(PackOutput output) {
+        super(output);
     }
 
     @Override
-    protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
 
-        ShapedRecipeBuilder.shaped(SimpleMusket.MUSKET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, SimpleMusket.MUSKET.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('F', Items.FLINT_AND_STEEL)
                 .define('P', ItemTags.PLANKS)
@@ -57,7 +58,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
         ConditionalRecipe.builder().addCondition(
                 getCondition(BulletType.values()[bulletItem.getType()])
         ).addRecipe(
-                ShapedRecipeBuilder.shaped(bulletItem, amount)
+                ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, amount)
                         .define('C', ingredient)
                         .define('G', Items.GUNPOWDER)
                         .define('P', Items.PAPER)

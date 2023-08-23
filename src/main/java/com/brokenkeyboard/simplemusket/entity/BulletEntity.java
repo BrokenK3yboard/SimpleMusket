@@ -1,12 +1,11 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.item.BulletType;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
+import com.brokenkeyboard.simplemusket.item.BulletType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +22,8 @@ import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+
+import static com.brokenkeyboard.simplemusket.SimpleMusket.BULLET;
 
 public class BulletEntity extends Projectile {
 
@@ -56,8 +57,8 @@ public class BulletEntity extends Projectile {
 
         if (ticksAlive > lifespan)
             this.discard();
-        
-        HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+
+        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
             this.onHit(hitresult);
         }
@@ -68,7 +69,7 @@ public class BulletEntity extends Projectile {
         double d0 = this.getY() + vec3.y;
         double d1 = this.getZ() + vec3.z;
 
-        this.level.addParticle(this.getParticle(), this.getX(), this.getY(), this.getZ(), -d1, -d2, -d0);
+        this.level().addParticle(this.getParticle(), this.getX(), this.getY(), this.getZ(), -d1, -d2, -d0);
         this.setPos(d2, d0, d1);
         ticksAlive++;
     }
@@ -110,7 +111,7 @@ public class BulletEntity extends Projectile {
     }
 
     protected DamageSource causeBulletDamage(BulletEntity bullet, @Nullable Entity attacker) {
-        return (new IndirectEntityDamageSource("bullet", bullet, attacker)).setProjectile().bypassArmor();
+        return (level().damageSources().source(BULLET, bullet, attacker));
     }
 
     private SimpleParticleType getParticle() {
@@ -119,7 +120,7 @@ public class BulletEntity extends Projectile {
     }
 
     public void setDamageScaling(double multiplier) {
-        damage *= multiplier * (1 - ((3 - this.level.getDifficulty().getId()) * 0.25));
+        damage *= multiplier * (1 - ((3 - this.level().getDifficulty().getId()) * 0.25));
     }
 
     public void setMagicBullet(int level) {

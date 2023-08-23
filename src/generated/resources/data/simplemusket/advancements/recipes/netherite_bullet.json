@@ -59,7 +59,8 @@
           "recipes": [
             "simplemusket:netherite_bullet"
           ]
-        }
+        },
+        "sends_telemetry_event": false
       },
       "conditions": [
         {

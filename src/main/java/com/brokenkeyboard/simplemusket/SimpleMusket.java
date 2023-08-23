@@ -11,18 +11,23 @@ import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.mojang.serialization.Codec;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.raid.Raid;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
@@ -47,6 +52,8 @@ public class SimpleMusket {
 
     public static final EnchantmentCategory FIREARM = EnchantmentCategory.create("FIREARM", item -> item instanceof MusketItem);
 
+    public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(SimpleMusket.MOD_ID, "bullet"));
+
     public static final RegistryObject<EntityType<BulletEntity>> BULLET_ENTITY = ENTITIES.register("bullet_entity", () -> EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
             .sized(0.5F, 0.5F)
             .setShouldReceiveVelocityUpdates(true)
@@ -62,12 +69,12 @@ public class SimpleMusket {
 
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
-    public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
-    public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
-    public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 2));
-    public static final RegistryObject<Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 3));
-    public static final RegistryObject<Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 4));
-    public static final RegistryObject<Item> MUSKET_PILLAGER_EGG = ITEMS.register("musket_pillager_spawn_egg", () -> new ForgeSpawnEggItem(MUSKET_PILLAGER, 5258034, 2960169, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties()));
+    public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties(), 1));
+    public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties(), 2));
+    public static final RegistryObject<Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(new Item.Properties(), 3));
+    public static final RegistryObject<Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(new Item.Properties(), 4));
+    public static final RegistryObject<Item> MUSKET_PILLAGER_EGG = ITEMS.register("musket_pillager_spawn_egg", () -> new ForgeSpawnEggItem(MUSKET_PILLAGER, 5258034, 2960169, new Item.Properties()));
 
     public static final RegistryObject<Enchantment> FIREPOWER = ENCHANTMENTS.register("firepower", () -> new FirepowerEnchantment(
             Enchantment.Rarity.COMMON, FIREARM, EquipmentSlot.MAINHAND));
@@ -85,10 +92,25 @@ public class SimpleMusket {
         ITEMS.register(bus);
         ENCHANTMENTS.register(bus);
         GLM.register(bus);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addCreative);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
         if (ModList.get().isLoaded("consecration"))
             bus.addListener(this::enqueueIMC);
+    }
+
+    public void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+            event.accept(SimpleMusket.MUSKET.get());
+            event.accept(SimpleMusket.IRON_BULLET.get());
+            event.accept(SimpleMusket.COPPER_BULLET.get());
+            event.accept(SimpleMusket.GOLD_BULLET.get());
+            event.accept(SimpleMusket.NETHERITE_BULLET.get());
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(SimpleMusket.MUSKET_PILLAGER_EGG);
+        }
     }
 
     public void enqueueIMC(final InterModEnqueueEvent event) {

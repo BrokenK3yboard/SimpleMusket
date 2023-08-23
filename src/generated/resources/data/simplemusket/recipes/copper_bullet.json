@@ -9,6 +9,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "equipment",
         "key": {
           "C": {
             "item": "minecraft:copper_ingot"
@@ -28,7 +29,8 @@
         "result": {
           "count": 4,
           "item": "simplemusket:copper_bullet"
-        }
+        },
+        "show_notification": true
       }
     }
   ]

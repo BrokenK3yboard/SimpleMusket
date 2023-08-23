@@ -67,5 +67,6 @@
     "recipes": [
       "simplemusket:musket"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
