@@ -7,25 +7,13 @@ public enum BulletType {
     GOLD(9.0F, 0, 30),
     NETHERITE(20.0F, 1.0, 40);
 
-    private final float damage;
-    private final double piercing;
-    private final int lifespan;
+    public final float DAMAGE;
+    public final double PIERCING;
+    public final int LIFESPAN;
 
     BulletType(float damage, double piercing, int lifespan) {
-        this.damage = damage;
-        this.piercing = piercing;
-        this.lifespan = lifespan;
-    }
-
-    public float getDamage() {
-        return damage;
-    }
-
-    public double getPiercing() {
-        return piercing;
-    }
-
-    public int getLifespan() {
-        return lifespan;
+        this.DAMAGE = damage;
+        this.PIERCING = piercing;
+        this.LIFESPAN = lifespan;
     }
 }

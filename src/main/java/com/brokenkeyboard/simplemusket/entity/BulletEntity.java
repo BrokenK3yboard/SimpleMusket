@@ -43,12 +43,11 @@ public class BulletEntity extends Projectile {
     public BulletEntity(Level level, Vec3 initalPos, BulletType bulletType, int firepowerLevel, int longshotLevel) {
         super(SimpleMusket.BULLET_ENTITY.get(), level);
         this.bulletType = bulletType;
-        this.damage = bulletType.getDamage();
-        this.lifespan = bulletType.getLifespan();
-        this.piercing = Math.min(bulletType.getPiercing() + (firepowerLevel * 0.1), 1.0);
+        this.damage = bulletType.DAMAGE;
+        this.lifespan = bulletType.LIFESPAN;
+        this.piercing = Math.min(bulletType.PIERCING + (firepowerLevel * 0.1), 1.0);
         this.longshot = longshotLevel;
         this.initialPos = initalPos;
-        this.isInvisible();
         this.setNoGravity(true);
     }
 
@@ -85,7 +84,7 @@ public class BulletEntity extends Projectile {
         if (longshot > 0) {
             double distance = Math.sqrt(target.distanceToSqr(initialPos));
             double coefficient = (Math.min((distance / 50) * (0.25 * longshot), (0.25 * longshot)));
-            damage *= (1 + coefficient);
+            damage *= (float) (1 + coefficient);
         }
 
         double armor = (target.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR)).getValue() : 0);
@@ -120,7 +119,7 @@ public class BulletEntity extends Projectile {
     }
 
     public void setDamageScaling(double multiplier) {
-        damage *= multiplier * (1 - ((3 - this.level().getDifficulty().getId()) * 0.25));
+        damage *= (float) (multiplier * (1 - ((3 - this.level().getDifficulty().getId()) * 0.25)));
     }
 
     public void setMagicBullet(int level) {
