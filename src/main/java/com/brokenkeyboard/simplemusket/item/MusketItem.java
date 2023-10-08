@@ -4,7 +4,6 @@ import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
@@ -69,13 +68,12 @@ public class MusketItem extends FirearmItem {
                 for (int i = 0; i < 5; i++) {
                     projectiles.add(new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
                 }
+                deviation = (float) (this.getDeviation() * (1 - EnchantmentHelper.getTagEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack) * 0.1));
             }
             case GOLD -> {
                 projectiles.add(0, new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
-                ListTag listTag = stack.getEnchantmentTags();
-                if (!(listTag.size() > 0)) break;
-
                 Map<Enchantment, Integer> enchantments = new HashMap<>(EnchantmentHelper.getEnchantments(stack));
+                if (enchantments.isEmpty()) break;
                 BulletEntity bulletEntity = projectiles.get(0);
                 int ench = 0;
 
