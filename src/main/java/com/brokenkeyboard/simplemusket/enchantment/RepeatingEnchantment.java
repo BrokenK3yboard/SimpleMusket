@@ -16,8 +16,4 @@ public class RepeatingEnchantment extends Enchantment {
     public int getMaxCost(int enchantmentLevel) {
         return 50;
     }
-
-    public int getMaxLevel() {
-        return 1;
-    }
 }
