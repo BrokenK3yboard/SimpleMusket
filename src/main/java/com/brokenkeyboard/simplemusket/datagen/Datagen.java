@@ -34,6 +34,7 @@ public class Datagen {
             generator.addProvider(true, new Recipes(output));
             generator.addProvider(true, provider);
             generator.addProvider(true, new Tags(output, lookupProvider, event.getExistingFileHelper()));
+            generator.addProvider(true, new GLMProvider(output));
         }
     }
 

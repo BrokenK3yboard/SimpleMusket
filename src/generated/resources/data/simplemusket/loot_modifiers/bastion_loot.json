@@ -2,7 +2,7 @@
   "type": "simplemusket:bastion_loot",
   "conditions": [
     {
-      "condition": "minecraft:alternative",
+      "condition": "minecraft:any_of",
       "terms": [
         {
           "condition": "forge:loot_table_id",
@@ -22,6 +22,5 @@
         }
       ]
     }
-  ],
-  "item": "simplemusket:netherite_bullet"
+  ]
 }
