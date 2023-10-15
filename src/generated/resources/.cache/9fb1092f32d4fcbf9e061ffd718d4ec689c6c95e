@@ -1,4 +1,4 @@
-// 1.19.2	2023-03-14T23:10:21.3902663	Recipes
+// 1.19.2	2023-10-15T01:24:32.1433882	Recipes
 d7174c96a1ebdef1aed6c11621b4ea7627820e46 data/simplemusket/advancements/recipes/combat/musket.json
 866abee9d614ea59c4d0f55336b4e1e03d693c07 data/simplemusket/advancements/recipes/copper_bullet.json
 9b92f67ac6b399a97279ca0e150cdd6a335a0dd0 data/simplemusket/advancements/recipes/gold_bullet.json
@@ -8,4 +8,4 @@ d7174c96a1ebdef1aed6c11621b4ea7627820e46 data/simplemusket/advancements/recipes/
 6ee438dccbd24414401c969fb67f07ebcb360605 data/simplemusket/recipes/gold_bullet.json
 bb2f055c9e72680cec5749da06b86ddd9dbdf180 data/simplemusket/recipes/iron_bullet.json
 c3fb51583c3fbd09754cef0a433cdb00e2e32f8c data/simplemusket/recipes/musket.json
-f23214c888b0c508f99b4a43d1057b28c6b3deab data/simplemusket/recipes/netherite_bullet.json
+304ad68d8bad8736294efdcc5d6483f6efa427c7 data/simplemusket/recipes/netherite_bullet.json
