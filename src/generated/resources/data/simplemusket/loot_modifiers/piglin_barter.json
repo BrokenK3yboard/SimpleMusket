@@ -1,5 +1,4 @@
 {
-  "type": "simplemusket:piglin_barter",
   "conditions": [
     {
       "condition": "minecraft:alternative",
@@ -10,5 +9,6 @@
         }
       ]
     }
-  ]
+  ],
+  "type": "simplemusket:piglin_barter"
 }

@@ -15,6 +15,7 @@ public class Datagen {
 
         if (event.includeServer()) {
             generator.addProvider(new Recipes(generator));
+            generator.addProvider(new GLMProvider(generator));
         }
     }
 }

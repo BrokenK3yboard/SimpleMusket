@@ -16,8 +16,8 @@ import java.util.Random;
 
 public class BastionLoot extends LootModifier {
 
-    public BastionLoot(LootItemCondition[] conditionsIn) {
-        super(conditionsIn);
+    public BastionLoot(LootItemCondition[] conditions) {
+        super(conditions);
     }
 
     @NotNull
@@ -41,13 +41,13 @@ public class BastionLoot extends LootModifier {
     public static class BastionLootSerializer extends GlobalLootModifierSerializer<BastionLoot> {
 
         @Override
-        public BastionLoot read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition) {
-            return new BastionLoot(ailootcondition);
+        public BastionLoot read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
+            return new BastionLoot(conditions);
         }
 
         @Override
         public JsonObject write(BastionLoot instance) {
-            return new JsonObject();
+            return this.makeConditions(instance.conditions);
         }
     }
 }

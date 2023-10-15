@@ -17,8 +17,8 @@ import java.util.Random;
 
 public class PiglinBarter extends LootModifier {
 
-    public PiglinBarter(LootItemCondition[] condition) {
-        super(condition);
+    public PiglinBarter(LootItemCondition[] conditions) {
+        super(conditions);
     }
 
     @NotNull
@@ -38,13 +38,13 @@ public class PiglinBarter extends LootModifier {
     public static class PiglinBarterSerializer extends GlobalLootModifierSerializer<PiglinBarter> {
 
         @Override
-        public PiglinBarter read(ResourceLocation location, JsonObject object, LootItemCondition[] condition) {
-            return new PiglinBarter(condition);
+        public PiglinBarter read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
+            return new PiglinBarter(conditions);
         }
 
         @Override
         public JsonObject write(PiglinBarter instance) {
-            return new JsonObject();
+            return this.makeConditions(instance.conditions);
         }
     }
 }

@@ -1,5 +1,4 @@
 {
-  "type": "simplemusket:bastion_loot",
   "conditions": [
     {
       "condition": "minecraft:alternative",
@@ -22,5 +21,6 @@
         }
       ]
     }
-  ]
+  ],
+  "type": "simplemusket:bastion_loot"
 }
