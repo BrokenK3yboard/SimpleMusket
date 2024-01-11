@@ -36,9 +36,10 @@ public abstract class FirearmItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        boolean hasAmmo = !findAmmo(player).isEmpty() || player.isCreative();
+        boolean hasCreative = player.getAbilities().instabuild;
+        boolean hasAmmo = !findAmmo(player).isEmpty() || hasCreative;
 
-        if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) && !player.isCreative()) {
+        if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) && !hasCreative) {
             return InteractionResultHolder.fail(stack);
         } else if (hasAmmo || isLoaded(stack)) {
             if(isLoaded(stack) && !isReady(stack)) {
@@ -66,7 +67,7 @@ public abstract class FirearmItem extends Item {
             createProjectile(player, level, stack, deviation);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), getFireSound(), SoundSource.PLAYERS, 0.8F, 1F);
 
-            if(repeatingLevel > 0 && getExtraAmmo(stack) > 0) {
+            if (repeatingLevel > 0 && getExtraAmmo(stack) > 0) {
                 setExtraAmmo(stack, getExtraAmmo(stack) - 1);
             } else {
                 player.stopUsingItem();
@@ -85,12 +86,8 @@ public abstract class FirearmItem extends Item {
 
         if (getUseDuration(stack) - timeLeft >= getReload(stack) && !isLoaded(stack)) {
             ItemStack ammoStack = findAmmo(player);
-
             if (player.isCreative()) {
-                if (!ammoStack.isEmpty())
-                    setAmmoType(stack, ((BulletItem) ammoStack.getItem()).getType());
-                else
-                    setAmmoType(stack, 1);
+                setAmmoType(stack, !ammoStack.isEmpty() ? ((BulletItem) ammoStack.getItem()).getType() : 1);
             } else {
                 if (ammoStack.isEmpty()) return;
                 setAmmoType(stack, ((BulletItem) ammoStack.getItem()).getType());
@@ -104,8 +101,7 @@ public abstract class FirearmItem extends Item {
     private ItemStack findAmmo(Player player) {
         for (int i = 0; i != player.getInventory().getContainerSize(); ++i) {
             ItemStack stack = player.getInventory().getItem(i);
-            if (isAmmo(stack))
-                return stack;
+            if (isAmmo(stack)) return stack;
         }
         return ItemStack.EMPTY;
     }
@@ -120,6 +116,10 @@ public abstract class FirearmItem extends Item {
         String name = BulletType.values()[getAmmoType(stack)].toString().toLowerCase() + "_bullet";
         String displayName = "item." + SimpleMusket.MOD_ID + "." + name;
         components.add(Component.translatable("item.minecraft.crossbow.projectile").append(" [").append(Component.translatable(displayName)).append("]"));
+    }
+
+    public static float getReloadTime(ItemStack stack) {
+        return stack.getItem() instanceof FirearmItem firearm ? firearm.getReload(stack) : 0;
     }
 
     public static void setAmmoType(ItemStack stack, int value) {

@@ -1,5 +1,5 @@
 {
-    "parent": "simplemusket:item/musket",
+    "parent": "simplemusket:item/musket_models/musket",
     "textures": {
         "layer0": "simplemusket:item/musket_loaded"
     },
