@@ -1,12 +1,16 @@
 package com.brokenkeyboard.simplemusket.item;
 
 import com.brokenkeyboard.simplemusket.SimpleMusket;
+import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +21,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
@@ -60,6 +65,7 @@ public abstract class FirearmItem extends ProjectileWeaponItem {
 
             createProjectile(player, level, stack, deviation);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), getFireSound(), SoundSource.PLAYERS, 0.8F, 1F);
+            spawnParticles(level, player);
 
             int ammoCount = getAmmo(stack).getCount();
             setAmmo(stack, new ItemStack(FirearmItem.getAmmo(stack).getItem(), ammoCount - 1));
@@ -87,6 +93,24 @@ public abstract class FirearmItem extends ProjectileWeaponItem {
                 if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
+        }
+    }
+
+    public static void spawnParticles(Level level, LivingEntity entity) {
+        if (!(level instanceof ServerLevel serverLevel)) return;
+        Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
+        Vec3 front = entity instanceof MusketPillager mob ? mob.getTargetDirection(mob.getTarget()) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot());
+        Vec3 side = Vec3.directionFromRotation(0, entity.getYRot() + (entity.getUsedItemHand() == InteractionHand.MAIN_HAND ? 90 : -90));
+        Vec3 down = Vec3.directionFromRotation(entity.getXRot() + 90, entity.getYRot());
+        origin.add(side.add(down).scale(0.15));
+
+        for (int i = 0; i != 10; ++i) {
+            RandomSource random = entity.getRandom();
+            double t = Math.pow(random.nextFloat(), 1.5);
+            Vec3 p = origin.add(front.scale(1.25 + t));
+            p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
+            Vec3 v = front.scale(0.1 * (1 - t));
+            serverLevel.sendParticles(ParticleTypes.POOF, p.x, p.y, p.z, (int)v.x, v.y, v.z, 0, 1);
         }
     }
 

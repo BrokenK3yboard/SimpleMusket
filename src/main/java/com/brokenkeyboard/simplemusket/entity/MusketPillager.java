@@ -1,8 +1,8 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.goal.FirearmAttackGoal;
+import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -198,12 +198,17 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         FirearmItem firearm = (FirearmItem) stack.getItem();
         firearm.createProjectile(this, level(), stack, 0.0F);
         level().playSound(null, getX(), getY(), getZ(), firearm.getFireSound(), SoundSource.HOSTILE, 1F, 1F);
+        FirearmItem.spawnParticles(level(), this);
     }
 
     public void shootBullet(LivingEntity entity, LivingEntity target, Projectile projectile, float speed) {
-        Vec3 direction = new Vec3(target.getX() - getX(), target.getBoundingBox().minY + target.getBbHeight() * 0.7f - getY() - getEyeHeight(),
-                target.getZ() - getZ()).normalize();
+        Vec3 direction = getTargetDirection(target);
         projectile.shoot(direction.x(), direction.y(), direction.z(), speed, (float)(8 - entity.level().getDifficulty().getId() * 2));
+    }
+
+    public Vec3 getTargetDirection(LivingEntity target) {
+        return new Vec3(target.getX() - getX(), target.getBoundingBox().minY + target.getBbHeight() * 0.7f - getY() - getEyeHeight(),
+                target.getZ() - getZ()).normalize();
     }
 
     public SimpleContainer getInventory() {

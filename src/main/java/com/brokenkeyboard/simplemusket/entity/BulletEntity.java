@@ -2,8 +2,6 @@ package com.brokenkeyboard.simplemusket.entity;
 
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -65,7 +63,6 @@ public class BulletEntity extends Projectile {
         double d0 = this.getY() + vec3.y;
         double d1 = this.getZ() + vec3.z;
 
-        this.level().addParticle(this.getParticle(), this.getX(), this.getY(), this.getZ(), -d1, -d2, -d0);
         this.setPos(d2, d0, d1);
         ticksAlive++;
     }
@@ -106,10 +103,6 @@ public class BulletEntity extends Projectile {
 
     protected DamageSource causeBulletDamage(BulletEntity bullet, @Nullable Entity attacker) {
         return (level().damageSources().source(BULLET, bullet, attacker));
-    }
-
-    private SimpleParticleType getParticle() {
-        return this.isInWater() ? ParticleTypes.BUBBLE : ParticleTypes.SMOKE;
     }
 
     public void setDamageScaling(double multiplier) {
