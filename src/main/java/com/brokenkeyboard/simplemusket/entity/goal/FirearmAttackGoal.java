@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
+import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import net.minecraft.util.TimeUtil;
@@ -109,8 +110,8 @@ public class FirearmAttackGoal extends Goal {
                     this.firearmState = FirearmState.LOADED;
                     this.attackDelay = 50 + this.mob.getRandom().nextInt(30);
                     this.mob.setReloading(false);
-                    FirearmItem.setAmmoType(stack, 1);
-                    FirearmItem.setReady(stack, true);
+                    FirearmItem.setAmmo(stack, new ItemStack(SimpleMusket.IRON_BULLET.get()));
+                    FirearmItem.setLoaded(stack, true);
                 }
             } else if (this.firearmState == FirearmState.LOADED) {
                 --this.attackDelay;
@@ -122,11 +123,12 @@ public class FirearmAttackGoal extends Goal {
                 if(stack.getItem() instanceof FirearmItem) {
                     LivingEntity target = this.mob.getTarget();
                     double armor = (target.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR)).getValue() : 0);
-                    if(d0 < 100 && armor < 7.5F)
-                        FirearmItem.setAmmoType(stack, 2);
+                    if(d0 < 100 && armor < 7.5F) {
+                        FirearmItem.setAmmo(stack, new ItemStack(SimpleMusket.COPPER_BULLET.get()));
+                    }
                     this.mob.useFirearm(stack);
-                    FirearmItem.setAmmoType(stack, 0);
-                    FirearmItem.setReady(stack, false);
+                    stack.removeTagKey("LoadedProjectiles");
+                    FirearmItem.setLoaded(stack, false);
                 }
                 this.firearmState = FirearmState.UNLOADED;
             }

@@ -153,8 +153,8 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance p_219060_) {
         ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
-        FirearmItem.setAmmoType(stack, 1);
-        FirearmItem.setReady(stack, true);
+        FirearmItem.setAmmo(stack, new ItemStack(SimpleMusket.IRON_BULLET.get()));
+        FirearmItem.setLoaded(stack, true);
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
@@ -247,7 +247,6 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
             } else if (value > raid.getNumGroups(Difficulty.EASY)) {
                 map.put(SimpleMusket.FIREPOWER.get(), 1);
             }
-
             map.put(SimpleMusket.DEADEYE.get(), 1);
             EnchantmentHelper.setEnchantments(map, stack);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);

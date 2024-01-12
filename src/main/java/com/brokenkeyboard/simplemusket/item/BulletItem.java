@@ -8,20 +8,18 @@ import net.minecraft.world.item.ItemStack;
 
 public class BulletItem extends Item {
 
-    private final int type;
+    public final double DAMAGE;
+    public final double PIERCING;
 
-    public BulletItem(Properties properties, int type) {
+    public BulletItem(double damage, double piercing, Properties properties) {
         super(properties);
-        this.type = type;
-    }
-
-    public int getType() {
-        return type;
+        this.DAMAGE = damage;
+        this.PIERCING = piercing;
     }
 
     public Component getName(ItemStack stack) {
-        if (BulletType.values()[this.getType()] != BulletType.IRON) return super.getName(stack);
-        if (Config.CRAFT_COPPER_BULLETS.get() || Config.CRAFT_GOLD_BULLETS.get() || Config.CRAFT_NETHERITE_BULLETS.get() || Config.FIND_NETHERITE_BULLETS.get()) return super.getName(stack);
-        return Component.translatable("item." + SimpleMusket.MOD_ID + ".generic_bullet");
+        if (!stack.is(SimpleMusket.IRON_BULLET.get())) return super.getName(stack);
+        return (Config.CRAFT_COPPER_BULLETS.get() || Config.CRAFT_GOLD_BULLETS.get() || Config.CRAFT_NETHERITE_BULLETS.get() || Config.FIND_NETHERITE_BULLETS.get()) ?
+                super.getName(stack) : Component.translatable("item." + SimpleMusket.MOD_ID + ".generic_bullet");
     }
 }

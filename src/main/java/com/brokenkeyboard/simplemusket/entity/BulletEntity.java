@@ -2,7 +2,6 @@ package com.brokenkeyboard.simplemusket.entity;
 
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
-import com.brokenkeyboard.simplemusket.item.BulletType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,35 +26,33 @@ import static com.brokenkeyboard.simplemusket.SimpleMusket.BULLET;
 
 public class BulletEntity extends Projectile {
 
-    private BulletType bulletType;
     private Vec3 initialPos;
     private float damage = 16.0F;
-    private double piercing = 0;
-    private boolean enchanted = false;
-    private int lifespan = 24;
+    private double pierce = 0;
     private int longshot = 0;
     private int ticksAlive = 0;
+    private boolean noIframe;
+    private boolean isHoly;
 
     public BulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
     }
 
-    public BulletEntity(Level level, Vec3 initalPos, BulletType bulletType, int firepowerLevel, int longshotLevel) {
+    public BulletEntity(Level level, Vec3 initalPos, float damage, double pierce, int longshotLevel, boolean noIframe, boolean isHoly) {
         super(SimpleMusket.BULLET_ENTITY.get(), level);
-        this.bulletType = bulletType;
-        this.damage = bulletType.DAMAGE;
-        this.lifespan = bulletType.LIFESPAN;
-        this.piercing = Math.min(bulletType.PIERCING + (firepowerLevel * 0.1), 1.0);
-        this.longshot = longshotLevel;
         this.initialPos = initalPos;
+        this.damage = damage;
+        this.pierce = pierce;
+        this.longshot = longshotLevel;
+        this.noIframe = noIframe;
+        this.isHoly = isHoly;
         this.setNoGravity(true);
     }
 
     public void tick() {
         super.tick();
 
-        if (ticksAlive > lifespan)
-            this.discard();
+        if (ticksAlive > 40) this.discard();
 
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
@@ -77,7 +74,7 @@ public class BulletEntity extends Projectile {
     protected void onHitEntity(EntityHitResult hitResult) {
         if (!(hitResult.getEntity() instanceof LivingEntity target)) return;
 
-        if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get() && this.isMagicBullet() && target.getMobType() == MobType.UNDEAD) {
+        if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get() && isHoly && target.getMobType() == MobType.UNDEAD) {
             damage += 7.0F;
         }
 
@@ -89,14 +86,12 @@ public class BulletEntity extends Projectile {
 
         double armor = (target.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR)).getValue() : 0);
         double toughness = (target.getAttributes().hasAttribute(Attributes.ARMOR_TOUGHNESS) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR_TOUGHNESS)).getValue() : 0);
-        double finalArmor = armor * (1 - piercing);
+        double finalArmor = armor * (1 - pierce);
         float finalDamage = (float) (damage * (1 - (Math.min(20, Math.max((finalArmor / 5), finalArmor - ((4 * damage) / (toughness + 8))))) / 25));
 
         DamageSource bulletDamage = (causeBulletDamage(this, this.getOwner()));
         target.hurt(bulletDamage, finalDamage);
-
-        if (bulletType == BulletType.COPPER)
-            target.invulnerableTime = 0;
+        if (noIframe) target.invulnerableTime = 0;
 
         this.discard();
     }
@@ -114,21 +109,14 @@ public class BulletEntity extends Projectile {
     }
 
     private SimpleParticleType getParticle() {
-        if (this.isInWater()) return ParticleTypes.BUBBLE;
-        return ParticleTypes.SMOKE;
+        return this.isInWater() ? ParticleTypes.BUBBLE : ParticleTypes.SMOKE;
     }
 
     public void setDamageScaling(double multiplier) {
         damage *= (float) (multiplier * (1 - ((3 - this.level().getDifficulty().getId()) * 0.25)));
     }
 
-    public void setMagicBullet(int level) {
-        enchanted = true;
-        if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get()) return;
-        damage += level;
-    }
-
-    public boolean isMagicBullet() {
-        return enchanted;
+    public boolean isHoly() {
+        return isHoly;
     }
 }
