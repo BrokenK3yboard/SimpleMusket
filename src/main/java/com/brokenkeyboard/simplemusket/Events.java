@@ -6,7 +6,6 @@ import com.brokenkeyboard.simplemusket.datagen.conditions.NetheriteCondition;
 import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
-import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
@@ -75,13 +74,8 @@ public class Events {
 
                 ItemProperties.register(SimpleMusket.MUSKET.get(),
                         new ResourceLocation(SimpleMusket.MOD_ID, "load_stage"),
-                        (stack, world, living, id) -> {
-                            if (living == null) {
-                                return 0.0F;
-                            } else {
-                                return (MusketItem.hasAmmo(stack)) ? 0.0F : FirearmItem.getReloadPerc(stack, stack.getUseDuration() - living.getUseItemRemainingTicks());
-                            }
-                        });
+                        (stack, world, living, id) -> (living == null || MusketItem.hasAmmo(stack)) ? 0.0F :
+                                MusketItem.getReloadPerc(stack, stack.getUseDuration() - living.getUseItemRemainingTicks()));
 
                 ItemProperties.register(SimpleMusket.MUSKET.get(),
                         new ResourceLocation(SimpleMusket.MOD_ID, "loaded"),

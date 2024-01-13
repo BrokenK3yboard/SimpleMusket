@@ -68,7 +68,7 @@ public class SimpleMusket {
 
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
-    public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties()));
+    public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new Item.Properties()));
     public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(16, 0.5, new Item.Properties()));
     public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(4, 0, new Item.Properties()));
     public static final RegistryObject<Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(9, 0, new Item.Properties()));
@@ -80,6 +80,8 @@ public class SimpleMusket {
     public static final RegistryObject<Enchantment> LONGSHOT = ENCHANTMENTS.register("longshot", () -> new LongshotEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
     public static final RegistryObject<Enchantment> REPEATING = ENCHANTMENTS.register("repeating", () -> new RepeatingEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlot.MAINHAND));
 
+    public static final boolean CONSECRATION = ModList.get().isLoaded("consecration");
+
     public SimpleMusket() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         Config.registerConfig();
@@ -90,8 +92,9 @@ public class SimpleMusket {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addCreative);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
-        if (ModList.get().isLoaded("consecration"))
+        if (CONSECRATION) {
             bus.addListener(this::enqueueIMC);
+        }
     }
 
     public void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -109,12 +112,8 @@ public class SimpleMusket {
     }
 
     public void enqueueIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>) (livingEntity, damageSource) -> {
-            if (damageSource.getDirectEntity() != null && damageSource.getDirectEntity() instanceof BulletEntity bullet && Config.CONSECRATION_COMPAT.get()) {
-                return bullet.isHoly();
-            }
-            return false;
-        });
+        InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
+                (livingEntity, damageSource) -> (Config.CONSECRATION_COMPAT.get() && damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.isHoly()));
     }
 
     public void setup(final FMLCommonSetupEvent event) {

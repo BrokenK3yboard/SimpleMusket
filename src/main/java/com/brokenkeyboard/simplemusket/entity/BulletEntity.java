@@ -10,17 +10,18 @@ import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static com.brokenkeyboard.simplemusket.SimpleMusket.BULLET;
+import static com.brokenkeyboard.simplemusket.SimpleMusket.CONSECRATION;
 
 public class BulletEntity extends Projectile {
 
@@ -36,8 +37,9 @@ public class BulletEntity extends Projectile {
         super(type, level);
     }
 
-    public BulletEntity(Level level, Vec3 initalPos, float damage, double pierce, int longshotLevel, boolean noIframe, boolean isHoly) {
+    public BulletEntity(Level level, Entity owner, Vec3 initalPos, float damage, double pierce, int longshotLevel, boolean noIframe, boolean isHoly) {
         super(SimpleMusket.BULLET_ENTITY.get(), level);
+        this.setOwner(owner);
         this.initialPos = initalPos;
         this.damage = damage;
         this.pierce = pierce;
@@ -59,19 +61,15 @@ public class BulletEntity extends Projectile {
 
         this.checkInsideBlocks();
         Vec3 vec3 = this.getDeltaMovement();
-        double d2 = this.getX() + vec3.x;
-        double d0 = this.getY() + vec3.y;
-        double d1 = this.getZ() + vec3.z;
-
-        this.setPos(d2, d0, d1);
+        this.setPos(this.getX() + vec3.x, this.getY() + vec3.y, this.getZ() + vec3.z);
         ticksAlive++;
     }
 
     @Override
     protected void onHitEntity(EntityHitResult hitResult) {
-        if (!(hitResult.getEntity() instanceof LivingEntity target)) return;
+        if (!(hitResult.getEntity() instanceof LivingEntity target) || (this.getOwner() instanceof Raider && target instanceof Raider)) return;
 
-        if (ModList.get().isLoaded("consecration") && Config.CONSECRATION_COMPAT.get() && isHoly && target.getMobType() == MobType.UNDEAD) {
+        if (CONSECRATION && Config.CONSECRATION_COMPAT.get() && isHoly && target.getMobType() == MobType.UNDEAD) {
             damage += 7.0F;
         }
 
