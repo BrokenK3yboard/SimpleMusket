@@ -99,7 +99,6 @@ public class FirearmAttackGoal extends Goal {
                 this.mob.setReloading(true);
             } else if (FirearmItem.hasAmmo(stack) && !FirearmItem.isLoaded(stack) && this.mob.isUsingItem()) {
                 this.mob.releaseUsingItem();
-                FirearmItem.setLoaded(stack, true);
                 this.mob.setReloading(false);
                 this.attackDelay = 50 + this.mob.getRandom().nextInt(30);
             } else if (FirearmItem.hasAmmo(stack) && FirearmItem.isLoaded(stack)) {

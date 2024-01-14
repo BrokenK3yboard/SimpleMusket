@@ -7,6 +7,7 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.network.PacketHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -37,6 +38,7 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -117,6 +119,15 @@ public class Events {
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(SimpleMusket.COPPER_BULLET.get(), 4), 16, 1, 0.05F));
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(SimpleMusket.IRON_BULLET.get(), 4), 16, 1, 0.05F));
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(SimpleMusket.GOLD_BULLET.get(),4 ), 16, 1, 0.05F));
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = SimpleMusket.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class CommonSetup {
+
+        @SubscribeEvent
+        public static void setup(final FMLCommonSetupEvent event) {
+            event.enqueueWork(PacketHandler::register);
         }
     }
 

@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -50,15 +49,12 @@ public abstract class FirearmItem extends ProjectileWeaponItem {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        if (!(entity instanceof Player player)) return;
-
         if (hasAmmo(stack) && isLoaded(stack)) {
             double coefficient = Math.min(((double) (getUseDuration(stack) - timeLeft) / getAim(stack)), 1.0);
             float accuracy = (float) (coefficient * getDeviation());
             float deviation = getDeviation() - accuracy;
 
-            fireWeapon(player, level, SoundSource.PLAYERS, stack, deviation);
-
+            fireWeapon(entity, level, entity instanceof Mob ? SoundSource.HOSTILE : SoundSource.PLAYERS, stack, deviation);
         } else if (hasAmmo(stack)) {
             setLoaded(stack, true);
         }
@@ -66,19 +62,33 @@ public abstract class FirearmItem extends ProjectileWeaponItem {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int timeLeft) {
-        if (getUseDuration(stack) - timeLeft >= getReload(stack) && !hasAmmo(stack)) {
-            SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
+        int useTime = getUseDuration(stack) - timeLeft;
+        int reloadTime = getReload(stack);
+        SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
+
+        if (useTime >= reloadTime && !hasAmmo(stack)) {
             ItemStack ammo = entity.getProjectile(stack);
             int amount = EnchantmentHelper.getTagEnchantmentLevel(SimpleMusket.REPEATING.get(), stack) + 1;
 
-            if (entity instanceof Player player && player.getAbilities().instabuild || entity instanceof Mob) {
-                setAmmo(stack, getAllSupportedProjectiles().test(ammo) ? new ItemStack(ammo.getItem(), amount) : new ItemStack(getDefaultAmmo(), amount));
-            } else if (entity instanceof Player player && !ammo.isEmpty()) {
-                setAmmo(stack, new ItemStack(ammo.getItem(), amount));
-                ammo.shrink(1);
-                if (ammo.isEmpty()) player.getInventory().removeItem(ammo);
+            if (entity instanceof Player player) {
+                if (player.getAbilities().instabuild) {
+                    setAmmo(stack, new ItemStack(getAllSupportedProjectiles().test(ammo) ? ammo.getItem() : getDefaultAmmo(), amount));
+                } else if (!ammo.isEmpty()) {
+                    setAmmo(stack, new ItemStack(ammo.getItem(), amount));
+                    ammo.shrink(1);
+                    if (ammo.isEmpty()) (player).getInventory().removeItem(ammo);
+                }
+            } else {
+                boolean closeRange = entity instanceof Mob mob && mob.getTarget() != null && mob.distanceTo(mob.getTarget()) <= 5;
+                FirearmItem.setAmmo(stack, new ItemStack(closeRange ? SimpleMusket.COPPER_BULLET.get() : getDefaultAmmo(), amount));
             }
-            level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.LEVER_CLICK, source, 1F, 1.1F);
+            level.playSound(null, entity, SimpleMusket.MUSKET_READY.get(), source, 1F, 0.8F);
+        } else if (!isLoaded(stack)) {
+            if (Math.floor(reloadTime * 0.12) == useTime) {
+                level.playSound(null, entity, SimpleMusket.MUSKET_LOAD_0.get(), source, 1F, 0.8F);
+            } else if (Math.floor(reloadTime * 0.6) == useTime) {
+                level.playSound(null, entity, SimpleMusket.MUSKET_LOAD_1.get(), source, 1F, 0.8F);
+            }
         }
     }
 

@@ -14,6 +14,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
@@ -48,6 +49,7 @@ public class SimpleMusket {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
     public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MOD_ID);
 
     public static final EnchantmentCategory FIREARM = EnchantmentCategory.create("FIREARM", item -> item instanceof MusketItem);
@@ -80,6 +82,11 @@ public class SimpleMusket {
     public static final RegistryObject<Enchantment> LONGSHOT = ENCHANTMENTS.register("longshot", () -> new LongshotEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
     public static final RegistryObject<Enchantment> REPEATING = ENCHANTMENTS.register("repeating", () -> new RepeatingEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlot.MAINHAND));
 
+    public static final RegistryObject<SoundEvent> MUSKET_LOAD_0 = SOUNDS.register("musket_load0", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MOD_ID, "musket_load0")));
+    public static final RegistryObject<SoundEvent> MUSKET_LOAD_1 = SOUNDS.register("musket_load1", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MOD_ID, "musket_load1")));
+    public static final RegistryObject<SoundEvent> MUSKET_READY = SOUNDS.register("musket_ready", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MOD_ID, "musket_ready")));
+    public static final RegistryObject<SoundEvent> MUSKET_FIRE = SOUNDS.register("musket_fire", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MOD_ID, "musket_fire")));
+
     public static final boolean CONSECRATION = ModList.get().isLoaded("consecration");
 
     public SimpleMusket() {
@@ -88,6 +95,7 @@ public class SimpleMusket {
         ENTITIES.register(bus);
         ITEMS.register(bus);
         ENCHANTMENTS.register(bus);
+        SOUNDS.register(bus);
         GLM.register(bus);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addCreative);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
