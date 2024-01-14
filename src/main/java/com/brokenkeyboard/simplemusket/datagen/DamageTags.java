@@ -13,8 +13,9 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.brokenkeyboard.simplemusket.SimpleMusket.BULLET;
 
-public class Tags extends DamageTypeTagsProvider {
-    public Tags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper fileHelper) {
+public class DamageTags extends DamageTypeTagsProvider {
+
+    public DamageTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper fileHelper) {
         super(output, provider, SimpleMusket.MOD_ID, fileHelper);
     }
 
