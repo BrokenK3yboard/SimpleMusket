@@ -125,10 +125,6 @@ public class SimpleMusket {
     }
 
     public void setup(final FMLCommonSetupEvent event) {
-        int[] intArray = new int[9];
-        for (int i = 0; i < 9; i++) {
-            intArray[i] = i < 4 ? 2 : 3;
-        }
-        Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), intArray);
+        Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
     }
 }

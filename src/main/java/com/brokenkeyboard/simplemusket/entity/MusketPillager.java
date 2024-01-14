@@ -60,7 +60,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new HoldGroundAttackGoal(this, 10.0F));
-        this.goalSelector.addGoal(3, new FirearmAttackGoal(this, 1.0F, 8));
+        this.goalSelector.addGoal(3, new FirearmAttackGoal(this, 1.0F, 24));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, net.minecraft.world.entity.Mob.class, 15.0F));
@@ -229,20 +229,22 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     public void applyRaidBuffs(int value, boolean bool) {
         Raid raid = this.getCurrentRaid();
-        if (raid == null) return;
-        boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
-        if (flag) {
-            ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
-            Map<Enchantment, Integer> map = Maps.newHashMap();
-            if (value > raid.getNumGroups(Difficulty.NORMAL)) {
-                map.put(SimpleMusket.FIREPOWER.get(), 2);
-            } else if (value > raid.getNumGroups(Difficulty.EASY)) {
-                map.put(SimpleMusket.FIREPOWER.get(), 1);
-            }
-            map.put(SimpleMusket.DEADEYE.get(), 1);
-            EnchantmentHelper.setEnchantments(map, stack);
-            this.setItemSlot(EquipmentSlot.MAINHAND, stack);
+        if (raid == null || this.random.nextFloat() > raid.getEnchantOdds()) return;
+        ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
+        Map<Enchantment, Integer> map = Maps.newHashMap();
+
+        if (value > raid.getNumGroups(Difficulty.HARD)) {
+            map.put(SimpleMusket.REPEATING.get(), 1);
+            map.put(SimpleMusket.FIREPOWER.get(), 2);
+        } else if (value > raid.getNumGroups(Difficulty.NORMAL)) {
+            map.put(SimpleMusket.FIREPOWER.get(), 2);
+        } else if (value > raid.getNumGroups(Difficulty.EASY)) {
+            map.put(SimpleMusket.FIREPOWER.get(), 1);
         }
+
+        map.put(SimpleMusket.DEADEYE.get(), 1);
+        EnchantmentHelper.setEnchantments(map, stack);
+        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
     @Override

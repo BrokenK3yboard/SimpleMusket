@@ -106,6 +106,9 @@ public class FirearmAttackGoal extends Goal {
                     --this.attackDelay;
                 } else if (hasLOS) {
                     this.mob.useFirearm(stack);
+                    if (FirearmItem.isLoaded(stack)) {
+                        this.attackDelay = 40;
+                    }
                 }
             }
         }
