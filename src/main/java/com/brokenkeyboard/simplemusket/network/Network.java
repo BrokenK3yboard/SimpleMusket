@@ -12,7 +12,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-public class PacketHandler {
+public class Network {
 
     private static SimpleChannel instance;
     private static int packetID = 0;
@@ -23,7 +23,7 @@ public class PacketHandler {
 
     public static void register() {
 
-        SimpleChannel network = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(SimpleMusket.MOD_ID, "main"))
+        SimpleChannel network = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(SimpleMusket.MOD_ID, "messages"))
                 .networkProtocolVersion(() -> "1")
                 .clientAcceptedVersions(string -> true)
                 .serverAcceptedVersions(string -> true)
@@ -34,11 +34,11 @@ public class PacketHandler {
         network.messageBuilder(S2CSoundPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(S2CSoundPacket::new)
                 .encoder(S2CSoundPacket::toBytes)
-                .consumerMainThread(S2CSoundPacket::handle)
+                .consumerMainThread(S2CSoundPacket::handleS2CSound)
                 .add();
     }
 
-    public static void sendPacket(SoundEvent sound, SoundSource source, ResourceKey<Level> dimension, Vec3 origin) {
+    public static void S2CSound(SoundEvent sound, SoundSource source, ResourceKey<Level> dimension, Vec3 origin) {
         instance.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(origin.x, origin.y, origin.z, 32, dimension)),
                 new S2CSoundPacket(sound, source, origin.toVector3f()));
     }

@@ -3,7 +3,7 @@ package com.brokenkeyboard.simplemusket.item;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
-import com.brokenkeyboard.simplemusket.network.PacketHandler;
+import com.brokenkeyboard.simplemusket.network.Network;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -100,7 +100,7 @@ public class MusketItem extends FirearmItem {
             setAmmo(stack, new ItemStack(bulletItem, ammoCount - 1));
             setLoaded(stack, ammoCount > 1);
         }
-        PacketHandler.sendPacket(SimpleMusket.MUSKET_FIRE.get(), source, level.dimension(), entity.position());
+        Network.S2CSound(SimpleMusket.MUSKET_FIRE.get(), source, level.dimension(), entity.position());
         stack.hurtAndBreak(bulletItem == SimpleMusket.NETHERITE_BULLET.get() ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
 

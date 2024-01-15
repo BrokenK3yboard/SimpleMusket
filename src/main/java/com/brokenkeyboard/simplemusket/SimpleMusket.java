@@ -10,6 +10,7 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.network.Network;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -98,7 +99,7 @@ public class SimpleMusket {
         SOUNDS.register(bus);
         GLM.register(bus);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addCreative);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         if (CONSECRATION) {
             bus.addListener(this::enqueueIMC);
@@ -119,12 +120,13 @@ public class SimpleMusket {
         }
     }
 
-    public void enqueueIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
-                (livingEntity, damageSource) -> (Config.CONSECRATION_COMPAT.get() && damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.isHoly()));
+    public void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(Network::register);
+        Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
     }
 
-    public void setup(final FMLCommonSetupEvent event) {
-        Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
+    public void enqueueIMC(InterModEnqueueEvent event) {
+        InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
+                (livingEntity, damageSource) -> (Config.CONSECRATION_COMPAT.get() && damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.isHoly()));
     }
 }

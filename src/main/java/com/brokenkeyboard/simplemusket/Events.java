@@ -7,7 +7,6 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import com.brokenkeyboard.simplemusket.network.PacketHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -38,7 +37,6 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -104,6 +102,7 @@ public class Events {
 
     @Mod.EventBusSubscriber(modid = SimpleMusket.MOD_ID)
     public static class CommonEvents {
+
         @SubscribeEvent
         public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
             if (event.getEntity() instanceof AbstractVillager villager) {
@@ -122,17 +121,9 @@ public class Events {
         }
     }
 
-    @Mod.EventBusSubscriber(modid = SimpleMusket.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class CommonSetup {
-
-        @SubscribeEvent
-        public static void setup(final FMLCommonSetupEvent event) {
-            event.enqueueWork(PacketHandler::register);
-        }
-    }
-
     @Mod.EventBusSubscriber(modid = SimpleMusket.MOD_ID, value = Dist.CLIENT)
     public static class ClientEvents {
+
         @SubscribeEvent
         public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
             if (!(event.getEntity() instanceof Player player)) return;
