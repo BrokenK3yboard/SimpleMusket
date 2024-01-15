@@ -1,14 +1,18 @@
 {
   "musket_load0": {
-    "sounds": ["simplemusket:musket_load0"]
+    "sounds": ["simplemusket:musket_load0"],
+    "subtitle": "subtitles.item.simplemusket.musket.loading"
   },
   "musket_load1": {
-    "sounds": ["simplemusket:musket_load1"]
+    "sounds": ["simplemusket:musket_load1"],
+    "subtitle": "subtitles.item.simplemusket.musket.loading"
   },
   "musket_ready": {
-    "sounds": ["simplemusket:musket_ready"]
+    "sounds": ["simplemusket:musket_ready"],
+    "subtitle": "subtitles.item.simplemusket.musket.loads"
   },
   "musket_fire": {
-    "sounds": ["simplemusket:musket_fire"]
+    "sounds": ["simplemusket:musket_fire"],
+    "subtitle": "subtitles.item.simplemusket.musket.shoot"
   }
 }
