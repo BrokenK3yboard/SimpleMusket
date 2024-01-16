@@ -28,11 +28,11 @@ public class BastionLoot extends LootModifier {
         int max = Config.MAX_NETHERITE_BULLETS.get();
         int min = (int)Math.ceil((double)max / 2);
 
-        Random rand = new Random();
-        double rng = rand.nextDouble();
+        Random random = context.getRandom();
+        double rng = random.nextDouble();
 
         if (rng < 0.3) {
-            int stackCount = rand.nextInt(max - min + 1) + min;
+            int stackCount = random.nextInt(max - min + 1) + min;
             generatedLoot.add(new ItemStack(SimpleMusket.NETHERITE_BULLET.get(), stackCount));
         }
         return generatedLoot;

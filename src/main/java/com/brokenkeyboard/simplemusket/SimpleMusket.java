@@ -10,6 +10,9 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.network.Network;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.PatrollingMonster;
@@ -42,6 +45,7 @@ public class SimpleMusket
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MOD_ID);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
     public static final DeferredRegister<GlobalLootModifierSerializer<?>> GLM = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MOD_ID);
 
     public static final EnchantmentCategory FIREARM = EnchantmentCategory.create("FIREARM", item -> item instanceof MusketItem);
@@ -62,20 +66,23 @@ public class SimpleMusket
     public static final RegistryObject<BastionLootSerializer> BASTION_LOOT = GLM.register("bastion_loot", BastionLootSerializer::new);
     public static final RegistryObject<PiglinBarterSerializer> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarterSerializer::new);
     public static final RegistryObject<MusketItem> MUSKET = ITEMS.register("musket", () -> new MusketItem(new net.minecraft.world.item.Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
-    public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 1));
-    public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 2));
-    public static final RegistryObject<Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 3));
-    public static final RegistryObject<Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), 4));
+    public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new BulletItem(16, 0.5, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
+    public static final RegistryObject<Item> COPPER_BULLET = ITEMS.register("copper_bullet", () -> new BulletItem(4, 0, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
+    public static final RegistryObject<Item> GOLD_BULLET = ITEMS.register("gold_bullet", () -> new BulletItem(9, 0, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
+    public static final RegistryObject<Item> NETHERITE_BULLET = ITEMS.register("netherite_bullet", () -> new BulletItem(20, 1, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<Item> MUSKET_PILLAGER_EGG = ITEMS.register("musket_pillager_spawn_egg", () -> new ForgeSpawnEggItem(MUSKET_PILLAGER, 5258034, 2960169, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
-    public static final RegistryObject<Enchantment> FIREPOWER = ENCHANTMENTS.register("firepower", () -> new FirepowerEnchantment(
-            Enchantment.Rarity.COMMON, FIREARM, EquipmentSlot.MAINHAND));
-    public static final RegistryObject<Enchantment> DEADEYE = ENCHANTMENTS.register("deadeye", () -> new DeadeyeEnchantment(
-            Enchantment.Rarity.UNCOMMON, FIREARM, EquipmentSlot.MAINHAND));
-    public static final RegistryObject<Enchantment> LONGSHOT = ENCHANTMENTS.register("longshot", () -> new LongshotEnchantment(
-            Enchantment.Rarity.RARE, FIREARM, EquipmentSlot.MAINHAND));
-    public static final RegistryObject<Enchantment> REPEATING = ENCHANTMENTS.register("repeating", () -> new RepeatingEnchantment(
-            Enchantment.Rarity.VERY_RARE, FIREARM, EquipmentSlot.MAINHAND));
+    public static final RegistryObject<Enchantment> FIREPOWER = ENCHANTMENTS.register("firepower", () -> new FirepowerEnchantment(Enchantment.Rarity.COMMON, EquipmentSlot.MAINHAND));
+    public static final RegistryObject<Enchantment> DEADEYE = ENCHANTMENTS.register("deadeye", () -> new DeadeyeEnchantment(Enchantment.Rarity.UNCOMMON, EquipmentSlot.MAINHAND));
+    public static final RegistryObject<Enchantment> LONGSHOT = ENCHANTMENTS.register("longshot", () -> new LongshotEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
+    public static final RegistryObject<Enchantment> REPEATING = ENCHANTMENTS.register("repeating", () -> new RepeatingEnchantment(Enchantment.Rarity.VERY_RARE, EquipmentSlot.MAINHAND));
+
+    public static final RegistryObject<SoundEvent> MUSKET_LOAD_0 = SOUNDS.register("musket_load0", () -> new SoundEvent(new ResourceLocation(MOD_ID, "musket_load0")));
+    public static final RegistryObject<SoundEvent> MUSKET_LOAD_1 = SOUNDS.register("musket_load1", () -> new SoundEvent(new ResourceLocation(MOD_ID, "musket_load1")));
+    public static final RegistryObject<SoundEvent> MUSKET_READY = SOUNDS.register("musket_ready", () -> new SoundEvent(new ResourceLocation(MOD_ID, "musket_ready")));
+    public static final RegistryObject<SoundEvent> MUSKET_FIRE = SOUNDS.register("musket_fire", () -> new SoundEvent(new ResourceLocation(MOD_ID, "musket_fire")));
+
+    public static final boolean CONSECRATION = ModList.get().isLoaded("consecration");
 
     public SimpleMusket() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -83,29 +90,23 @@ public class SimpleMusket
         ENTITIES.register(bus);
         ITEMS.register(bus);
         ENCHANTMENTS.register(bus);
+        SOUNDS.register(bus);
         GLM.register(bus);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
-        if (ModList.get().isLoaded("consecration"))
+        if (CONSECRATION) {
             bus.addListener(this::enqueueIMC);
-    }
-
-    public void enqueueIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("consecration", "holy_attack", ()
-                -> (BiFunction<LivingEntity, DamageSource, Boolean>) (livingEntity, damageSource) -> {
-            if(damageSource.getDirectEntity() != null && damageSource.getDirectEntity() instanceof BulletEntity bullet && Config.CONSECRATION_COMPAT.get()) {
-                return bullet.isMagicBullet();
-            }
-            return false;
-        });
-    }
-
-    public void setup(final FMLCommonSetupEvent event) {
-        int[] intArray = new int[9];
-        for (int i = 0; i < 9; i++) {
-            intArray[i] = i < 4 ? 2 : 3;
         }
+    }
+
+    public void setup(FMLCommonSetupEvent event) {
+        Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
         SpawnPlacements.register(MUSKET_PILLAGER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
-        Raid.RaiderType.create(MUSKET_PILLAGER.get().toString(), MUSKET_PILLAGER.get(), intArray);
+        Network.register();
+    }
+
+    public void enqueueIMC(InterModEnqueueEvent event) {
+        InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
+                (livingEntity, damageSource) -> (Config.CONSECRATION_COMPAT.get() && damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.isHoly()));
     }
 }

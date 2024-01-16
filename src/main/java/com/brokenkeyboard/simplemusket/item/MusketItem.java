@@ -3,10 +3,11 @@ package com.brokenkeyboard.simplemusket.item;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
-import com.brokenkeyboard.simplemusket.entity.MusketPillager;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.brokenkeyboard.simplemusket.network.Network;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -14,12 +15,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.Predicate;
+
+import static com.brokenkeyboard.simplemusket.SimpleMusket.CONSECRATION;
 
 public class MusketItem extends FirearmItem {
 
+    public static final Predicate<ItemStack> BULLETS = (stack) -> stack.getItem() instanceof BulletItem;
     private static final int DURABILITY = 256;
 
     public MusketItem(Properties properties) {
@@ -27,14 +30,24 @@ public class MusketItem extends FirearmItem {
     }
 
     @Override
-    public boolean isAmmo(ItemStack stack) {
-        return stack.getItem() instanceof BulletItem;
+    public Predicate<ItemStack> getAllSupportedProjectiles() {
+        return BULLETS;
+    }
+
+    @Override
+    public int getDefaultProjectileRange() {
+        return 30;
     }
 
     @Override
     public int getReload(ItemStack stack) {
         double coeff = 1 - (EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack) * 0.1);
         return (int) (Config.MUSKET_RELOAD_TIME.get() * coeff);
+    }
+
+    @Override
+    public Item getDefaultAmmo() {
+        return SimpleMusket.IRON_BULLET.get();
     }
 
     @Override
@@ -49,64 +62,59 @@ public class MusketItem extends FirearmItem {
     }
 
     @Override
-    public SoundEvent getFireSound() {
-        return SoundEvents.GENERIC_EXPLODE;
-    }
+    public void fireWeapon(LivingEntity entity, Level level, SoundSource source, ItemStack stack, float deviation) {
+        if (level.isClientSide || (entity instanceof Mob mob && mob.getTarget() == null)) return;
 
-    @Override
-    public void createProjectile(LivingEntity entity, Level level, ItemStack stack, float deviation) {
-        if (level.isClientSide) return;
-
-        int pierceLevel = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.FIREPOWER.get(), stack);
-        int longshotLevel = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.LONGSHOT.get(), stack);
         Vec3 initialPos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
         ArrayList<BulletEntity> projectiles = new ArrayList<>();
-        BulletType type = BulletType.values()[getAmmoType(stack)];
+        ItemStack bulletStack = getAmmo(stack);
+        BulletItem bulletItem = (BulletItem) bulletStack.getItem();
 
-        switch (type) {
-            case COPPER -> {
-                for (int i = 0; i < 5; i++) {
-                    projectiles.add(new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
-                }
-                deviation = (float) (this.getDeviation() * (1 - EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack) * 0.1));
-            }
-            case GOLD -> {
-                projectiles.add(0, new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
-                Map<Enchantment, Integer> enchantments = new HashMap<>(EnchantmentHelper.getEnchantments(stack));
-                if (enchantments.isEmpty()) break;
-                BulletEntity bulletEntity = projectiles.get(0);
-                int ench = 0;
+        int ammoCount = bulletStack.getCount();
+        int firepower = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.FIREPOWER.get(), stack);
+        int longshot = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.LONGSHOT.get(), stack);
+        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.DEADEYE.get(), stack);
 
-                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet())
-                    ench += getEnchantPower(entry.getKey(), entry.getValue());
+        double damage = bulletItem == SimpleMusket.GOLD_BULLET.get() ? getGoldBulletDamage(EnchantmentHelper.getEnchantments(stack), bulletItem.DAMAGE) : bulletItem.DAMAGE;
+        double piercing = Math.min(bulletItem.PIERCING + firepower * 0.1, 1);
+        boolean noIFrames = bulletItem == SimpleMusket.COPPER_BULLET.get();
+        boolean isHoly = CONSECRATION && bulletItem == SimpleMusket.GOLD_BULLET.get() && !stack.getEnchantmentTags().isEmpty();
+        deviation = bulletItem == SimpleMusket.COPPER_BULLET.get() ? (float) (getDeviation() * deadeye * 0.1) : deviation;
 
-                bulletEntity.setMagicBullet(Math.min((ench / 2) + 1, 24));
-            }
-            default -> projectiles.add(new BulletEntity(level, initialPos, type, pierceLevel, longshotLevel));
+        for (int i = 0; i < (bulletItem == SimpleMusket.COPPER_BULLET.get() ? 5 : 1); i++) {
+            projectiles.add(new BulletEntity(level, entity, initialPos, (float) damage, piercing, longshot, noIFrames, isHoly));
         }
 
-        for(BulletEntity bullet : projectiles) {
-            bullet.setOwner(entity);
+        for (BulletEntity bullet : projectiles) {
             bullet.setPos(initialPos);
-
-            if (entity instanceof MusketPillager musketAttackMob) {
+            if (entity instanceof Mob mob) {
                 bullet.setDamageScaling(Config.REDUCE_PILLAGER_DAMAGE.get() ? 0.75 : 1);
-                musketAttackMob.shootBullet(entity, Objects.requireNonNull(musketAttackMob.getTarget()), bullet, 4F);
+                Vec3 direction = mobTargetVec(mob, mob.getTarget());
+                bullet.shoot(direction.x(), direction.y(), direction.z(), 4F, deviation);
             } else {
                 bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, deviation);
             }
             level.addFreshEntity(bullet);
         }
-        stack.hurtAndBreak(type == BulletType.NETHERITE ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
+
+        setAmmo(stack, new ItemStack(bulletItem, ammoCount - 1));
+        setLoaded(stack, ammoCount > 1);
+        spawnParticles(level, entity, entity instanceof Mob mob ? mobTargetVec(mob, mob.getTarget()) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
+        Network.S2CSound(SimpleMusket.MUSKET_FIRE.get(), source, level.dimension(), entity.blockPosition());
+        stack.hurtAndBreak(bulletItem == SimpleMusket.NETHERITE_BULLET.get() ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
 
-    private int getEnchantPower(Enchantment enchantment, int level) {
-        Enchantment.Rarity rarity = enchantment.getRarity();
-        return switch (rarity) {
-            case UNCOMMON -> 2 * level;
-            case RARE -> 3 * level;
-            case VERY_RARE -> 4 * level;
-            default -> level;
-        };
+    private static double getGoldBulletDamage(Map<Enchantment, Integer> enchantments, double baseDamage) {
+        if (CONSECRATION && Config.CONSECRATION_COMPAT.get()) return baseDamage;
+        int value = 0;
+        for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+            switch(entry.getKey().getRarity()) {
+                case UNCOMMON -> value += (entry.getValue() * 2);
+                case RARE -> value += (entry.getValue() * 3);
+                case VERY_RARE -> value += (entry.getValue() * 4);
+                default -> value += (entry.getValue());
+            }
+        }
+        return Math.min((value / 2) + 1, 15) + baseDamage;
     }
 }

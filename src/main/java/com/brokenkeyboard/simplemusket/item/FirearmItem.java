@@ -1,34 +1,34 @@
 package com.brokenkeyboard.simplemusket.item;
 
 import com.brokenkeyboard.simplemusket.SimpleMusket;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
-public abstract class FirearmItem extends Item {
+public abstract class FirearmItem extends ProjectileWeaponItem {
 
-    public abstract boolean isAmmo(ItemStack stack);
     public abstract int getReload(ItemStack stack);
     public abstract int getAim(ItemStack stack);
     public abstract float getDeviation();
-    public abstract SoundEvent getFireSound();
-    public abstract void createProjectile(LivingEntity entity, Level Level, ItemStack stack, float deviation);
+    public abstract Item getDefaultAmmo();
+    public abstract void fireWeapon(LivingEntity entity, Level Level, SoundSource source, ItemStack stack, float deviation);
 
     public FirearmItem(Properties properties) {
         super(properties);
@@ -37,16 +37,10 @@ public abstract class FirearmItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        boolean hasAmmo = !findAmmo(player).isEmpty() || player.isCreative();
+        boolean hasAmmo = getAllSupportedProjectiles().test(player.getProjectile(stack)) || player.getAbilities().instabuild;
 
-        if (player.isEyeInFluid(FluidTags.WATER) && !player.isCreative()) {
-            return InteractionResultHolder.fail(stack);
-        } else if (hasAmmo || isLoaded(stack)) {
-            if(isLoaded(stack) && !isReady(stack)) {
-                setReady(stack, true);
-                int extraAmmo = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
-                setExtraAmmo(stack, extraAmmo);
-            }
+        if ((hasAmmo || hasAmmo(stack)) && !player.isEyeInFluid(FluidTags.WATER)) {
+            if (hasAmmo(stack) && !isLoaded(stack)) setLoaded(stack, true);
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
         }
@@ -55,111 +49,113 @@ public abstract class FirearmItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        if (!(entity instanceof Player player)) return;
-
-        int repeatingLevel = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack);
-
-        if (isLoaded(stack) && isReady(stack)) {
+        if (hasAmmo(stack) && isLoaded(stack)) {
             double coefficient = Math.min(((double) (getUseDuration(stack) - timeLeft) / getAim(stack)), 1.0);
             float accuracy = (float) (coefficient * getDeviation());
             float deviation = getDeviation() - accuracy;
 
-            createProjectile(player, level, stack, deviation);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), getFireSound(), SoundSource.PLAYERS, 0.8F, 1F);
-
-            if(repeatingLevel > 0 && getExtraAmmo(stack) > 0) {
-                setExtraAmmo(stack, getExtraAmmo(stack) - 1);
-            } else {
-                player.stopUsingItem();
-                setReady(stack, false);
-                setAmmoType(stack, 0);
-            }
-        } else if (isLoaded(stack)) {
-            setReady(stack, true);
-            setExtraAmmo(stack, repeatingLevel);
+            fireWeapon(entity, level, entity instanceof Mob ? SoundSource.HOSTILE : SoundSource.PLAYERS, stack, deviation);
+        } else if (hasAmmo(stack)) {
+            setLoaded(stack, true);
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof Player player)) return;
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int timeLeft) {
+        int useTime = getUseDuration(stack) - timeLeft;
+        int reloadTime = getReload(stack);
+        SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
 
-        if (getUseDuration(stack) - timeLeft >= getReload(stack) && !isLoaded(stack)) {
-            ItemStack ammoStack = findAmmo(player);
+        if (useTime >= reloadTime && !hasAmmo(stack)) {
+            ItemStack ammo = entity.getProjectile(stack);
+            int amount = EnchantmentHelper.getItemEnchantmentLevel(SimpleMusket.REPEATING.get(), stack) + 1;
 
-            if (player.isCreative()) {
-                if (!ammoStack.isEmpty())
-                    setAmmoType(stack, ((BulletItem) ammoStack.getItem()).getType());
-                else
-                    setAmmoType(stack, 1);
+            if (entity instanceof Player player) {
+                if (player.getAbilities().instabuild) {
+                    setAmmo(stack, new ItemStack(getAllSupportedProjectiles().test(ammo) ? ammo.getItem() : getDefaultAmmo(), amount));
+                } else if (!ammo.isEmpty()) {
+                    setAmmo(stack, new ItemStack(ammo.getItem(), amount));
+                    ammo.shrink(1);
+                    if (ammo.isEmpty()) (player).getInventory().removeItem(ammo);
+                }
             } else {
-                if (ammoStack.isEmpty()) return;
-                setAmmoType(stack, ((BulletItem) ammoStack.getItem()).getType());
-                ammoStack.shrink(1);
-                if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
+                boolean closeRange = entity instanceof Mob mob && mob.getTarget() != null && mob.distanceTo(mob.getTarget()) <= 5;
+                FirearmItem.setAmmo(stack, new ItemStack(closeRange ? SimpleMusket.COPPER_BULLET.get() : getDefaultAmmo(), amount));
             }
-            entityLiving.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS, 1F, 1.1F);
+            level.playSound(null, entity, SimpleMusket.MUSKET_READY.get(), source, 1F, 0.8F);
+        } else if (!isLoaded(stack)) {
+            if (Math.floor(reloadTime * 0.12) == useTime) {
+                level.playSound(null, entity, SimpleMusket.MUSKET_LOAD_0.get(), source, 1F, 0.8F);
+            } else if (Math.floor(reloadTime * 0.6) == useTime) {
+                level.playSound(null, entity, SimpleMusket.MUSKET_LOAD_1.get(), source, 1F, 0.8F);
+            }
         }
     }
 
-    private ItemStack findAmmo(Player player) {
-        for (int i = 0; i != player.getInventory().getContainerSize(); ++i) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (isAmmo(stack))
-                return stack;
+    public static void spawnParticles(Level level, LivingEntity entity, Vec3 direction) {
+        if (!(level instanceof ServerLevel serverLevel)) return;
+
+        Vec3 side = Vec3.directionFromRotation(0, entity.getYRot() + (entity.getUsedItemHand() == InteractionHand.MAIN_HAND ? 90 : -90));
+        Vec3 down = Vec3.directionFromRotation(entity.getXRot() + 90, entity.getYRot());
+        Vec3 particlePos = entity.getEyePosition().add(side.add(down).scale(0.15));
+
+        for (int i = 0; i < 10; i++) {
+            Random random = entity.getRandom();
+            double t = Math.pow(random.nextFloat(), 1.5);
+            Vec3 p = particlePos.add(direction.scale(1.25 + t));
+            p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
+            Vec3 v = direction.scale(0.1 * (1 - t));
+            serverLevel.sendParticles(ParticleTypes.POOF, p.x, p.y, p.z, (int)v.x, v.y, v.z, 0, 1);
         }
-        return ItemStack.EMPTY;
+    }
+
+    public static Vec3 mobTargetVec(LivingEntity mob, LivingEntity target) {
+        double vecY = target.getBoundingBox().minY + target.getBbHeight() * 0.7f - mob.getY() - mob.getEyeHeight();
+        return new Vec3(target.getX() - mob.getX(), vecY, target.getZ() - mob.getZ()).normalize();
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
-        if(isLoaded(stack) && isReady(stack)) return UseAnim.BOW;
-        return UseAnim.NONE;
+        return (hasAmmo(stack) && isLoaded(stack)) ? UseAnim.BOW : UseAnim.NONE;
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
-        if (!isLoaded(stack)) return;
-        String name = BulletType.values()[getAmmoType(stack)].toString().toLowerCase() + "_bullet";
-        String displayName = "item." + SimpleMusket.MOD_ID + "." + name;
-        components.add((new TranslatableComponent("item.minecraft.crossbow.projectile")).append(" [").append(new TranslatableComponent(displayName)).append("]"));
+        if (hasAmmo(stack)) {
+            components.add(new TranslatableComponent("item.minecraft.crossbow.projectile").append(" ").append(getAmmo(stack).getDisplayName()));
+        }
     }
 
-    public static void setAmmoType(ItemStack stack, int value) {
-        stack.getOrCreateTag().putInt("ammotype", value);
+    public static void setAmmo(ItemStack stack, ItemStack bullet) {
+        if (bullet.getCount() < 1) {
+            stack.removeTagKey("LoadedProjectiles");
+        } else {
+            stack.addTagElement("LoadedProjectiles", bullet.serializeNBT());
+        }
     }
 
-    public static int getAmmoType(ItemStack stack) {
-        return stack.getOrCreateTag().getInt("ammotype");
+    public static ItemStack getAmmo(ItemStack stack) {
+        CompoundTag tag = stack.getTagElement("LoadedProjectiles");
+        boolean valid = tag != null && stack.getItem() instanceof FirearmItem;
+        return valid && ((FirearmItem)stack.getItem()).getAllSupportedProjectiles().test(ItemStack.of(tag)) ? ItemStack.of(tag) : ItemStack.EMPTY;
     }
 
-    public static void setExtraAmmo(ItemStack stack, int value) {
-        stack.getOrCreateTag().putInt("extraammo", value);
-    }
-
-    public static int getExtraAmmo(ItemStack stack) {
-        return stack.getOrCreateTag().getInt("extraammo");
-    }
-
-    public static void setReady(ItemStack stack, boolean value) {
-        stack.getOrCreateTag().putBoolean("ready", value);
-    }
-
-    public static boolean isReady(ItemStack stack) {
-        return stack.getOrCreateTag().getBoolean("ready");
+    public static void setLoaded(ItemStack stack, boolean value) {
+        stack.getOrCreateTag().putBoolean("Loaded", value);
     }
 
     public static boolean isLoaded(ItemStack stack) {
-        return getAmmoType(stack) > 0;
+        return stack.getOrCreateTag().getBoolean("Loaded");
     }
 
-    public boolean useOnRelease(ItemStack stack) {
-        return stack.is(this);
+    public static float getReloadPerc(ItemStack stack, float useTime) {
+        return stack.getItem() instanceof FirearmItem firearm ? useTime / firearm.getReload(stack) : 0;
+    }
+
+    public static boolean hasAmmo(ItemStack stack) {
+        return !getAmmo(stack).is(ItemStack.EMPTY.getItem());
     }
 
     public int getUseDuration(ItemStack stack) {
         return 72000;
-    }
-
-    public int getEnchantmentValue() {
-        return 1;
     }
 }

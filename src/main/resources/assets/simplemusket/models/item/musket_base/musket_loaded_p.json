@@ -1,0 +1,12 @@
+{
+    "parent": "forge:item/default",
+    "base": {
+        "parent": "simplemusket:item/musket_models/musket_loaded"
+    },
+    "loader": "forge:separate-perspective",
+    "perspectives": {
+        "gui": {
+            "parent": "simplemusket:item/musket_models/musket_loaded"
+        }
+    }
+}

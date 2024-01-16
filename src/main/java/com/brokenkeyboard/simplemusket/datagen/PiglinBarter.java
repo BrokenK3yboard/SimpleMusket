@@ -26,10 +26,10 @@ public class PiglinBarter extends LootModifier {
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
         if(!Config.BARTER_NETHERITE_BULLETS.get()) return generatedLoot;
 
-        Random rand = new Random();
-        double rng = rand.nextDouble();
+        Random random = context.getRandom();
+        double rng = random.nextDouble();
         if (generatedLoot.size() == 1 && generatedLoot.get(0).getItem() == Items.SPECTRAL_ARROW && rng < 0.25) {
-            int amount = rand.nextInt(2) + 2;
+            int amount = random.nextInt(2) + 2;
             generatedLoot.set(0, new ItemStack(SimpleMusket.NETHERITE_BULLET.get(), amount));
         }
         return generatedLoot;

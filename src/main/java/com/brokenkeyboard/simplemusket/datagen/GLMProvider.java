@@ -9,6 +9,7 @@ import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 
 public class GLMProvider extends GlobalLootModifierProvider {
+
     public GLMProvider(DataGenerator generator) {
         super(generator, SimpleMusket.MOD_ID);
     }

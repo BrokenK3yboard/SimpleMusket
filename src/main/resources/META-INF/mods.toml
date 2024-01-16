@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[40,)"
-license="MIT License"
+license="GPLv3"
 
 [[mods]]
 modId="simplemusket"
