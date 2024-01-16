@@ -63,7 +63,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         this.goalSelector.addGoal(3, new FirearmAttackGoal(this, 1.0F, 24));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, net.minecraft.world.entity.Mob.class, 15.0F));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 15.0F));
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));

@@ -4,14 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 public class ClientPacketHandler {
 
-    public static void playSound(Vec3 origin, SoundEvent sound, SoundSource source) {
+    public static void playSound(SoundEvent sound, SoundSource source, Vector3f pos) {
         if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
             Player player = Minecraft.getInstance().player;
-            double distance = Math.sqrt(player.distanceToSqr(origin.x(), origin.y(), origin.z()));
+            double distance = Math.sqrt(player.distanceToSqr(pos.x(), pos.y(), pos.z()));
             float volume = (float) Math.max(1F - (distance / 32), 0.15F);
             Minecraft.getInstance().level.playLocalSound(player.getX(), player.getY(), player.getZ(), sound, source, volume, 0.8F, true);
         }

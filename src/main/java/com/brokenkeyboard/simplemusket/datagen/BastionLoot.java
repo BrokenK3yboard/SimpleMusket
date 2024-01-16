@@ -6,6 +6,7 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -13,7 +14,6 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 public class BastionLoot extends LootModifier {
@@ -32,11 +32,11 @@ public class BastionLoot extends LootModifier {
         int max = Config.MAX_NETHERITE_BULLETS.get();
         int min = (int)Math.ceil((double)max / 2);
 
-        Random rand = new Random();
-        double rng = rand.nextDouble();
+        RandomSource random = context.getRandom();
+        double rng = random.nextDouble();
 
         if (rng < 0.3) {
-            int stackCount = rand.nextInt(max - min + 1) + min;
+            int stackCount = random.nextInt(max - min + 1) + min;
             generatedLoot.add(new ItemStack(SimpleMusket.NETHERITE_BULLET.get(), stackCount));
         }
         return generatedLoot;

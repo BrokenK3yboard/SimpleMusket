@@ -94,12 +94,12 @@ public class MusketItem extends FirearmItem {
             } else {
                 bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, deviation);
             }
-
             level.addFreshEntity(bullet);
-            spawnParticles(level, entity, entity instanceof Mob mob ? mobTargetVec(mob, mob.getTarget()) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
-            setAmmo(stack, new ItemStack(bulletItem, ammoCount - 1));
-            setLoaded(stack, ammoCount > 1);
         }
+
+        setAmmo(stack, new ItemStack(bulletItem, ammoCount - 1));
+        setLoaded(stack, ammoCount > 1);
+        spawnParticles(level, entity, entity instanceof Mob mob ? mobTargetVec(mob, mob.getTarget()) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
         Network.S2CSound(SimpleMusket.MUSKET_FIRE.get(), source, level.dimension(), entity.position());
         stack.hurtAndBreak(bulletItem == SimpleMusket.NETHERITE_BULLET.get() ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
