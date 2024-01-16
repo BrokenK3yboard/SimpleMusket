@@ -3,13 +3,14 @@ package com.brokenkeyboard.simplemusket.enchantment;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import org.jetbrains.annotations.NotNull;
+
+import static com.brokenkeyboard.simplemusket.SimpleMusket.FIREARM;
 
 public class FirepowerEnchantment extends Enchantment {
 
-    public FirepowerEnchantment(Rarity rarity, EnchantmentCategory type, EquipmentSlot... slots) {
-        super(rarity, type, slots);
+    public FirepowerEnchantment(Rarity rarity, EquipmentSlot... slots) {
+        super(rarity, FIREARM, slots);
     }
 
     public int getMinCost(int level) {

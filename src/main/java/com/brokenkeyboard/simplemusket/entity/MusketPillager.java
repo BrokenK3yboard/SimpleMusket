@@ -1,8 +1,8 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.goal.FirearmAttackGoal;
+import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -32,7 +32,6 @@ import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.BannerItem;
@@ -44,7 +43,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -62,7 +60,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new HoldGroundAttackGoal(this, 10.0F));
-        this.goalSelector.addGoal(3, new FirearmAttackGoal(this, 1.0F, 32));
+        this.goalSelector.addGoal(3, new FirearmAttackGoal(this, 1.0F, 24));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 15.0F));
@@ -74,9 +72,10 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
 
     public static AttributeSupplier.Builder createAttributes() {
         return LivingEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, 24.0)
+                .add(Attributes.ATTACK_DAMAGE, 5.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3);
+                .add(Attributes.MOVEMENT_SPEED, 0.35);
     }
 
     protected void defineSynchedData() {
@@ -151,10 +150,10 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance p_219060_) {
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficulty) {
         ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
-        FirearmItem.setAmmoType(stack, 1);
-        FirearmItem.setReady(stack, true);
+        FirearmItem.setAmmo(stack, new ItemStack(SimpleMusket.IRON_BULLET.get()));
+        FirearmItem.setLoaded(stack, true);
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
@@ -196,14 +195,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
 
     public void useFirearm(ItemStack stack) {
         FirearmItem firearm = (FirearmItem) stack.getItem();
-        firearm.createProjectile(this, level, stack, 0.0F);
-        level.playSound(null, getX(), getY(), getZ(), firearm.getFireSound(), SoundSource.HOSTILE, 1F, 1F);
-    }
-
-    public void shootBullet(LivingEntity entity, LivingEntity target, Projectile projectile, float speed) {
-        Vec3 direction = new Vec3(target.getX() - getX(), target.getBoundingBox().minY + target.getBbHeight() * 0.7f - getY() - getEyeHeight(),
-                target.getZ() - getZ()).normalize();
-        projectile.shoot(direction.x(), direction.y(), direction.z(), speed, (float)(8 - entity.level.getDifficulty().getId() * 2));
+        firearm.fireWeapon(this, level, SoundSource.HOSTILE, stack, (float)(8 - level.getDifficulty().getId() * 2));
     }
 
     public SimpleContainer getInventory() {
@@ -237,21 +229,22 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     public void applyRaidBuffs(int value, boolean bool) {
         Raid raid = this.getCurrentRaid();
-        if (raid == null) return;
-        boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
-        if (flag) {
-            ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
-            Map<Enchantment, Integer> map = Maps.newHashMap();
-            if (value > raid.getNumGroups(Difficulty.NORMAL)) {
-                map.put(SimpleMusket.FIREPOWER.get(), 2);
-            } else if (value > raid.getNumGroups(Difficulty.EASY)) {
-                map.put(SimpleMusket.FIREPOWER.get(), 1);
-            }
+        if (raid == null || this.random.nextFloat() > raid.getEnchantOdds()) return;
+        ItemStack stack = new ItemStack(SimpleMusket.MUSKET.get());
+        Map<Enchantment, Integer> map = Maps.newHashMap();
 
-            map.put(SimpleMusket.DEADEYE.get(), 1);
-            EnchantmentHelper.setEnchantments(map, stack);
-            this.setItemSlot(EquipmentSlot.MAINHAND, stack);
+        if (value > raid.getNumGroups(Difficulty.HARD)) {
+            map.put(SimpleMusket.REPEATING.get(), 1);
+            map.put(SimpleMusket.FIREPOWER.get(), 2);
+        } else if (value > raid.getNumGroups(Difficulty.NORMAL)) {
+            map.put(SimpleMusket.FIREPOWER.get(), 2);
+        } else if (value > raid.getNumGroups(Difficulty.EASY)) {
+            map.put(SimpleMusket.FIREPOWER.get(), 1);
         }
+
+        map.put(SimpleMusket.DEADEYE.get(), 1);
+        EnchantmentHelper.setEnchantments(map, stack);
+        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
     @Override

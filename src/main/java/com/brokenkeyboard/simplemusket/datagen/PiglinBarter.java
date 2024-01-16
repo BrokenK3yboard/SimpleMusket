@@ -6,6 +6,7 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -14,7 +15,6 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 public class PiglinBarter extends LootModifier {
@@ -30,10 +30,10 @@ public class PiglinBarter extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         if(!Config.BARTER_NETHERITE_BULLETS.get()) return generatedLoot;
 
-        Random rand = new Random();
-        double rng = rand.nextDouble();
+        RandomSource random = context.getRandom();
+        double rng = random.nextDouble();
         if (generatedLoot.size() == 1 && generatedLoot.get(0).getItem() == Items.SPECTRAL_ARROW && rng < 0.25) {
-            int amount = rand.nextInt(2) + 2;
+            int amount = random.nextInt(2) + 2;
             generatedLoot.set(0, new ItemStack(SimpleMusket.NETHERITE_BULLET.get(), amount));
         }
         return generatedLoot;

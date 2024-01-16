@@ -1,42 +1,40 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
-import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.item.FirearmItem;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
-import java.util.Objects;
 
 public class FirearmAttackGoal extends Goal {
 
     public static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(1, 2);
-    private FirearmState firearmState = FirearmState.UNLOADED;
     private final MusketPillager mob;
     private final float speedModifier;
-    private final float attackRadiusSqr;
+    private final float attackRange;
     private int seeTime;
     private int attackDelay;
     private int updatePathDelay;
 
-    public FirearmAttackGoal(MusketPillager mob, float speedModifier, float attackRadiusSqr) {
+    public FirearmAttackGoal(MusketPillager mob, float speedModifier, float attackRange) {
         this.mob = mob;
         this.speedModifier = speedModifier;
-        this.attackRadiusSqr = attackRadiusSqr * attackRadiusSqr;
+        this.attackRange = attackRange * attackRange;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-    }
-
-    public boolean canUse() {
-        return this.isValidTarget() && this.isHoldingFirearm();
     }
 
     private boolean isHoldingFirearm() {
         return this.mob.isHolding(is -> is.getItem() instanceof FirearmItem);
+    }
+
+    public boolean canUse() {
+        return this.isValidTarget() && this.isHoldingFirearm();
     }
 
     public boolean canContinueToUse() {
@@ -63,26 +61,30 @@ public class FirearmAttackGoal extends Goal {
     }
 
     public void tick() {
-        LivingEntity livingentity = this.mob.getTarget();
-        if (livingentity != null) {
-            boolean flag = this.mob.getSensing().hasLineOfSight(livingentity);
-            boolean flag1 = this.seeTime > 0;
-            if (flag != flag1) {
+        LivingEntity target = this.mob.getTarget();
+
+        if (target != null) {
+            InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof FirearmItem);
+            ItemStack stack = mob.getItemInHand(hand);
+            boolean hasLOS = this.mob.getSensing().hasLineOfSight(target);
+            boolean seeTarget = this.seeTime > 0;
+
+            if (hasLOS != seeTarget) {
                 this.seeTime = 0;
             }
 
-            if (flag) {
+            if (hasLOS) {
                 ++this.seeTime;
             } else {
                 --this.seeTime;
             }
 
-            double d0 = this.mob.distanceToSqr(livingentity);
-            boolean flag2 = (d0 > (double)this.attackRadiusSqr || this.seeTime < 5) && this.attackDelay == 0;
-            if (flag2) {
+            double distance = this.mob.distanceToSqr(target);
+            boolean moving = (distance > (double) this.attackRange || this.seeTime < 5) && this.attackDelay == 0;
+            if (moving) {
                 --this.updatePathDelay;
                 if (this.updatePathDelay <= 0) {
-                    this.mob.getNavigation().moveTo(livingentity, this.canRun() ? this.speedModifier : this.speedModifier * 0.5D);
+                    this.mob.getNavigation().moveTo(target, this.speedModifier);
                     this.updatePathDelay = PATHFINDING_DELAY_RANGE.sample(this.mob.getRandom());
                 }
             } else {
@@ -90,57 +92,25 @@ public class FirearmAttackGoal extends Goal {
                 this.mob.getNavigation().stop();
             }
 
-            this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
-            if (this.firearmState == FirearmState.UNLOADED) {
-                if (!flag2) {
-                    this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof FirearmItem));
-                    this.firearmState = FirearmState.LOADING;
-                    this.mob.setReloading(true);
-                }
-            } else if (this.firearmState == FirearmState.LOADING) {
-                if (!this.mob.isUsingItem()) {
-                    this.firearmState = FirearmState.UNLOADED;
-                }
+            this.mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-                int i = this.mob.getTicksUsingItem();
-                ItemStack stack = this.mob.getUseItem();
-                if (stack.getItem() instanceof FirearmItem firearm && i >= firearm.getReload(stack)) {
-                    this.mob.releaseUsingItem();
-                    this.firearmState = FirearmState.LOADED;
-                    this.attackDelay = 50 + this.mob.getRandom().nextInt(30);
-                    this.mob.setReloading(false);
-                    FirearmItem.setAmmoType(stack, 1);
-                    FirearmItem.setReady(stack, true);
-                }
-            } else if (this.firearmState == FirearmState.LOADED) {
-                --this.attackDelay;
-                if (this.attackDelay == 0) {
-                    this.firearmState = FirearmState.READY;
-                }
-            } else if (this.firearmState == FirearmState.READY && flag) {
-                ItemStack stack = this.mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof FirearmItem));
-                if(stack.getItem() instanceof FirearmItem) {
-                    LivingEntity target = this.mob.getTarget();
-                    double armor = (target.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR)).getValue() : 0);
-                    if(d0 < 100 && armor < 7.5F)
-                        FirearmItem.setAmmoType(stack, 2);
+            if (!FirearmItem.hasAmmo(stack) && !moving) {
+                this.mob.startUsingItem(hand);
+                this.mob.setReloading(true);
+            } else if (FirearmItem.hasAmmo(stack) && !FirearmItem.isLoaded(stack) && this.mob.isUsingItem()) {
+                this.mob.releaseUsingItem();
+                this.mob.setReloading(false);
+                this.attackDelay = 50 + this.mob.getRandom().nextInt(30);
+            } else if (FirearmItem.hasAmmo(stack) && FirearmItem.isLoaded(stack)) {
+                if (this.attackDelay > 0) {
+                    --this.attackDelay;
+                } else if (hasLOS) {
                     this.mob.useFirearm(stack);
-                    FirearmItem.setAmmoType(stack, 0);
-                    FirearmItem.setReady(stack, false);
+                    if (FirearmItem.isLoaded(stack)) {
+                        this.attackDelay = 40;
+                    }
                 }
-                this.firearmState = FirearmState.UNLOADED;
             }
         }
-    }
-
-    private boolean canRun() {
-        return this.firearmState == FirearmState.UNLOADED;
-    }
-
-    enum FirearmState {
-        UNLOADED,
-        LOADING,
-        LOADED,
-        READY
     }
 }

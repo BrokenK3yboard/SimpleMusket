@@ -1,11 +1,10 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
-import com.brokenkeyboard.simplemusket.item.BulletItem;
-import com.brokenkeyboard.simplemusket.item.BulletType;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.datagen.conditions.CopperCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.GoldCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.NetheriteCondition;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -44,19 +43,16 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
                 .save(consumer);
 
-        bulletRecipe((BulletItem) SimpleMusket.IRON_BULLET.get(), Items.IRON_INGOT, 4, consumer);
-        bulletRecipe((BulletItem) SimpleMusket.COPPER_BULLET.get(), Items.COPPER_INGOT, 4, consumer);
-        bulletRecipe((BulletItem) SimpleMusket.GOLD_BULLET.get(), Items.GOLD_INGOT, 4, consumer);
-        bulletRecipe((BulletItem) SimpleMusket.NETHERITE_BULLET.get(), Items.NETHERITE_INGOT, 8, consumer);
+        bulletRecipe((BulletItem) SimpleMusket.IRON_BULLET.get(), Items.IRON_INGOT, 4, TRUE(), consumer);
+        bulletRecipe((BulletItem) SimpleMusket.COPPER_BULLET.get(), Items.COPPER_INGOT, 4, new CopperCondition(), consumer);
+        bulletRecipe((BulletItem) SimpleMusket.GOLD_BULLET.get(), Items.GOLD_INGOT, 4, new GoldCondition(), consumer);
+        bulletRecipe((BulletItem) SimpleMusket.NETHERITE_BULLET.get(), Items.NETHERITE_INGOT, 8, new NetheriteCondition(), consumer);
     }
 
-    private void bulletRecipe(BulletItem bulletItem, Item ingredient, int amount, Consumer<FinishedRecipe> consumer) {
-
+    private void bulletRecipe(BulletItem bulletItem, Item ingredient, int amount, ICondition condition, Consumer<FinishedRecipe> consumer) {
         ResourceLocation ID = new ResourceLocation(SimpleMusket.MOD_ID, bulletItem.toString());
 
-        ConditionalRecipe.builder().addCondition(
-                getCondition(BulletType.values()[bulletItem.getType()])
-        ).addRecipe(
+        ConditionalRecipe.builder().addCondition(condition).addRecipe(
                 ShapedRecipeBuilder.shaped(bulletItem, amount)
                         .define('C', ingredient)
                         .define('G', Items.GUNPOWDER)
@@ -69,14 +65,5 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
                         .unlockedBy("has_paper", has(Items.PAPER))
                         ::save
         ).generateAdvancement().build(consumer, ID);
-    }
-
-    private ICondition getCondition(BulletType type) {
-        return switch(type) {
-            case COPPER -> new CopperCondition();
-            case GOLD -> new GoldCondition();
-            case NETHERITE -> new NetheriteCondition();
-            default -> TRUE();
-        };
     }
 }

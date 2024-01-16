@@ -16,5 +16,7 @@
   "enchantment.simplemusket.longshot.desc": "Bullets fired from a musket deal more damage the further they travel.",
   "entity.simplemusket.musket_pillager": "Pillager",
   "death.attack.bullet": "%1$s was shot by %2$s",
-  "death.attack.bullet.item": "%1$s was shot by %2$s using %3$s"
+  "subtitles.item.simplemusket.musket.loading": "Musket loading",
+  "subtitles.item.simplemusket.musket.loads": "Musket loads",
+  "subtitles.item.simplemusket.musket.shoot": "Musket fires"
 }

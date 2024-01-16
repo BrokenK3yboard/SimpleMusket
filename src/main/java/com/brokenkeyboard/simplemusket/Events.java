@@ -14,8 +14,6 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.PatrollingMonster;
@@ -68,21 +66,25 @@ public class Events {
 
         @SubscribeEvent
         public static void setup(final FMLClientSetupEvent event) {
-            event.enqueueWork(() ->
-            {
+            event.enqueueWork(() -> {
                 ItemProperties.register(SimpleMusket.MUSKET.get(),
                         new ResourceLocation(SimpleMusket.MOD_ID, "loading"),
                         (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                                && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                                && !MusketItem.hasAmmo(stack) ? 1.0F : 0.0F);
+
+                ItemProperties.register(SimpleMusket.MUSKET.get(),
+                        new ResourceLocation(SimpleMusket.MOD_ID, "load_stage"),
+                        (stack, world, living, id) -> (living == null || MusketItem.hasAmmo(stack)) ? 0.0F :
+                                MusketItem.getReloadPerc(stack, stack.getUseDuration() - living.getUseItemRemainingTicks()));
 
                 ItemProperties.register(SimpleMusket.MUSKET.get(),
                         new ResourceLocation(SimpleMusket.MOD_ID, "loaded"),
-                        (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                        (stack, world, living, id) -> living != null && MusketItem.hasAmmo(stack) ? 1.0F : 0.0F);
 
                 ItemProperties.register(SimpleMusket.MUSKET.get(),
                         new ResourceLocation(SimpleMusket.MOD_ID, "aiming"),
                         (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                                && MusketItem.isReady(stack) ? 1.0F : 0.0F);
+                                && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
             });
         }
 
@@ -103,11 +105,8 @@ public class Events {
 
         @SubscribeEvent
         public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
-            Entity entity = event.getEntity();
-            if (entity instanceof Mob mob) {
-                if (mob instanceof AbstractVillager villager) {
-                    villager.goalSelector.addGoal(1, new AvoidEntityGoal<>(villager, MusketPillager.class, 8.0F, 0.6D, 0.6D));
-                }
+            if (event.getEntity() instanceof AbstractVillager villager) {
+                villager.goalSelector.addGoal(1, new AvoidEntityGoal<>(villager, MusketPillager.class, 8.0F, 0.6D, 0.6D));
             }
         }
 
@@ -131,13 +130,13 @@ public class Events {
             InteractionHand hand = player.getUsedItemHand();
             if (player.getItemInHand(hand).getItem() instanceof MusketItem) {
                 HumanoidModel<Player> model = event.getRenderer().getModel();
-                if (MusketItem.isLoaded(player.getItemInHand(hand))) {
+                if (MusketItem.hasAmmo(player.getItemInHand(hand))) {
                     if (hand == InteractionHand.MAIN_HAND) {
                         model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
                     } else {
                         model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
                     }
-                } else if (player.isUsingItem() && !MusketItem.isLoaded(player.getItemInHand(hand))) {
+                } else if (player.isUsingItem() && !MusketItem.hasAmmo(player.getItemInHand(hand))) {
                     if (hand == InteractionHand.MAIN_HAND) {
                         model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
                     } else {
