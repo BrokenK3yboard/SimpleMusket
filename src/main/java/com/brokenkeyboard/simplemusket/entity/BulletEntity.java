@@ -16,6 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.entity.PartEntity;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -37,13 +38,13 @@ public class BulletEntity extends Projectile {
         super(type, level);
     }
 
-    public BulletEntity(Level level, Entity owner, Vec3 initalPos, float damage, double pierce, int longshotLevel, boolean noIframe, boolean isHoly) {
+    public BulletEntity(Level level, Entity owner, Vec3 initalPos, float damage, double pierce, int longshot, boolean noIframe, boolean isHoly) {
         super(SimpleMusket.BULLET_ENTITY.get(), level);
         this.setOwner(owner);
         this.initialPos = initalPos;
         this.damage = damage;
         this.pierce = pierce;
-        this.longshot = longshotLevel;
+        this.longshot = longshot;
         this.noIframe = noIframe;
         this.isHoly = isHoly;
         this.setNoGravity(true);
@@ -51,10 +52,10 @@ public class BulletEntity extends Projectile {
 
     public void tick() {
         super.tick();
-
         if (ticksAlive > 40) this.discard();
 
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+
         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
             this.onHit(hitresult);
         }
@@ -67,27 +68,32 @@ public class BulletEntity extends Projectile {
 
     @Override
     protected void onHitEntity(EntityHitResult hitResult) {
-        if (!(hitResult.getEntity() instanceof LivingEntity target) || (this.getOwner() instanceof Raider && target instanceof Raider)) return;
 
-        if (CONSECRATION && Config.CONSECRATION_COMPAT.get() && isHoly && target.getMobType() == MobType.UNDEAD) {
-            damage += 7.0F;
-        }
+        Entity entity = hitResult.getEntity();
+        Entity target = entity instanceof PartEntity<?> part ? part.getParent() : entity;
+
+        if (this.getOwner() instanceof Raider && target instanceof Raider) return;
 
         if (longshot > 0) {
-            double distance = Math.sqrt(target.distanceToSqr(initialPos));
-            double coefficient = (Math.min((distance / 50) * (0.25 * longshot), (0.25 * longshot)));
+            double distance = Math.sqrt(entity.distanceToSqr(initialPos));
+            double coefficient = Math.min(distance / 50, 1) * 0.25 * longshot;
             damage *= (float) (1 + coefficient);
         }
 
-        double armor = (target.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR)).getValue() : 0);
-        double toughness = (target.getAttributes().hasAttribute(Attributes.ARMOR_TOUGHNESS) ? Objects.requireNonNull(target.getAttribute(Attributes.ARMOR_TOUGHNESS)).getValue() : 0);
-        double finalArmor = armor * (1 - pierce);
-        float finalDamage = (float) (damage * (1 - (Math.min(20, Math.max((finalArmor / 5), finalArmor - ((4 * damage) / (toughness + 8))))) / 25));
+        if (target instanceof LivingEntity livingEntity) {
 
-        DamageSource bulletDamage = (causeBulletDamage(this, this.getOwner()));
-        target.hurt(bulletDamage, finalDamage);
-        if (noIframe) target.invulnerableTime = 0;
+            if (CONSECRATION && Config.CONSECRATION_COMPAT.get() && isHoly && livingEntity.getMobType() == MobType.UNDEAD) {
+                damage *= 2;
+            }
 
+            double armor = livingEntity.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(livingEntity.getAttribute(Attributes.ARMOR)).getValue() : 0;
+            double toughness = livingEntity.getAttributes().hasAttribute(Attributes.ARMOR_TOUGHNESS) ? Objects.requireNonNull(livingEntity.getAttribute(Attributes.ARMOR_TOUGHNESS)).getValue() : 0;
+            double finalArmor = armor * (1 - pierce);
+            damage = (float) (damage * (1 - (Math.min(20, Math.max((finalArmor / 5), finalArmor - ((4 * damage) / (toughness + 8))))) / 25));
+        }
+
+        entity.hurt(bullet(this, this.getOwner()), damage);
+        if (noIframe) entity.invulnerableTime = 0;
         this.discard();
     }
 
@@ -99,7 +105,7 @@ public class BulletEntity extends Projectile {
     protected void defineSynchedData() {
     }
 
-    protected DamageSource causeBulletDamage(BulletEntity bullet, @Nullable Entity attacker) {
+    protected DamageSource bullet(BulletEntity bullet, @Nullable Entity attacker) {
         return (level().damageSources().source(BULLET, bullet, attacker));
     }
 
