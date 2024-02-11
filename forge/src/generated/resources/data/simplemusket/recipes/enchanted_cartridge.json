@@ -1,0 +1,37 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "simplemusket:craft_enchanted"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "equipment",
+        "key": {
+          "C": {
+            "item": "minecraft:gold_ingot"
+          },
+          "G": {
+            "item": "minecraft:gunpowder"
+          },
+          "P": {
+            "item": "minecraft:paper"
+          }
+        },
+        "pattern": [
+          " C ",
+          " G ",
+          " P "
+        ],
+        "result": {
+          "count": 4,
+          "item": "simplemusket:enchanted_cartridge"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

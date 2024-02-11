@@ -1,6 +1,0 @@
-{
-    "parent": "simplemusket:item/musket_models/musket_loading_1",
-    "textures": {
-        "layer0": "simplemusket:item/musket_loading_3"
-    }
-}

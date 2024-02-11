@@ -1,0 +1,38 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "simplemusket:item/musket"
+    },
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [ -80, 260, -40 ],
+            "translation": [ -1, 0, 2.5 ],
+            "scale": [ 0.9, 0.9, 0.9 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ -80, -280, 40 ],
+            "translation": [ -1, 0, 2.5 ],
+            "scale": [ 0.9, 0.9, 0.9 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, -90, 45 ],
+            "translation": [ 0, 3.2, -0.96],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [ 0, 90, -45 ],
+            "translation": [ 0, 3.2, -0.96],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        }
+    },
+    "overrides": [
+        {"predicate": {"simplemusket:loading": 1}, "model": "simplemusket:item/musket_loading_1"},
+        {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.12}, "model": "simplemusket:item/musket_loading_2"},
+        {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.24}, "model": "simplemusket:item/musket_loading_3"},
+        {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.60}, "model": "simplemusket:item/musket_loading_4"},
+        {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.75}, "model": "simplemusket:item/musket_loading_5"},
+        {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.90}, "model": "simplemusket:item/musket_loading_6"},
+        {"predicate": {"simplemusket:loaded": 1}, "model": "simplemusket:item/musket_loaded"},
+        {"predicate": {"simplemusket:aiming": 1}, "model": "simplemusket:item/musket_aiming"}
+    ]
+}

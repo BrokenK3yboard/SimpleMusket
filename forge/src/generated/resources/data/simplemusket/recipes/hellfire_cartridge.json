@@ -1,0 +1,37 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "simplemusket:craft_hellfire"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "equipment",
+        "key": {
+          "C": {
+            "item": "minecraft:netherite_ingot"
+          },
+          "G": {
+            "item": "minecraft:gunpowder"
+          },
+          "P": {
+            "item": "minecraft:paper"
+          }
+        },
+        "pattern": [
+          " C ",
+          " G ",
+          " P "
+        ],
+        "result": {
+          "count": 8,
+          "item": "simplemusket:hellfire_cartridge"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

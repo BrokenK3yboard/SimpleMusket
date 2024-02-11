@@ -1,0 +1,42 @@
+{
+    "schemaVersion": 1,
+    "id": "simplemusket",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "contact": {
+        "homepage": "https://fabricmc.net/",
+        "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+    "license": "${license}",
+    "icon": "${mod_id}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.brokenkeyboard.simplemusket.SimpleMusket"
+        ],
+        "client": [
+            "com.brokenkeyboard.simplemusket.ClientSetup"
+        ],
+        "fabric-datagen": [
+            "com.brokenkeyboard.simplemusket.datagen.Datagen"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json",
+        "${mod_id}.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.14",
+        "fabric": "*",
+        "minecraft": "1.20.1",
+        "java": ">=17",
+        "extensibleenums": "*"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
+}
