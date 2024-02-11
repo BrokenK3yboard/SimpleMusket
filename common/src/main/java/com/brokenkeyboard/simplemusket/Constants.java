@@ -1,6 +1,5 @@
 package com.brokenkeyboard.simplemusket;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -13,8 +12,6 @@ public class Constants {
 	public static final String MOD_ID = "simplemusket";
 	public static final String MOD_NAME = "Simple Musket";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
-
-	public static final ModelResourceLocation MUSKET_MODEL = new ModelResourceLocation(Constants.MOD_ID, "musket_inventory", "inventory");
 
 	public static final ResourceLocation BASTION_OTHER = new ResourceLocation("minecraft:chests/bastion_other");
 	public static final ResourceLocation HOGLIN_STABLE = new ResourceLocation("minecraft:chests/bastion_hoglin_stable");

@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -38,8 +39,6 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.List;
 
-import static com.brokenkeyboard.simplemusket.Constants.MUSKET_MODEL;
-
 @SuppressWarnings("unused")
 public class Events {
 
@@ -58,11 +57,6 @@ public class Events {
         public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModRegistry.BULLET_ENTITY.get(), BulletEntityRenderer::new);
             event.registerEntityRenderer(ModRegistry.MUSKET_PILLAGER.get(), MusketPillagerRenderer::new);
-        }
-
-        @SubscribeEvent
-        public static void registerModels(ModelEvent.RegisterAdditional event) {
-            event.register(MUSKET_MODEL);
         }
 
         @SubscribeEvent
@@ -153,6 +147,15 @@ public class Events {
                     event.setCanceled(true);
                 }
             }
+        }
+    }
+
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Constants.MOD_ID, value = Dist.CLIENT)
+    public static class RegisterModels {
+
+        @SubscribeEvent
+        public static void registerModels(ModelEvent.RegisterAdditional event) {
+            event.register(new ModelResourceLocation(Constants.MOD_ID, "musket_inventory", "inventory"));
         }
     }
 }

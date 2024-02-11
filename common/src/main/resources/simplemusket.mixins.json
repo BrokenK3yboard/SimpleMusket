@@ -6,10 +6,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "VillagerHostilesSensorAccessor",
-    "WanderingTraderMixin",
-    "ItemRendererMixin"
+    "WanderingTraderMixin"
   ],
   "client": [
+    "ItemRendererMixin"
   ],
   "server": [
   ],
