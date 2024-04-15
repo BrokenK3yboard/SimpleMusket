@@ -30,7 +30,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
     @Override
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.MUSKET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.MUSKET)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('F', Items.FLINT_AND_STEEL)
                 .define('P', ItemTags.PLANKS)
@@ -43,9 +43,9 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
                 .save(consumer);
 
-        cartridgeRecipe(ModRegistry.CARTRIDGE.get(), Items.IRON_INGOT, 4, TRUE(), consumer);
-        cartridgeRecipe(ModRegistry.ENCHANTED_CARTRIDGE.get(), Items.GOLD_INGOT, 4, new EnchantedCondition(), consumer);
-        cartridgeRecipe(ModRegistry.HELLFIRE_CARTRIDGE.get(), Items.NETHERITE_INGOT, 8, new HellfireCondition(), consumer);
+        cartridgeRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 4, TRUE(), consumer);
+        cartridgeRecipe(ModRegistry.ENCHANTED_CARTRIDGE, Items.GOLD_INGOT, 4, new EnchantedCondition(), consumer);
+        cartridgeRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, 8, new HellfireCondition(), consumer);
     }
 
     private void cartridgeRecipe(Item bulletItem, Item ingredient, int amount, ICondition condition, Consumer<FinishedRecipe> consumer) {

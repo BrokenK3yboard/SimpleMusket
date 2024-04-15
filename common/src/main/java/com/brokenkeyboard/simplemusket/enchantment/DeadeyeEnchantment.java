@@ -6,8 +6,8 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 public class DeadeyeEnchantment extends Enchantment {
 
-    public DeadeyeEnchantment(Rarity rarity, EnchantmentCategory category, EquipmentSlot... slots) {
-        super(rarity, category, slots);
+    public DeadeyeEnchantment(EnchantmentCategory category, EquipmentSlot... slots) {
+        super(Rarity.UNCOMMON, category, slots);
     }
 
     public int getMinCost(int level) {

@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlastEnchantment extends Enchantment {
 
-    public BlastEnchantment(Rarity rarity, EnchantmentCategory category, EquipmentSlot... slots) {
-        super(rarity, category, slots);
+    public BlastEnchantment(EnchantmentCategory category, EquipmentSlot... slots) {
+        super(Rarity.RARE, category, slots);
     }
 
     public int getMinCost(int level) {
@@ -25,6 +25,6 @@ public class BlastEnchantment extends Enchantment {
     }
 
     public boolean checkCompatibility(@NotNull Enchantment ench) {
-        return super.checkCompatibility(ench) && ench != ModRegistry.FIREPOWER.get() && ench != ModRegistry.LONGSHOT.get();
+        return super.checkCompatibility(ench) && ench != ModRegistry.FIREPOWER && ench != ModRegistry.LONGSHOT;
     }
 }

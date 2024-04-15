@@ -25,7 +25,7 @@ public class ItemRendererMixin {
 
     @ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
     private BakedModel guiModel(BakedModel defaultModel, ItemStack stack, ItemDisplayContext context) {
-        if (context == ItemDisplayContext.GUI && stack.is(ModRegistry.MUSKET.get()))
+        if (context == ItemDisplayContext.GUI && stack.is(ModRegistry.MUSKET))
             return this.itemModelShaper.getModelManager().getModel(MUSKET_MODEL);
         return defaultModel;
     }

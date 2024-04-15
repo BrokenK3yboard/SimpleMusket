@@ -24,7 +24,7 @@ public class LocalPlayerMixin {
         ItemStack stack = player.getItemInHand(player.getUsedItemHand());
 
         if (stack.getItem() instanceof MusketItem && MusketItem.isLoaded(stack) && player.isUsingItem()) {
-            int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE.get(), stack);
+            int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE, stack);
             if (deadeye > 0) {
                 float multiplier = 2 + deadeye;
                 this.input.leftImpulse *= multiplier;

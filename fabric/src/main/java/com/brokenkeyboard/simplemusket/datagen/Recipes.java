@@ -24,7 +24,7 @@ public class Recipes extends FabricRecipeProvider {
     @Override
     public void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.MUSKET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.MUSKET)
                 .define('I', Items.IRON_INGOT)
                 .define('F', Items.FLINT_AND_STEEL)
                 .define('P', ItemTags.PLANKS)
@@ -37,8 +37,8 @@ public class Recipes extends FabricRecipeProvider {
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
                 .save(consumer);
 
-        bulletRecipe(ModRegistry.CARTRIDGE.get(), Items.IRON_INGOT, 4, consumer, Constants.CRAFT_CARTRIDGE);
-        bulletRecipe(ModRegistry.HELLFIRE_CARTRIDGE.get(), Items.NETHERITE_INGOT, 8, consumer, Constants.CRAFT_HELLFIRE);
+        bulletRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 4, consumer, Constants.CRAFT_CARTRIDGE);
+        bulletRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, 8, consumer, Constants.CRAFT_HELLFIRE);
     }
 
     private void bulletRecipe(Item bulletItem, Item ingredient, int amount, Consumer<FinishedRecipe> consumer, ResourceLocation location) {

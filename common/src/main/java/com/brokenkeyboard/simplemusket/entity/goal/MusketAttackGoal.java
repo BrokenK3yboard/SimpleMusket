@@ -65,7 +65,7 @@ public class MusketAttackGoal extends Goal {
         LivingEntity target = this.mob.getTarget();
 
         if (target != null) {
-            InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(this.mob, ModRegistry.MUSKET.get());
+            InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(this.mob, ModRegistry.MUSKET);
             ItemStack stack = mob.getItemInHand(hand);
             boolean hasLOS = this.mob.getSensing().hasLineOfSight(target);
             boolean seeTarget = this.seeTime > 0;

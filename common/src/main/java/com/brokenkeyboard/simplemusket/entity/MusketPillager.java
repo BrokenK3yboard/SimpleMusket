@@ -151,8 +151,8 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficulty) {
-        ItemStack stack = new ItemStack(ModRegistry.MUSKET.get());
-        MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE.get()));
+        ItemStack stack = new ItemStack(ModRegistry.MUSKET);
+        MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE));
         MusketItem.setLoaded(stack, true);
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
@@ -163,7 +163,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
             ItemStack stack = this.getMainHandItem();
             if (stack.getItem() instanceof MusketItem) {
                 Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-                map.putIfAbsent(ModRegistry.FIREPOWER.get(), 1);
+                map.putIfAbsent(ModRegistry.FIREPOWER, 1);
                 EnchantmentHelper.setEnchantments(map, stack);
                 this.setItemSlot(EquipmentSlot.MAINHAND, stack);
             }
@@ -195,7 +195,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
 
     public void useMusket(ItemStack stack) {
         MusketItem musket = (MusketItem) stack.getItem();
-        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE.get(), stack);
+        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE, stack);
         double deviation = (float) (8 - level().getDifficulty().getId() * 2);
         musket.fire(this, level(), SoundSource.HOSTILE, stack, deadeye > 0 ? deviation * (1 - (0.125 + 0.125 * deviation)) : deviation);
     }
@@ -232,19 +232,19 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     public void applyRaidBuffs(int value, boolean bool) {
         Raid raid = this.getCurrentRaid();
         if (raid == null || this.random.nextFloat() > raid.getEnchantOdds()) return;
-        ItemStack stack = new ItemStack(ModRegistry.MUSKET.get());
+        ItemStack stack = new ItemStack(ModRegistry.MUSKET);
         Map<Enchantment, Integer> map = Maps.newHashMap();
 
         if (value > raid.getNumGroups(Difficulty.HARD)) {
-            map.put(ModRegistry.REPEATING.get(), 1);
-            map.put(ModRegistry.FIREPOWER.get(), 2);
+            map.put(ModRegistry.REPEATING, 1);
+            map.put(ModRegistry.FIREPOWER, 2);
         } else if (value > raid.getNumGroups(Difficulty.NORMAL)) {
-            map.put(ModRegistry.FIREPOWER.get(), 2);
+            map.put(ModRegistry.FIREPOWER, 2);
         } else if (value > raid.getNumGroups(Difficulty.EASY)) {
-            map.put(ModRegistry.FIREPOWER.get(), 1);
+            map.put(ModRegistry.FIREPOWER, 1);
         }
 
-        map.put(ModRegistry.DEADEYE.get(), 1);
+        map.put(ModRegistry.DEADEYE, 1);
         EnchantmentHelper.setEnchantments(map, stack);
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }

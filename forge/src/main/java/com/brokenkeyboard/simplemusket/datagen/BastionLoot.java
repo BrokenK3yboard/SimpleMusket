@@ -33,7 +33,7 @@ public class BastionLoot extends LootModifier {
 
         if (random.nextDouble() < 0.3) {
             int stackCount = random.nextInt(7) + 2;
-            generatedLoot.add(new ItemStack(ModRegistry.HELLFIRE_CARTRIDGE.get(), stackCount));
+            generatedLoot.add(new ItemStack(ModRegistry.HELLFIRE_CARTRIDGE, stackCount));
         }
         return generatedLoot;
     }

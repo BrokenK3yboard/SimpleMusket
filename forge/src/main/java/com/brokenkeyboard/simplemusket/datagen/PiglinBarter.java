@@ -33,7 +33,7 @@ public class PiglinBarter extends LootModifier {
         RandomSource random = context.getRandom();
         if (generatedLoot.size() == 1 && generatedLoot.get(0).getItem() == Items.SPECTRAL_ARROW && random.nextDouble() < 0.25) {
             int amount = random.nextInt(2) + 2;
-            generatedLoot.set(0, new ItemStack(ModRegistry.HELLFIRE_CARTRIDGE.get(), amount));
+            generatedLoot.set(0, new ItemStack(ModRegistry.HELLFIRE_CARTRIDGE, amount));
         }
         return generatedLoot;
     }

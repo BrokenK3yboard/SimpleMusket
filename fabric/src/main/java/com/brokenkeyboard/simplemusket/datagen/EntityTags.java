@@ -16,6 +16,6 @@ public class EntityTags extends FabricTagProvider.EntityTypeTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        getOrCreateTagBuilder(EntityTypeTags.RAIDERS).add(ModRegistry.MUSKET_PILLAGER.get());
+        getOrCreateTagBuilder(EntityTypeTags.RAIDERS).add(ModRegistry.MUSKET_PILLAGER);
     }
 }

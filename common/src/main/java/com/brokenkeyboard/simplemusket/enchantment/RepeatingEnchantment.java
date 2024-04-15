@@ -5,8 +5,9 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 public class RepeatingEnchantment extends Enchantment {
-    public RepeatingEnchantment(Rarity rarity, EnchantmentCategory category, EquipmentSlot... slots) {
-        super(rarity, category, slots);
+
+    public RepeatingEnchantment(EnchantmentCategory category, EquipmentSlot... slots) {
+        super(Rarity.VERY_RARE, category, slots);
     }
 
     public int getMinCost(int enchantmentLevel) {

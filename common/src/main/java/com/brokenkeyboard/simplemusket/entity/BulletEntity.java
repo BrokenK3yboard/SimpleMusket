@@ -40,7 +40,7 @@ public class BulletEntity extends Projectile {
     }
 
     public BulletEntity(Level level, Entity owner, Vec3 pos, double damage, double pierce, int longshot, int blast, int lifespan, double deviation, boolean isHoly, boolean isHellfire) {
-        super(ModRegistry.BULLET_ENTITY.get(), level);
+        super(ModRegistry.BULLET_ENTITY, level);
         this.setOwner(owner);
         this.initialPos = pos;
         this.damage = damage;
@@ -103,7 +103,7 @@ public class BulletEntity extends Projectile {
 
         if (entity.hurt(bullet(this, this.getOwner()), (float) damage)) {
             if (entity instanceof LivingEntity livingEntity && isHellfire) {
-                livingEntity.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE.get(), 300));
+                livingEntity.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE, 300));
             }
         }
         this.discard();

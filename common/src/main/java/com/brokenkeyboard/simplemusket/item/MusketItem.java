@@ -81,26 +81,26 @@ public class MusketItem extends ProjectileWeaponItem {
 
         if (useTime >= reloadTime && !hasAmmo(stack)) {
             ItemStack ammo = entity.getProjectile(stack);
-            int amount = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.REPEATING.get(), stack) + 1;
+            int amount = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.REPEATING, stack) + 1;
 
             if (entity instanceof Player player) {
                 if (player.getAbilities().instabuild) {
-                    setAmmo(stack, new ItemStack(getAllSupportedProjectiles().test(ammo) ? ammo.getItem() : ModRegistry.CARTRIDGE.get(), amount));
+                    setAmmo(stack, new ItemStack(getAllSupportedProjectiles().test(ammo) ? ammo.getItem() : ModRegistry.CARTRIDGE, amount));
                 } else if (!ammo.isEmpty()) {
                     setAmmo(stack, new ItemStack(ammo.getItem(), amount));
                     ammo.shrink(1);
                     if (ammo.isEmpty()) (player).getInventory().removeItem(ammo);
                 }
             } else {
-                setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE.get(), amount));
+                setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, amount));
             }
 
-            level.playSound(null, entity, ModRegistry.MUSKET_READY.get(), source, 1F, 0.8F);
+            level.playSound(null, entity, ModRegistry.MUSKET_READY, source, 1F, 0.8F);
         } else if (!isLoaded(stack)) {
             if (Math.floor(reloadTime * 0.12) == useTime) {
-                level.playSound(null, entity, ModRegistry.MUSKET_LOAD_0.get(), source, 1F, 0.8F);
+                level.playSound(null, entity, ModRegistry.MUSKET_LOAD_0, source, 1F, 0.8F);
             } else if (Math.floor(reloadTime * 0.6) == useTime) {
-                level.playSound(null, entity, ModRegistry.MUSKET_LOAD_1.get(), source, 1F, 0.8F);
+                level.playSound(null, entity, ModRegistry.MUSKET_LOAD_1, source, 1F, 0.8F);
             }
         }
     }
@@ -113,12 +113,12 @@ public class MusketItem extends ProjectileWeaponItem {
         ItemStack bulletStack = getAmmo(stack);
         BulletItem bulletItem = (BulletItem) bulletStack.getItem();
         int ammoCount = bulletStack.getCount();
-        int longshot = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.LONGSHOT.get(), stack);
-        int blast = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.BLAST.get(), stack);
+        int longshot = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.LONGSHOT, stack);
+        int blast = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.BLAST, stack);
         double damage = bulletItem.DAMAGE;
-        double piercing = Math.min(bulletItem.PIERCING + EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.FIREPOWER.get(), stack) * 0.1, 1);
-        boolean isHoly = bulletItem == ModRegistry.ENCHANTED_CARTRIDGE.get();
-        boolean isHellfire = bulletItem == ModRegistry.HELLFIRE_CARTRIDGE.get();
+        double piercing = Math.min(bulletItem.PIERCING + EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.FIREPOWER, stack) * 0.1, 1);
+        boolean isHoly = bulletItem == ModRegistry.ENCHANTED_CARTRIDGE;
+        boolean isHellfire = bulletItem == ModRegistry.HELLFIRE_CARTRIDGE;
 
         for (int i = 0; i < (blast > 0 ? 4 * blast : 1); i++) {
             projectiles.add(new BulletEntity(level, entity, pos, (i > 0 ? damage * 0.25 : damage), piercing, longshot, (i > 0 ? 0 : blast), (i > 0 ? 12 : 60), (i > 0 ? 18F : deviation), isHoly, isHellfire));
@@ -139,8 +139,8 @@ public class MusketItem extends ProjectileWeaponItem {
         setAmmo(stack, new ItemStack(bulletItem, ammoCount - 1));
         setLoaded(stack, ammoCount > 1);
         spawnParticles(level, entity, entity instanceof Mob mob ? mobTargetVec(mob, mob.getTarget()) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
-        Services.PLATFORM.playSound(ModRegistry.MUSKET_FIRE.get(), source, (ServerLevel) level, entity.position());
-        stack.hurtAndBreak(bulletItem == ModRegistry.HELLFIRE_CARTRIDGE.get() ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
+        Services.PLATFORM.playSound(ModRegistry.MUSKET_FIRE, source, (ServerLevel) level, entity.position());
+        stack.hurtAndBreak(bulletItem == ModRegistry.HELLFIRE_CARTRIDGE ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
 
     public static void spawnParticles(Level level, LivingEntity entity, Vec3 direction) {
@@ -166,7 +166,7 @@ public class MusketItem extends ProjectileWeaponItem {
     }
 
     public int getAim(ItemStack stack) {
-        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE.get(), stack);
+        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE, stack);
         return (int) (deadeye > 0 ? Config.AIM_TIME.get() * (1 - (0.125 + 0.125 * deadeye)) : Config.AIM_TIME.get());
     }
 

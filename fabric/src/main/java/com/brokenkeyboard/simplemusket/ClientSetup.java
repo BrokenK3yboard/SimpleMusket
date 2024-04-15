@@ -16,8 +16,8 @@ public class ClientSetup implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
-        EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY.get(), BulletEntityRenderer::new);
-        EntityRendererRegistry.register(ModRegistry.MUSKET_PILLAGER.get(), MusketPillagerRenderer::new);
+        EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
+        EntityRendererRegistry.register(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
         ModelLoadingPlugin.register(new SMModelPlugin());
         ModRegistry.registerItemProperties();
 

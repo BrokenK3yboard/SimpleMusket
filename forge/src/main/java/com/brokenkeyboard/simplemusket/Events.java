@@ -55,8 +55,8 @@ public class Events {
 
         @SubscribeEvent
         public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(ModRegistry.BULLET_ENTITY.get(), BulletEntityRenderer::new);
-            event.registerEntityRenderer(ModRegistry.MUSKET_PILLAGER.get(), MusketPillagerRenderer::new);
+            event.registerEntityRenderer(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
+            event.registerEntityRenderer(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
         }
 
         @SubscribeEvent
@@ -66,12 +66,12 @@ public class Events {
 
         @SubscribeEvent
         public static void onAttributeCreate(EntityAttributeCreationEvent event) {
-            event.put(ModRegistry.MUSKET_PILLAGER.get(), MusketPillager.createAttributes().build());
+            event.put(ModRegistry.MUSKET_PILLAGER, MusketPillager.createAttributes().build());
         }
 
         @SubscribeEvent
         public static void spawnRegister(SpawnPlacementRegisterEvent event) {
-            event.register(ModRegistry.MUSKET_PILLAGER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+            event.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     PatrollingMonster::checkPatrollingMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         }
     }
@@ -90,8 +90,8 @@ public class Events {
         public static void addTrades(VillagerTradesEvent event) {
             if(event.getType() != VillagerProfession.WEAPONSMITH) return;
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
-            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET.get()), 3, 10, 0.05F));
-            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE.get(), 4), 16, 1, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE, 4), 16, 1, 0.05F));
         }
     }
 
@@ -104,7 +104,7 @@ public class Events {
             ItemStack stack = player.getItemInHand(event.getEntity().getUsedItemHand());
 
             if (stack.getItem() instanceof MusketItem && MusketItem.isLoaded(stack) && player.isUsingItem()) {
-                int deadeye = EnchantmentHelper.getTagEnchantmentLevel(ModRegistry.DEADEYE.get(), stack);
+                int deadeye = EnchantmentHelper.getTagEnchantmentLevel(ModRegistry.DEADEYE, stack);
                 if (deadeye > 0) {
                     float multiplier = 2 + deadeye;
                     event.getInput().leftImpulse *= multiplier;
