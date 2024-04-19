@@ -3,6 +3,7 @@ package com.brokenkeyboard.simplemusket;
 import com.brokenkeyboard.simplemusket.datagen.conditions.EnchantedCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.HellfireCondition;
 import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
+import com.brokenkeyboard.simplemusket.entity.HatModel;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
@@ -156,6 +157,11 @@ public class Events {
         @SubscribeEvent
         public static void registerModels(ModelEvent.RegisterAdditional event) {
             event.register(new ModelResourceLocation(Constants.MOD_ID, "musket_inventory", "inventory"));
+        }
+
+        @SubscribeEvent
+        public static void armorLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(ModRegistry.GUNSLINGER_HAT, HatModel::createBodyLayer);
         }
     }
 }

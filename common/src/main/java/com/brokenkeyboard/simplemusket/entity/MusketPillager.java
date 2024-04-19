@@ -2,11 +2,11 @@ package com.brokenkeyboard.simplemusket.entity;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.goal.MusketAttackGoal;
+import com.brokenkeyboard.simplemusket.entity.goal.SawnOffGoal;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -21,6 +21,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
@@ -47,10 +48,15 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import javax.annotation.Nullable;
 import java.util.Map;
 
+import static com.brokenkeyboard.simplemusket.Config.GUNSLINGER_RANGE;
+
 public class MusketPillager extends AbstractIllager implements InventoryCarrier {
 
     private static final EntityDataAccessor<Boolean> RELOADING = SynchedEntityData.defineId(MusketPillager.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SAWN_OFF = SynchedEntityData.defineId(MusketPillager.class, EntityDataSerializers.BOOLEAN);
     private final SimpleContainer inventory = new SimpleContainer(5);
+    private int sawnoffCooldown = 0;
+    private int attackCooldown = 0;
 
     public MusketPillager(EntityType<? extends MusketPillager> type, Level level) {
         super(type, level);
@@ -59,28 +65,31 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new HoldGroundAttackGoal(this, 10.0F));
-        this.goalSelector.addGoal(3, new MusketAttackGoal(this, 1.0F, 24));
+        this.goalSelector.addGoal(1, new SawnOffGoal(this, 8));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 12, 1.0, 1.2));
+        this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 10.0F));
+        this.goalSelector.addGoal(4, new MusketAttackGoal(this, 1.0F, GUNSLINGER_RANGE.get().floatValue()));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6D));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 15.0F));
-        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers());
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Mob.class, 15.0F));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Raider.class).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 24.0)
                 .add(Attributes.ATTACK_DAMAGE, 5.0)
-                .add(Attributes.FOLLOW_RANGE, 40.0)
+                .add(Attributes.FOLLOW_RANGE, GUNSLINGER_RANGE.get().floatValue() + 16F)
                 .add(Attributes.MOVEMENT_SPEED, 0.35);
     }
 
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(RELOADING, false);
+        this.entityData.define(SAWN_OFF, false);
     }
 
     public boolean canFireProjectileWeapon(ProjectileWeaponItem item) {
@@ -95,25 +104,54 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         this.entityData.set(RELOADING, value);
     }
 
+    public boolean isUsingSawnOff() {
+        return this.entityData.get(SAWN_OFF);
+    }
+
+    public void setUsingSawnOff(boolean value) {
+        this.entityData.set(SAWN_OFF, value);
+    }
+
+    public int getSawnoffCD() {
+        return sawnoffCooldown;
+    }
+
+    public void setSawnoffCD(int value) {
+        sawnoffCooldown = value;
+    }
+
+    public int getAttackCD() {
+        return attackCooldown;
+    }
+
+    public void setAttackCD(int value) {
+        attackCooldown = value;
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (sawnoffCooldown > 0) {
+            --sawnoffCooldown;
+        }
+        if (attackCooldown > 0) {
+            --attackCooldown;
+        }
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        ListTag listtag = new ListTag();
-
-        for(int i = 0; i < this.inventory.getContainerSize(); ++i) {
-            ItemStack stack = this.inventory.getItem(i);
-            if (!stack.isEmpty()) {
-                listtag.add(stack.save(new CompoundTag()));
-            }
-        }
-        tag.put("Inventory", listtag);
+        this.writeInventoryToTag(tag);
+        tag.putInt("Sawnoff_cooldown", sawnoffCooldown);
+        tag.putInt("Attack_cooldown", sawnoffCooldown);
     }
 
     public IllagerArmPose getArmPose() {
         if (this.isReloading()) {
             return IllagerArmPose.CROSSBOW_CHARGE;
         } else if (this.isHolding(is -> is.getItem() instanceof MusketItem)) {
-            return IllagerArmPose.CROSSBOW_HOLD;
+            return isUsingSawnOff() ? IllagerArmPose.ATTACKING : IllagerArmPose.CROSSBOW_HOLD;
         } else {
             return this.isAggressive() ? IllagerArmPose.ATTACKING : IllagerArmPose.NEUTRAL;
         }
@@ -122,15 +160,10 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        ListTag listtag = tag.getList("Inventory", 10);
-
-        for(int i = 0; i < listtag.size(); ++i) {
-            ItemStack stack = ItemStack.of(listtag.getCompound(i));
-            if (!stack.isEmpty()) {
-                this.inventory.addItem(stack);
-            }
-        }
+        this.readInventoryFromTag(tag);
         this.setCanPickUpLoot(true);
+        sawnoffCooldown = tag.getInt("Sawnoff_cooldown");
+        attackCooldown = tag.getInt("Attack_cooldown");
     }
 
     public float getWalkTargetValue(BlockPos pos, LevelReader reader) {

@@ -9,6 +9,7 @@ import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.mixin.VillagerHostilesSensorAccessor;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -63,6 +64,8 @@ public class ModRegistry {
     public static final SoundEvent MUSKET_LOAD_1 = addSound(new ResourceLocation(Constants.MOD_ID, "musket_load1"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Constants.MOD_ID, "musket_load1")));
     public static final SoundEvent MUSKET_READY = addSound(new ResourceLocation(Constants.MOD_ID, "musket_ready"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Constants.MOD_ID, "musket_ready")));
     public static final SoundEvent MUSKET_FIRE = addSound(new ResourceLocation(Constants.MOD_ID, "musket_fire"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Constants.MOD_ID, "musket_fire")));
+
+    public static final ModelLayerLocation GUNSLINGER_HAT = new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay");
 
     public static EntityType<?> addEntity(ResourceLocation location, EntityType<?> type) {
         ENTITIES.put(location, type);
@@ -135,6 +138,9 @@ public class ModRegistry {
         ItemProperties.register(ModRegistry.MUSKET, new ResourceLocation(Constants.MOD_ID, "aiming"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
                         && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+
+        ItemProperties.register(ModRegistry.MUSKET, new ResourceLocation(Constants.MOD_ID, "sawnoff"),
+                (stack, world, living, id) -> living instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
     }
 
     public static void registerSensorGoal() {

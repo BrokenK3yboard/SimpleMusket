@@ -11,6 +11,7 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue FIND_HELLFIRE_CARTRIDGE;
     public static ForgeConfigSpec.BooleanValue BARTER_HELLFIRE_CARTRIDGE;
     public static ForgeConfigSpec.BooleanValue REDUCE_MOB_DAMAGE;
+    public static ForgeConfigSpec.DoubleValue GUNSLINGER_RANGE;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -43,5 +44,9 @@ public class Config {
         REDUCE_MOB_DAMAGE = builder
                 .comment("If enabled, the amount of damage dealt by mobs armed with muskets is reduced by 25%.")
                 .define("Reduced Pillager bullet damage", false);
+
+        GUNSLINGER_RANGE = builder
+                .comment("Intended for use with the Enhanced AI mod. Any value above the default is not recommended otherwise.")
+                .defineInRange("Gunslinger Pillager range", 24D, 24D, 40D);
     }
 }
