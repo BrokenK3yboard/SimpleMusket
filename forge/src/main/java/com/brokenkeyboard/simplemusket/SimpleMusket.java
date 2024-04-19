@@ -3,7 +3,6 @@ package com.brokenkeyboard.simplemusket;
 import com.brokenkeyboard.simplemusket.datagen.BastionLoot;
 import com.brokenkeyboard.simplemusket.datagen.PiglinBarter;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
-import com.brokenkeyboard.simplemusket.network.Network;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
@@ -12,7 +11,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -21,7 +19,6 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -32,8 +29,6 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-
-import static com.brokenkeyboard.simplemusket.ModRegistry.MUSKET_PILLAGER;
 
 @SuppressWarnings("unused")
 @Mod(Constants.MOD_ID)
@@ -54,7 +49,6 @@ public class SimpleMusket {
         GLM.register(bus);
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addCreative);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         if (Services.PLATFORM.isModLoaded("consecration")) {
             bus.addListener(this::enqueueIMC);
@@ -80,12 +74,6 @@ public class SimpleMusket {
         if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
             event.accept(ModRegistry.MUSKET_PILLAGER_EGG);
         }
-    }
-
-    public void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(Network::register);
-        Raid.RaiderType.create(MUSKET_PILLAGER.toString(), MUSKET_PILLAGER, new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
-        ModRegistry.registerSensorGoal();
     }
 
     public void enqueueIMC(InterModEnqueueEvent event) {

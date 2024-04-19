@@ -1,11 +1,11 @@
 package com.brokenkeyboard.simplemusket.entity;
 
 import com.brokenkeyboard.simplemusket.Constants;
-import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.IllagerModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -19,7 +19,7 @@ public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerMode
 
     public MusketPillagerLayer(LivingEntityRenderer<MusketPillager, IllagerModel<MusketPillager>> parent) {
         super(parent);
-        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModRegistry.GUNSLINGER_HAT));
+        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay")));
     }
 
     @Override

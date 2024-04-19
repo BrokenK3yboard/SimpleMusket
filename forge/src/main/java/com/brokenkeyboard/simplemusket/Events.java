@@ -7,11 +7,14 @@ import com.brokenkeyboard.simplemusket.entity.HatModel;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.network.Network;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -20,6 +23,7 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -35,10 +39,13 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.List;
+
+import static com.brokenkeyboard.simplemusket.ModRegistry.MUSKET_PILLAGER;
 
 @SuppressWarnings("unused")
 public class Events {
@@ -61,7 +68,14 @@ public class Events {
         }
 
         @SubscribeEvent
-        public static void setup(final FMLClientSetupEvent event) {
+        public static void commonSetup(FMLCommonSetupEvent event) {
+            event.enqueueWork(Network::register);
+            Raid.RaiderType.create(MUSKET_PILLAGER.toString(), MUSKET_PILLAGER, new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
+            ModRegistry.registerSensorGoal();
+        }
+
+        @SubscribeEvent
+        public static void clientSetup(final FMLClientSetupEvent event) {
             event.enqueueWork(ModRegistry::registerItemProperties);
         }
 
@@ -161,7 +175,7 @@ public class Events {
 
         @SubscribeEvent
         public static void armorLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(ModRegistry.GUNSLINGER_HAT, HatModel::createBodyLayer);
+            event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
         }
     }
 }
