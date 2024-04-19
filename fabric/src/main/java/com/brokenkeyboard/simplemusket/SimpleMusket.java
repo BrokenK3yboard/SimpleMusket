@@ -28,10 +28,11 @@ import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.function.BiConsumer;
 
+import static com.brokenkeyboard.simplemusket.ModRegistry.MUSKET_PILLAGER_EGG;
+
 public class SimpleMusket implements ModInitializer {
 
     public static final PacketType<S2CSoundPacket> SOUND_TYPE = PacketType.create(new ResourceLocation(Constants.MOD_ID, "sound"), S2CSoundPacket::new);
-    public static final SpawnEggItem MUSKET_PILLAGER_EGG = new SpawnEggItem(ModRegistry.MUSKET_PILLAGER, 5258034, 2960169, new Item.Properties());
 
     @Override
     public void onInitialize() {
@@ -43,7 +44,6 @@ public class SimpleMusket implements ModInitializer {
         ModRegistry.registerEnchants(bind(BuiltInRegistries.ENCHANTMENT));
         ModRegistry.registerEffects(bind(BuiltInRegistries.MOB_EFFECT));
         ModRegistry.registerSounds(bind(BuiltInRegistries.SOUND_EVENT));
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Constants.MOD_ID, "musket_pillager_spawn_egg"), MUSKET_PILLAGER_EGG);
 
         ResourceConditions.register(Constants.CRAFT_CARTRIDGE, object -> true);
         ResourceConditions.register(Constants.CRAFT_ENCHANTED, object -> false);
