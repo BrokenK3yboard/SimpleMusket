@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -86,10 +87,10 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
                 .add(Attributes.MOVEMENT_SPEED, 0.35);
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(RELOADING, false);
-        this.entityData.define(SAWN_OFF, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        this.entityData.set(RELOADING, false);
+        this.entityData.set(SAWN_OFF, false);
     }
 
     public boolean canFireProjectileWeapon(ProjectileWeaponItem item) {
@@ -190,30 +191,6 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
-    protected void enchantSpawnedWeapon(RandomSource randomSource, float value) {
-        super.enchantSpawnedWeapon(randomSource, value);
-        if (this.random.nextInt(300) == 0) {
-            ItemStack stack = this.getMainHandItem();
-            if (stack.getItem() instanceof MusketItem) {
-                Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-                map.putIfAbsent(ModRegistry.FIREPOWER, 1);
-                EnchantmentHelper.setEnchantments(map, stack);
-                this.setItemSlot(EquipmentSlot.MAINHAND, stack);
-            }
-        }
-    }
-
-    @Override
-    public boolean isAlliedTo(Entity entity) {
-        if (super.isAlliedTo(entity)) {
-            return true;
-        } else if (entity instanceof LivingEntity && ((LivingEntity)entity).getMobType() == MobType.ILLAGER) {
-            return this.getTeam() == null && entity.getTeam() == null;
-        } else {
-            return false;
-        }
-    }
-
     protected SoundEvent getAmbientSound() {
         return SoundEvents.PILLAGER_AMBIENT;
     }
@@ -262,7 +239,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     }
 
     @Override
-    public void applyRaidBuffs(int value, boolean bool) {
+    public void applyRaidBuffs(ServerLevel serverLevel, int value, boolean bool) {
         Raid raid = this.getCurrentRaid();
         if (raid == null || this.random.nextFloat() > raid.getEnchantOdds()) return;
         ItemStack stack = new ItemStack(ModRegistry.MUSKET);

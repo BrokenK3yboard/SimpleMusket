@@ -3,12 +3,12 @@ package com.brokenkeyboard.simplemusket.entity;
 import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.platform.Services;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -60,7 +60,7 @@ public class BulletEntity extends Projectile {
 
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 
-        if (hitresult.getType() != HitResult.Type.MISS && !Services.PLATFORM.bulletHitResult(this, hitresult)) {
+        if (hitresult.getType() != HitResult.Type.MISS) {
             this.onHit(hitresult);
             this.hasImpulse = true;
         }
@@ -72,11 +72,12 @@ public class BulletEntity extends Projectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult hitResult) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
+    @Override
+    protected void onHitEntity(EntityHitResult hitResult) {
         Entity entity = hitResult.getEntity();
         Entity target = Services.PLATFORM.getHitEntity(entity);
-
         if (this.getOwner() instanceof Raider && target instanceof Raider) return;
 
         if (longshot > 0) {
@@ -88,8 +89,7 @@ public class BulletEntity extends Projectile {
         }
 
         if (target instanceof LivingEntity livingEntity) {
-
-            if (isHoly && livingEntity.getMobType() == MobType.UNDEAD) damage *= 2;
+            if (isHoly && livingEntity.getType() == MobType.UNDEAD) damage *= 2;
             if (blast > 0 && initialPos.distanceTo(livingEntity.position()) <= 8) damage *= 1.25;
 
             double armor = livingEntity.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(livingEntity.getAttribute(Attributes.ARMOR)).getValue() : 0;
@@ -101,20 +101,16 @@ public class BulletEntity extends Projectile {
             }
         }
 
-        if (entity.hurt(bullet(this, this.getOwner()), (float) damage)) {
-            if (entity instanceof LivingEntity livingEntity && isHellfire) {
-                livingEntity.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE, 300));
-            }
+        if (entity.hurt(bullet(this, this.getOwner()), (float) damage) && entity instanceof LivingEntity livingEntity && isHellfire) {
+            livingEntity.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE, 300));
         }
         this.discard();
     }
 
     @Override
     protected void onHitBlock(BlockHitResult hitResult) {
+        super.onHitBlock(hitResult);
         this.discard();
-    }
-
-    protected void defineSynchedData() {
     }
 
     protected DamageSource bullet(BulletEntity bullet, @Nullable Entity attacker) {

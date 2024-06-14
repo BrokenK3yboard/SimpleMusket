@@ -4,16 +4,13 @@ import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 public class Recipes extends FabricRecipeProvider {
 
@@ -22,7 +19,7 @@ public class Recipes extends FabricRecipeProvider {
     }
 
     @Override
-    public void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
+    public void buildRecipes(RecipeOutput exporter) {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.MUSKET)
                 .define('I', Items.IRON_INGOT)
@@ -35,13 +32,13 @@ public class Recipes extends FabricRecipeProvider {
                 .unlockedBy("has_planks", has(ItemTags.PLANKS))
                 .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
-                .save(consumer);
+                .save(exporter);
 
-        bulletRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 4, consumer, Constants.CRAFT_CARTRIDGE);
-        bulletRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, 8, consumer, Constants.CRAFT_HELLFIRE);
+        bulletRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 4, exporter, Constants.CRAFT_CARTRIDGE);
+        bulletRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, 8, exporter, Constants.CRAFT_HELLFIRE);
     }
 
-    private void bulletRecipe(Item bulletItem, Item ingredient, int amount, Consumer<FinishedRecipe> consumer, ResourceLocation location) {
+    private void bulletRecipe(Item bulletItem, Item ingredient, int amount, RecipeOutput exporter, ResourceLocation location) {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, amount)
                 .define('C', ingredient)
@@ -53,6 +50,6 @@ public class Recipes extends FabricRecipeProvider {
                 .unlockedBy("has_" + ingredient.toString().toLowerCase(), has(ingredient))
                 .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
                 .unlockedBy("has_paper", has(Items.PAPER))
-                .save(withConditions(consumer, Conditions.configBooleans(location, String.valueOf(location))));
+                .save(withConditions(exporter, Conditions.configBooleans(location, String.valueOf(location))));
     }
 }

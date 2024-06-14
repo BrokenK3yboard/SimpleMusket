@@ -1,25 +1,25 @@
 package com.brokenkeyboard.simplemusket;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class Config {
 
-    public static final ForgeConfigSpec SPEC;
-    public static ForgeConfigSpec.IntValue RELOAD_TIME;
-    public static ForgeConfigSpec.IntValue AIM_TIME;
-    public static ForgeConfigSpec.BooleanValue CRAFT_HELLFIRE_CARTRIDGE;
-    public static ForgeConfigSpec.BooleanValue FIND_HELLFIRE_CARTRIDGE;
-    public static ForgeConfigSpec.BooleanValue BARTER_HELLFIRE_CARTRIDGE;
-    public static ForgeConfigSpec.BooleanValue REDUCE_MOB_DAMAGE;
-    public static ForgeConfigSpec.DoubleValue GUNSLINGER_RANGE;
+    public static final ModConfigSpec SPEC;
+    public static ModConfigSpec.IntValue RELOAD_TIME;
+    public static ModConfigSpec.IntValue AIM_TIME;
+    public static ModConfigSpec.BooleanValue CRAFT_HELLFIRE_CARTRIDGE;
+    public static ModConfigSpec.BooleanValue FIND_HELLFIRE_CARTRIDGE;
+    public static ModConfigSpec.BooleanValue BARTER_HELLFIRE_CARTRIDGE;
+    public static ModConfigSpec.BooleanValue REDUCE_MOB_DAMAGE;
+    public static ModConfigSpec.DoubleValue GUNSLINGER_RANGE;
 
     static {
-        ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder configBuilder = new ModConfigSpec.Builder();
         registerConfig(configBuilder);
         SPEC = configBuilder.build();
     }
 
-    public static void registerConfig(ForgeConfigSpec.Builder builder) {
+    public static void registerConfig(ModConfigSpec.Builder builder) {
 
         RELOAD_TIME = builder
                 .comment("The number of ticks needed to reload a musket. 20 ticks = 1 second.")

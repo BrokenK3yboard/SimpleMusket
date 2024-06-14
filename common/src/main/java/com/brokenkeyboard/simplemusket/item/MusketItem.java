@@ -4,6 +4,7 @@ import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
@@ -17,10 +18,9 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -35,7 +35,7 @@ public class MusketItem extends ProjectileWeaponItem {
     public static final Predicate<ItemStack> BULLETS = (stack) -> stack.getItem() instanceof BulletItem;
 
     public MusketItem(Properties properties) {
-        super(properties.defaultDurability(256));
+        super(properties.durability(256));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class MusketItem extends ProjectileWeaponItem {
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         if (!hasAmmo(stack)) return;
         if (isLoaded(stack)) {
-            double aimPerc = Math.min(((double) (getUseDuration(stack) - timeLeft) / getAim(stack)), 1.0);
+            double aimPerc = Math.min(((double) (getUseDuration() - timeLeft) / getAim(stack)), 1.0);
             float deviation = (float) (12 - aimPerc * 12);
             fire(entity, level, SoundSource.PLAYERS, stack, deviation);
         } else {
@@ -75,7 +75,7 @@ public class MusketItem extends ProjectileWeaponItem {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int timeLeft) {
-        int useTime = getUseDuration(stack) - timeLeft;
+        int useTime = getUseDuration() - timeLeft;
         int reloadTime = Config.RELOAD_TIME.get();
         SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
 
@@ -143,6 +143,11 @@ public class MusketItem extends ProjectileWeaponItem {
         stack.hurtAndBreak(bulletItem == ModRegistry.HELLFIRE_CARTRIDGE ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
 
+    @Override
+    protected void shootProjectile(LivingEntity livingEntity, Projectile projectile, int i, float v, float v1, float v2, @Nullable LivingEntity livingEntity1) {
+
+    }
+
     public static void spawnParticles(Level level, LivingEntity entity, Vec3 direction) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
@@ -172,10 +177,9 @@ public class MusketItem extends ProjectileWeaponItem {
 
     public static void setAmmo(ItemStack stack, ItemStack bullet) {
         if (bullet.getCount() < 1) {
-            stack.removeTagKey("LoadedProjectiles");
+            stack.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
         } else {
-            CompoundTag tag = new CompoundTag();
-            stack.addTagElement("LoadedProjectiles", bullet.save(tag));
+            stack.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(bullet));
         }
     }
 
@@ -194,22 +198,26 @@ public class MusketItem extends ProjectileWeaponItem {
     }
 
     public static boolean isLoaded(ItemStack stack) {
-        return stack.getOrCreateTag().getBoolean("Loaded");
+        return !stack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).isEmpty();
     }
 
     public static float getReloadPerc(ItemStack stack, float useTime) {
         return stack.getItem() instanceof MusketItem ? useTime / Config.RELOAD_TIME.get() : 0;
     }
 
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
-        if (hasAmmo(stack)) components.add(Component.translatable("item.minecraft.crossbow.projectile").append(CommonComponents.SPACE).append(getAmmo(stack).getDisplayName()));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext tooltip, List<Component> components, TooltipFlag flag) {
+        ChargedProjectiles projectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
+        if (projectiles != null && !projectiles.isEmpty()) {
+            ItemStack stack1 = projectiles.getItems().getFirst();
+            components.add(Component.translatable("item.minecraft.crossbow.projectile").append(CommonComponents.SPACE).append(stack1.getDisplayName()));
+        }
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
         return hasAmmo(stack) && isLoaded(stack) ? UseAnim.BOW : UseAnim.NONE;
     }
 
-    public int getUseDuration(ItemStack stack) {
+    public int getUseDuration() {
         return 72000;
     }
 }

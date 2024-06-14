@@ -23,13 +23,13 @@ public class HatModel<T extends LivingEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(T t, float v, float v1, float v2, float v3, float v4) {
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int i1, int i2) {
+        hat.render(poseStack,vertexConsumer, i, i1, i2);
+        hat_rim.render(poseStack,vertexConsumer, i, i1, i2);
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int i1, float v, float v1, float v2, float v3) {
-        hat.render(poseStack,vertexConsumer, i, i1, v, v1, v2, v3);
-        hat_rim.render(poseStack,vertexConsumer, i, i1, v, v1, v2, v3);
+    public void setupAnim(T t, float v, float v1, float v2, float v3, float v4) {
     }
 
     public static LayerDefinition createBodyLayer() {

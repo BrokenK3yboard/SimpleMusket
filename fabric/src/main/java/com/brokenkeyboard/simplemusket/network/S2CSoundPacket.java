@@ -1,14 +1,13 @@
 package com.brokenkeyboard.simplemusket.network;
 
 import com.brokenkeyboard.simplemusket.SimpleMusket;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import org.joml.Vector3f;
 
-public class S2CSoundPacket implements FabricPacket {
+public class S2CSoundPacket implements Packet {
 
     private final SoundEvent SOUND;
     private final SoundSource SOURCE;

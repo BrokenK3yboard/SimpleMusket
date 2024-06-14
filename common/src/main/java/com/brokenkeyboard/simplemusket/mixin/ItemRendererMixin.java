@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ItemRendererMixin {
 
     @Unique
-    private static final ModelResourceLocation MUSKET_MODEL = new ModelResourceLocation(Constants.MOD_ID, "musket_inventory", "inventory");
+    private static final ModelResourceLocation MUSKET_MODEL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_inventory"));
 
     @Shadow @Final private ItemModelShaper itemModelShaper;
 

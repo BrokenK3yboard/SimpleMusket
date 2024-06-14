@@ -22,7 +22,7 @@ public class ClientSetup implements ClientModInitializer {
 
         EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
         EntityRendererRegistry.register(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
         ModelLoadingPlugin.register(new SMModelPlugin());
         ModRegistry.registerItemProperties();
 

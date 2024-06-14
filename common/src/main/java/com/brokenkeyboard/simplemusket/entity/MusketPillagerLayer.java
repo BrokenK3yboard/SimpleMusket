@@ -14,12 +14,12 @@ import net.minecraft.resources.ResourceLocation;
 
 public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerModel<MusketPillager>> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/gunslinger_layer.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/gunslinger_layer.png");
     private final HatModel<MusketPillager> MODEL;
 
     public MusketPillagerLayer(LivingEntityRenderer<MusketPillager, IllagerModel<MusketPillager>> parent) {
         super(parent);
-        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay")));
+        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("simplemusket", "musket_pillager"), "overlay")));
     }
 
     @Override
