@@ -3,7 +3,6 @@ package com.brokenkeyboard.simplemusket.datagen;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.google.common.base.Suppliers;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -19,7 +18,7 @@ import java.util.function.Supplier;
 
 public class BastionLoot extends LootModifier {
 
-    public static final Supplier<Codec<BastionLoot>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, BastionLoot::new)));
+    public static final Supplier<MapCodec<BastionLoot>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, BastionLoot::new)));
 
     public BastionLoot(LootItemCondition[] conditions) {
         super(conditions);

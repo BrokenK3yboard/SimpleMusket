@@ -3,7 +3,7 @@ package com.brokenkeyboard.simplemusket.datagen;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.google.common.base.Suppliers;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.RandomSource;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 public class PiglinBarter extends LootModifier {
 
-    public static final Supplier<Codec<PiglinBarter>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, PiglinBarter::new)));
+    public static final Supplier<MapCodec<PiglinBarter>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, PiglinBarter::new)));
 
     public PiglinBarter(LootItemCondition[] conditions) {
         super(conditions);
@@ -31,7 +31,7 @@ public class PiglinBarter extends LootModifier {
         if (!Config.BARTER_HELLFIRE_CARTRIDGE.get()) return generatedLoot;
 
         RandomSource random = context.getRandom();
-        if (generatedLoot.size() == 1 && generatedLoot.get(0).getItem() == Items.SPECTRAL_ARROW && random.nextDouble() < 0.25) {
+        if (generatedLoot.size() == 1 && generatedLoot.getFirst().getItem() == Items.SPECTRAL_ARROW && random.nextDouble() < 0.25) {
             int amount = random.nextInt(2) + 2;
             generatedLoot.set(0, new ItemStack(ModRegistry.HELLFIRE_CARTRIDGE, amount));
         }
@@ -39,7 +39,7 @@ public class PiglinBarter extends LootModifier {
     }
 
     @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
+    public MapCodec<? extends IGlobalLootModifier> codec() {
         return CODEC.get();
     }
 }

@@ -4,10 +4,9 @@ import com.brokenkeyboard.simplemusket.datagen.BastionLoot;
 import com.brokenkeyboard.simplemusket.datagen.PiglinBarter;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -15,13 +14,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.InterModComms;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -34,15 +33,14 @@ import java.util.function.Consumer;
 @Mod(Constants.MOD_ID)
 public class SimpleMusket {
 
-    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Constants.MOD_ID);
-    public static final RegistryOps<Codec<? extends IGlobalLootModifier>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
-    public static final RegistryOps<Codec<? extends IGlobalLootModifier>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
+    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Constants.MOD_ID);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PiglinBarter>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
 
     public SimpleMusket(IEventBus bus) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        bus.register(ModConfig.Type.COMMON);
         register(Registries.ITEM, ModRegistry::registerItems);
         register(Registries.ENTITY_TYPE, ModRegistry::registerEntity);
-        register(Registries.ENCHANTMENT, ModRegistry::registerEnchants);
         register(Registries.MOB_EFFECT, ModRegistry::registerEffects);
         register(Registries.SOUND_EVENT, ModRegistry::registerSounds);
         GLM.register(bus);

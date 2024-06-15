@@ -111,14 +111,14 @@ public class ModRegistry {
 
         ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "loading"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                        && !MusketItem.hasAmmo(stack) ? 1.0F : 0.0F);
+                        && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
         ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "load_stage"),
-                (stack, world, living, id) -> (living == null || MusketItem.hasAmmo(stack)) ? 0.0F :
+                (stack, world, living, id) -> (living == null || MusketItem.isLoaded(stack)) ? 0.0F :
                         MusketItem.getReloadPerc(stack, stack.getUseDuration(living) - living.getUseItemRemainingTicks()));
 
         ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "loaded"),
-                (stack, world, living, id) -> living != null && MusketItem.hasAmmo(stack) ? 1.0F : 0.0F);
+                (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
         ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "aiming"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()

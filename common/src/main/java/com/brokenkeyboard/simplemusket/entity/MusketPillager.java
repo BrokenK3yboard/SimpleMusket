@@ -4,8 +4,8 @@ import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.goal.MusketAttackGoal;
 import com.brokenkeyboard.simplemusket.entity.goal.SawnOffGoal;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -15,7 +15,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -40,14 +39,10 @@ import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 import static com.brokenkeyboard.simplemusket.Config.GUNSLINGER_RANGE;
 
@@ -143,7 +138,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        this.writeInventoryToTag(tag);
+        this.writeInventoryToTag(tag, this.registryAccess());
         tag.putInt("Sawnoff_cooldown", sawnoffCooldown);
         tag.putInt("Attack_cooldown", sawnoffCooldown);
     }
@@ -161,7 +156,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.readInventoryFromTag(tag);
+        this.readInventoryFromTag(tag, this.registryAccess());
         this.setCanPickUpLoot(true);
         sawnoffCooldown = tag.getInt("Sawnoff_cooldown");
         attackCooldown = tag.getInt("Attack_cooldown");
@@ -175,19 +170,17 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
         return 1;
     }
 
-    @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficulty, MobSpawnType type, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficulty, MobSpawnType type, SpawnGroupData data) {
         RandomSource randomsource = accessor.getRandom();
         this.populateDefaultEquipmentSlots(randomsource, difficulty);
-        this.populateDefaultEquipmentEnchantments(randomsource, difficulty);
-        return super.finalizeSpawn(accessor, difficulty, type, groupData, tag);
+        // this.populateDefaultEquipmentEnchantments($$0, $$4, $$1);
+        return super.finalizeSpawn(accessor, difficulty, type, data);
     }
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficulty) {
         ItemStack stack = new ItemStack(ModRegistry.MUSKET);
         MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE));
-        MusketItem.setLoaded(stack, true);
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
     }
 
@@ -205,9 +198,9 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
 
     public void useMusket(ItemStack stack) {
         MusketItem musket = (MusketItem) stack.getItem();
-        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE, stack);
-        double deviation = (float) (8 - level().getDifficulty().getId() * 2);
-        musket.fire(this, level(), SoundSource.HOSTILE, stack, deadeye > 0 ? deviation * (1 - (0.125 + 0.125 * deviation)) : deviation);
+        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(ModRegistry.DEADEYE), stack);
+        float deviation = (float) (8 - level().getDifficulty().getId() * 2);
+        musket.fire(level(), this, this.getUsedItemHand(), stack, 4F, deviation, this.getTarget(), SoundSource.HOSTILE);
     }
 
     public SimpleContainer getInventory() {
@@ -242,21 +235,7 @@ public class MusketPillager extends AbstractIllager implements InventoryCarrier 
     public void applyRaidBuffs(ServerLevel serverLevel, int value, boolean bool) {
         Raid raid = this.getCurrentRaid();
         if (raid == null || this.random.nextFloat() > raid.getEnchantOdds()) return;
-        ItemStack stack = new ItemStack(ModRegistry.MUSKET);
-        Map<Enchantment, Integer> map = Maps.newHashMap();
-
-        if (value > raid.getNumGroups(Difficulty.HARD)) {
-            map.put(ModRegistry.REPEATING, 1);
-            map.put(ModRegistry.FIREPOWER, 2);
-        } else if (value > raid.getNumGroups(Difficulty.NORMAL)) {
-            map.put(ModRegistry.FIREPOWER, 2);
-        } else if (value > raid.getNumGroups(Difficulty.EASY)) {
-            map.put(ModRegistry.FIREPOWER, 1);
-        }
-
-        map.put(ModRegistry.DEADEYE, 1);
-        EnchantmentHelper.setEnchantments(map, stack);
-        this.setItemSlot(EquipmentSlot.MAINHAND, stack);
+        System.out.println("NO BUFFS YET");
     }
 
     @Override

@@ -27,6 +27,7 @@ public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerMode
         if (pillager.isInvisible()) return;
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         this.getParentModel().getHead().translateAndRotate(poseStack);
-        MODEL.renderToBuffer(poseStack, vertexConsumer, i, LivingEntityRenderer.getOverlayCoords(pillager, 0.0F), 1.0F, 1.0F, 1.0F, 1.0F);
+        // MODEL.renderToBuffer(poseStack, vertexConsumer, i, LivingEntityRenderer.getOverlayCoords(pillager, 0.0F), 1.0F, 1.0F, 1.0F, 1.0F); REMOVE/FIX
+        MODEL.renderToBuffer(poseStack, vertexConsumer, 1, 1, 1);
     }
 }

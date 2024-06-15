@@ -3,7 +3,6 @@ package com.brokenkeyboard.simplemusket.tags;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.EnchantmentTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;

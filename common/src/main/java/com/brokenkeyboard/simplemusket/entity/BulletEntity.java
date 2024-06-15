@@ -5,7 +5,6 @@ import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +18,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class BulletEntity extends Projectile {
@@ -89,7 +87,7 @@ public class BulletEntity extends Projectile {
         }
 
         if (target instanceof LivingEntity livingEntity) {
-            if (isHoly && livingEntity.getType() == MobType.UNDEAD) damage *= 2;
+            // if (isHoly && livingEntity.getType() == level().registryAccess().lookupOrThrow(Registries.)) damage *= 2; FIX LATER
             if (blast > 0 && initialPos.distanceTo(livingEntity.position()) <= 8) damage *= 1.25;
 
             double armor = livingEntity.getAttributes().hasAttribute(Attributes.ARMOR) ? Objects.requireNonNull(livingEntity.getAttribute(Attributes.ARMOR)).getValue() : 0;
@@ -101,9 +99,11 @@ public class BulletEntity extends Projectile {
             }
         }
 
+        /* FIX LATER
         if (entity.hurt(bullet(this, this.getOwner()), (float) damage) && entity instanceof LivingEntity livingEntity && isHellfire) {
             livingEntity.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE, 300));
         }
+         */
         this.discard();
     }
 
@@ -113,7 +113,7 @@ public class BulletEntity extends Projectile {
         this.discard();
     }
 
-    protected DamageSource bullet(BulletEntity bullet, @Nullable Entity attacker) {
+    protected DamageSource bullet(BulletEntity bullet, Entity attacker) {
         return level().damageSources().source(Constants.BULLET, bullet, attacker);
     }
 

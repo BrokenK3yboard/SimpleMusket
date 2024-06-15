@@ -1,7 +1,4 @@
-@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 package com.brokenkeyboard.simplemusket.item;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;

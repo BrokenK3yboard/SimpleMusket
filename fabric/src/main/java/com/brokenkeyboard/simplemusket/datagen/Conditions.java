@@ -4,10 +4,13 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.jetbrains.annotations.Nullable;
 
 public class Conditions {
 
@@ -22,25 +25,19 @@ public class Conditions {
         return false;
     }
 
-    public static ConditionJsonProvider configBooleans(ResourceLocation id, String... configValues) {
+    public static ResourceCondition configBooleans(ResourceLocation id, String... configValues) {
         Preconditions.checkArgument(configValues.length > 0, "Must register at least one config boolean.");
 
-        return new ConditionJsonProvider() {
+        return new ResourceCondition() {
 
             @Override
-            public ResourceLocation getConditionId() {
-                return id;
+            public ResourceConditionType<?> getType() {
+                return null;
             }
 
             @Override
-            public void writeParameters(JsonObject object) {
-                JsonArray array = new JsonArray();
-
-                for (String fieldName : configValues) {
-                    array.add(fieldName);
-                }
-
-                object.add("values", array);
+            public boolean test(@Nullable HolderLookup.Provider registryLookup) {
+                return false;
             }
         };
     }

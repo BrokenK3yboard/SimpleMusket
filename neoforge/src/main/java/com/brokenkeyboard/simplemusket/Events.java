@@ -1,13 +1,12 @@
 package com.brokenkeyboard.simplemusket;
 
-import com.brokenkeyboard.simplemusket.datagen.conditions.EnchantedCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.HellfireCondition;
 import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.HatModel;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import com.brokenkeyboard.simplemusket.network.Network;
+import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -28,6 +27,7 @@ import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.api.distmarker.Dist;
@@ -41,6 +41,9 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.List;
@@ -56,8 +59,7 @@ public class Events {
         @SubscribeEvent
         public static void onRegisterEvent(final RegisterEvent event) {
             event.register(Registries.RECIPE_SERIALIZER, helper -> {
-                CraftingHelper.register(EnchantedCondition.SERIALIZER);
-                CraftingHelper.register(HellfireCondition.SERIALIZER);
+                // helper.register(HellfireCondition.CODEC);
             });
         }
 
@@ -69,7 +71,6 @@ public class Events {
 
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
-            event.enqueueWork(Network::register);
             Raid.RaiderType.create(MUSKET_PILLAGER.toString(), MUSKET_PILLAGER, new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
             ModRegistry.registerSensorGoal();
         }
@@ -89,6 +90,12 @@ public class Events {
             event.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     PatrollingMonster::checkPatrollingMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         }
+
+        @SubscribeEvent
+        public static void register(final RegisterPayloadHandlersEvent event) {
+            final PayloadRegistrar registrar = event.registrar("1");
+            registrar.playToClient(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC, NeoPacketHandler::handleData);
+        }
     }
 
     @EventBusSubscriber(modid = Constants.MOD_ID)
@@ -105,8 +112,8 @@ public class Events {
         public static void addTrades(VillagerTradesEvent event) {
             if(event.getType() != VillagerProfession.WEAPONSMITH) return;
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
-            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F));
-            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE, 4), 16, 1, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemCost(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemCost(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE, 4), 16, 1, 0.05F));
         }
     }
 
@@ -119,7 +126,7 @@ public class Events {
             ItemStack stack = player.getItemInHand(event.getEntity().getUsedItemHand());
 
             if (stack.getItem() instanceof MusketItem && MusketItem.isLoaded(stack) && player.isUsingItem()) {
-                int deadeye = EnchantmentHelper.getTagEnchantmentLevel(ModRegistry.DEADEYE, stack);
+                int deadeye = EnchantmentHelper.getTagEnchantmentLevel(player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(ModRegistry.DEADEYE), stack);
                 if (deadeye > 0) {
                     float multiplier = 2 + deadeye;
                     event.getInput().leftImpulse *= multiplier;
@@ -134,13 +141,13 @@ public class Events {
             InteractionHand hand = player.getUsedItemHand();
             if (player.getItemInHand(hand).getItem() instanceof MusketItem) {
                 HumanoidModel<Player> model = event.getRenderer().getModel();
-                if (MusketItem.hasAmmo(player.getItemInHand(hand))) {
+                if (MusketItem.isLoaded(player.getItemInHand(hand))) {
                     if (hand == InteractionHand.MAIN_HAND) {
                         model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
                     } else {
                         model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
                     }
-                } else if (player.isUsingItem() && !MusketItem.hasAmmo(player.getItemInHand(hand))) {
+                } else if (player.isUsingItem() && !MusketItem.isLoaded(player.getItemInHand(hand))) {
                     if (hand == InteractionHand.MAIN_HAND) {
                         model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
                     } else {

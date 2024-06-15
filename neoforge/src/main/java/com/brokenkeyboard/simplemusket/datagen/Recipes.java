@@ -4,6 +4,7 @@ import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.datagen.conditions.EnchantedCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.HellfireCondition;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -17,10 +18,12 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Recipes extends RecipeProvider implements IConditionBuilder {
 
-    public Recipes(PackOutput output) {
-        super(output);
+    public Recipes(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+        super(output, provider);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
                         .unlockedBy("has_" + ingredient.toString().toLowerCase(), has(ingredient))
                         .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
                         .unlockedBy("has_paper", has(Items.PAPER))
-                        ::save
+                        .save(output, ID)
         ).generateAdvancement().build(output, ID);
     }
 }

@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
+import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
@@ -95,14 +96,14 @@ public class MusketAttackGoal extends Goal {
 
             MOB.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-            if (!MusketItem.hasAmmo(stack) && !moving) {
+            if (!MusketItem.isLoaded(stack) && !moving) {
                 MOB.startUsingItem(hand);
                 MOB.setReloading(true);
-            } else if (MusketItem.hasAmmo(stack) && !MusketItem.isLoaded(stack) && MOB.isUsingItem()) {
+            } else if (!MusketItem.isLoaded(stack) && MOB.isUsingItem() && MOB.getTicksUsingItem() > Config.RELOAD_TIME.get()) {
                 MOB.releaseUsingItem();
                 MOB.setReloading(false);
                 attackDelay = 50 + MOB.getRandom().nextInt(30);
-            } else if (MusketItem.hasAmmo(stack) && MusketItem.isLoaded(stack)) {
+            } else if (MusketItem.isLoaded(stack)) {
                 if (attackDelay > 0) {
                     --attackDelay;
                 } else if (hasLOS && MOB.getAttackCD() <= 0) {

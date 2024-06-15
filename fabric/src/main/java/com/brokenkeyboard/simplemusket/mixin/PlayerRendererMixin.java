@@ -18,10 +18,10 @@ public class PlayerRendererMixin {
     private static void getArmPose(AbstractClientPlayer player, InteractionHand hand, CallbackInfoReturnable<HumanoidModel.ArmPose> cir) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() instanceof MusketItem) {
-            if (MusketItem.hasAmmo(stack)) {
+            if (MusketItem.isLoaded(stack)) {
                 cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_HOLD);
                 cir.cancel();
-            } else if (player.isUsingItem() && !MusketItem.hasAmmo(stack)) {
+            } else if (player.isUsingItem() && !MusketItem.isLoaded(stack)) {
                 cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_CHARGE);
                 cir.cancel();
             }

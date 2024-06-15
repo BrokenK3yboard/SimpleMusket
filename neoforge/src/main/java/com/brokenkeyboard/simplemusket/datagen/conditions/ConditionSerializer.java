@@ -1,24 +1,20 @@
 package com.brokenkeyboard.simplemusket.datagen.conditions;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.conditions.ICondition;
 
 import java.util.function.Supplier;
 
-public record ConditionSerializer<T extends ICondition>(ResourceLocation id, Supplier<T> supplier) implements IConditionSerializer<T> {
+public record ConditionSerializer<T extends ICondition>(ResourceLocation id, Supplier<T> supplier) implements ICondition {
 
     @Override
-    public void write(JsonObject json, T value) {
+    public boolean test(IContext context) {
+        return false;
     }
 
     @Override
-    public T read(JsonObject json) {
-        return supplier.get();
-    }
-
-    @Override
-    public ResourceLocation getID() {
-        return id;
+    public MapCodec<? extends ICondition> codec() {
+        return null;
     }
 }

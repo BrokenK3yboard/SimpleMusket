@@ -6,7 +6,7 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,8 +25,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -45,16 +43,14 @@ public class MusketItem extends ProjectileWeaponItem {
 
     @Override
     public int getDefaultProjectileRange() {
-        return 24;
+        return 40;
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        boolean hasAmmo = getAllSupportedProjectiles().test(player.getProjectile(stack)) || player.getAbilities().instabuild;
 
-        if ((hasAmmo || hasAmmo(stack)) && !player.isEyeInFluid(FluidTags.WATER)) {
-            if (hasAmmo(stack) && !isLoaded(stack)) setLoaded(stack, true);
+        if ((isLoaded(stack) || (getAllSupportedProjectiles().test(player.getProjectile(stack)) || player.getAbilities().instabuild)) && !player.isEyeInFluid(FluidTags.WATER)) {
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
         }
@@ -63,13 +59,21 @@ public class MusketItem extends ProjectileWeaponItem {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        if (!hasAmmo(stack)) return;
         if (isLoaded(stack)) {
-            double aimPerc = Math.min(((double) (getUseDuration() - timeLeft) / getAim(stack)), 1.0);
+            double aimPerc = Math.min(((double) (getUseDuration() - timeLeft) / getAim(stack, entity)), 1.0);
             float deviation = (float) (12 - aimPerc * 12);
-            fire(entity, level, SoundSource.PLAYERS, stack, deviation);
-        } else {
-            setLoaded(stack, true);
+            fire(level, entity, entity.getUsedItemHand(), stack, 4F, deviation, null, SoundSource.PLAYERS);
+        } else if (getUseDuration() - timeLeft >= Config.RELOAD_TIME.get()) {
+            if ((entity instanceof Player player && player.getAbilities().instabuild) || !(entity instanceof Player)) {
+                setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE));
+            } else {
+                ItemStack ammo = entity.getProjectile(stack);
+                setAmmo(stack, new ItemStack(ammo.getItem()));
+                ammo.shrink(1);
+                if (ammo.isEmpty()) {
+                    ((Player) entity).getInventory().removeItem(ammo);
+                }
+            }
         }
     }
 
@@ -79,73 +83,49 @@ public class MusketItem extends ProjectileWeaponItem {
         int reloadTime = Config.RELOAD_TIME.get();
         SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
 
-        if (useTime >= reloadTime && !hasAmmo(stack)) {
-            ItemStack ammo = entity.getProjectile(stack);
-            int amount = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.REPEATING, stack) + 1;
-
-            if (entity instanceof Player player) {
-                if (player.getAbilities().instabuild) {
-                    setAmmo(stack, new ItemStack(getAllSupportedProjectiles().test(ammo) ? ammo.getItem() : ModRegistry.CARTRIDGE, amount));
-                } else if (!ammo.isEmpty()) {
-                    setAmmo(stack, new ItemStack(ammo.getItem(), amount));
-                    ammo.shrink(1);
-                    if (ammo.isEmpty()) (player).getInventory().removeItem(ammo);
-                }
-            } else {
-                setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, amount));
-            }
-
-            level.playSound(null, entity, ModRegistry.MUSKET_READY, source, 1F, 0.8F);
-        } else if (!isLoaded(stack)) {
+        if (!isLoaded(stack)) {
             if (Math.floor(reloadTime * 0.12) == useTime) {
                 level.playSound(null, entity, ModRegistry.MUSKET_LOAD_0, source, 1F, 0.8F);
             } else if (Math.floor(reloadTime * 0.6) == useTime) {
                 level.playSound(null, entity, ModRegistry.MUSKET_LOAD_1, source, 1F, 0.8F);
+            } else if (reloadTime == useTime) {
+                level.playSound(null, entity, ModRegistry.MUSKET_READY, source, 1F, 0.8F);
             }
         }
     }
 
-    public void fire(LivingEntity entity, Level level, SoundSource source, ItemStack stack, double deviation) {
-        if (level.isClientSide || (entity instanceof Mob mob && mob.getTarget() == null)) return;
+    public void fire(Level level, LivingEntity entity, InteractionHand hand, ItemStack stack, float power, float deviation, LivingEntity target, SoundSource source) {
+        if (!(level instanceof ServerLevel serverLevel) || (entity instanceof Mob mob && mob.getTarget() == null)) return;
 
-        Vec3 pos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
-        ArrayList<BulletEntity> projectiles = new ArrayList<>();
-        ItemStack bulletStack = getAmmo(stack);
-        BulletItem bulletItem = (BulletItem) bulletStack.getItem();
-        int ammoCount = bulletStack.getCount();
-        int longshot = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.LONGSHOT, stack);
-        int blast = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.BLAST, stack);
-        double damage = bulletItem.DAMAGE;
-        double piercing = Math.min(bulletItem.PIERCING + EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.FIREPOWER, stack) * 0.1, 1);
-        boolean isHoly = bulletItem == ModRegistry.ENCHANTED_CARTRIDGE;
-        boolean isHellfire = bulletItem == ModRegistry.HELLFIRE_CARTRIDGE;
-
-        for (int i = 0; i < (blast > 0 ? 4 * blast : 1); i++) {
-            projectiles.add(new BulletEntity(level, entity, pos, (i > 0 ? damage * 0.25 : damage), piercing, longshot, (i > 0 ? 0 : blast), (i > 0 ? 12 : 60), (i > 0 ? 18F : deviation), isHoly, isHellfire));
+        ChargedProjectiles projectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
+        if (projectiles != null && !projectiles.isEmpty()) {
+            this.shoot(serverLevel, entity, hand, stack, projectiles.getItems(), power, deviation, entity instanceof Player, target);
+            ItemStack bullet = getLoadedAmmo(stack);
+            setAmmo(stack, new ItemStack(stack.getItem(), bullet.getCount() - 1));
         }
-
-        for (BulletEntity bullet : projectiles) {
-            bullet.setPos(pos);
-            if (entity instanceof Mob mob) {
-                bullet.setDamageScaling(Config.REDUCE_MOB_DAMAGE.get() ? 0.75 : 1);
-                Vec3 direction = mobTargetVec(mob, mob.getTarget());
-                bullet.shoot(direction.x(), direction.y(), direction.z(), 4F, bullet.getDeviation());
-            } else {
-                bullet.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, bullet.getDeviation());
-            }
-            level.addFreshEntity(bullet);
-        }
-
-        setAmmo(stack, new ItemStack(bulletItem, ammoCount - 1));
-        setLoaded(stack, ammoCount > 1);
         spawnParticles(level, entity, entity instanceof Mob mob ? mobTargetVec(mob, mob.getTarget()) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
         Services.PLATFORM.playSound(ModRegistry.MUSKET_FIRE, source, (ServerLevel) level, entity.position());
-        stack.hurtAndBreak(bulletItem == ModRegistry.HELLFIRE_CARTRIDGE ? 3 : 1, entity, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
 
     @Override
-    protected void shootProjectile(LivingEntity livingEntity, Projectile projectile, int i, float v, float v1, float v2, @Nullable LivingEntity livingEntity1) {
+    protected void shootProjectile(LivingEntity entity, Projectile projectile, int index, float power, float deviation, float v2, LivingEntity target) {
+        projectile.setPos(entity.getX(), entity.getEyeY(), entity.getZ());
+        if (entity instanceof Mob mob) {
+            // bullet.setDamageScaling(Config.REDUCE_MOB_DAMAGE.get() ? 0.75 : 1); FIX LATER
+            Vec3 direction = mobTargetVec(mob, mob.getTarget());
+            projectile.shoot(direction.x(), direction.y(), direction.z(), 4F, deviation);
+        } else {
+            projectile.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, deviation);
+        }
+    }
 
+    @Override
+    protected Projectile createProjectile(Level level, LivingEntity entity, ItemStack weapon, ItemStack ammo, boolean $$4) {
+        Vec3 pos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
+        if (ammo.getItem() instanceof BulletItem bullet) {
+            return new BulletEntity(level, entity, pos, bullet.DAMAGE, bullet.PIERCING, 0, 0, 60, 12F, false, false);
+        }
+        return new BulletEntity(level, entity, pos, 16, 0.5, 0, 0, 60, 12F, false, false);
     }
 
     public static void spawnParticles(Level level, LivingEntity entity, Vec3 direction) {
@@ -170,8 +150,8 @@ public class MusketItem extends ProjectileWeaponItem {
         return new Vec3(target.getX() - mob.getX(), vecY, target.getZ() - mob.getZ()).normalize();
     }
 
-    public int getAim(ItemStack stack) {
-        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.DEADEYE, stack);
+    public int getAim(ItemStack stack, LivingEntity entity) {
+        int deadeye = EnchantmentHelper.getItemEnchantmentLevel(entity.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(ModRegistry.DEADEYE), stack);
         return (int) (deadeye > 0 ? Config.AIM_TIME.get() * (1 - (0.125 + 0.125 * deadeye)) : Config.AIM_TIME.get());
     }
 
@@ -183,22 +163,14 @@ public class MusketItem extends ProjectileWeaponItem {
         }
     }
 
-    public static ItemStack getAmmo(ItemStack stack) {
-        CompoundTag tag = stack.getTagElement("LoadedProjectiles");
-        boolean valid = tag != null && stack.getItem() instanceof MusketItem;
-        return valid && ((MusketItem)stack.getItem()).getAllSupportedProjectiles().test(ItemStack.of(tag)) ? ItemStack.of(tag) : ItemStack.EMPTY;
-    }
-
-    public static boolean hasAmmo(ItemStack stack) {
-        return !getAmmo(stack).is(ItemStack.EMPTY.getItem());
-    }
-
-    public static void setLoaded(ItemStack stack, boolean value) {
-        stack.getOrCreateTag().putBoolean("Loaded", value);
+    public static ItemStack getLoadedAmmo(ItemStack stack) {
+        ChargedProjectiles projectiles = stack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
+        ItemStack stack1 = projectiles.getItems().getFirst();
+        return stack.getItem() instanceof MusketItem musket && musket.getAllSupportedProjectiles().test(stack1) ? stack1 : ItemStack.EMPTY;
     }
 
     public static boolean isLoaded(ItemStack stack) {
-        return !stack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).isEmpty();
+        return !getLoadedAmmo(stack).is(ItemStack.EMPTY.getItem());
     }
 
     public static float getReloadPerc(ItemStack stack, float useTime) {
@@ -214,7 +186,7 @@ public class MusketItem extends ProjectileWeaponItem {
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
-        return hasAmmo(stack) && isLoaded(stack) ? UseAnim.BOW : UseAnim.NONE;
+        return isLoaded(stack) && isLoaded(stack) ? UseAnim.BOW : UseAnim.NONE;
     }
 
     public int getUseDuration() {

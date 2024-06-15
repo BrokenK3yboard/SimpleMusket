@@ -30,32 +30,33 @@ import static com.brokenkeyboard.simplemusket.ModRegistry.BULLET_ENTITY;
 @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Datagen {
 
-    private static final RegistrySetBuilder DAMAGETYPE_BUILDER = new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, Datagen::bootstrap);
-    private static final RegistrySetBuilder ENCHANTMENT_BUILDER = new RegistrySetBuilder().add(Registries.ENCHANTMENT, Datagen::enchantmentBootstrap);
+    private static final RegistrySetBuilder DAMAGETYPE_BUILDER = new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, Datagen::damageTypeBC);
+    private static final RegistrySetBuilder ENCHANTMENT_BUILDER = new RegistrySetBuilder().add(Registries.ENCHANTMENT, Datagen::enchantmentBC);
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-        DatapackBuiltinEntriesProvider provider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), DAMAGETYPE_BUILDER, Set.of(Constants.MOD_ID));
-        // DatapackBuiltinEntriesProvider provider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), ENCHANTMENT_BUILDER, Set.of(Constants.MOD_ID));
-        CompletableFuture<HolderLookup.Provider> lookupProvider = provider.getRegistryProvider();
+        DatapackBuiltinEntriesProvider damageProvider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), DAMAGETYPE_BUILDER, Set.of(Constants.MOD_ID));
+        DatapackBuiltinEntriesProvider enchantProvider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), ENCHANTMENT_BUILDER, Set.of(Constants.MOD_ID));
+        CompletableFuture<HolderLookup.Provider> lookupProvider = damageProvider.getRegistryProvider();
 
         if (event.includeServer()) {
-            generator.addProvider(true, new Recipes(output));
-            generator.addProvider(true, provider);
+            generator.addProvider(true, damageProvider);
+            generator.addProvider(true, enchantProvider);
+            generator.addProvider(true, new Recipes(output, lookupProvider));
+            generator.addProvider(true, new GLMProvider(output, lookupProvider));
             generator.addProvider(true, new DamageTags(output, lookupProvider, event.getExistingFileHelper()));
             generator.addProvider(true, new EntityTags(output, lookupProvider, event.getExistingFileHelper()));
-            generator.addProvider(true, new GLMProvider(output, lookupProvider));
         }
     }
 
-    protected static void bootstrap(BootstrapContext<DamageType> context) {
+    protected static void damageTypeBC(BootstrapContext<DamageType> context) {
         context.register(Constants.BULLET, new DamageType("bullet", 0.5F));
 
     }
 
-    protected static void enchantmentBootstrap(BootstrapContext<Enchantment> context) {
+    protected static void enchantmentBC(BootstrapContext<Enchantment> context) {
         context.register(ModRegistry.FIREPOWER,
                 Enchantment.enchantment(Enchantment.definition(context.lookup(Registries.ITEM)
                         .getOrThrow(net.minecraft.tags.ItemTags.BOW_ENCHANTABLE), 10, 5, Enchantment.dynamicCost(1, 10), Enchantment.dynamicCost(16, 10), 1, EquipmentSlotGroup.MAINHAND))

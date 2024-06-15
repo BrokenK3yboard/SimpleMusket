@@ -4,16 +4,15 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.HatModel;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.network.ClientPacketHandler;
+import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import org.joml.Vector3f;
 
 public class ClientSetup implements ClientModInitializer {
 
@@ -26,11 +25,9 @@ public class ClientSetup implements ClientModInitializer {
         ModelLoadingPlugin.register(new SMModelPlugin());
         ModRegistry.registerItemProperties();
 
-        ClientPlayNetworking.registerGlobalReceiver(SimpleMusket.SOUND_TYPE.getId(), (client, handler, buf, responseSender) -> {
-                SoundEvent sound = SoundEvent.readFromNetwork(buf);
-                SoundSource source = buf.readEnum(SoundSource.class);
-                Vector3f location = buf.readVector3f();
-                client.execute(() -> ClientPacketHandler.playSound(sound, source, location)
-        );});
+        PayloadTypeRegistry.playC2S().register(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC);
+
+        ClientPlayNetworking.registerGlobalReceiver(S2CSoundPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> ClientPacketHandler.playSound(payload.playerSource(), payload.pos())));
     }
 }
