@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -21,9 +20,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void playSound(SoundEvent sound, SoundSource source, ServerLevel level, Vec3 origin) {
+    public void playSound(SoundSource source, ServerLevel level, Vec3 origin) {
+        boolean isPlayerSource = source.equals(SoundSource.PLAYERS);
         for (ServerPlayer serverPlayer : PlayerLookup.around(level, origin, 128)) {
-            ServerPlayNetworking.send(serverPlayer, new S2CSoundPayload(true, origin.toVector3f()));
+            ServerPlayNetworking.send(serverPlayer, new S2CSoundPayload(isPlayerSource, origin.toVector3f()));
         }
     }
 

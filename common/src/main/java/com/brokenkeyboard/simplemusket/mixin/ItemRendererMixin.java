@@ -20,14 +20,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ItemRendererMixin {
 
     @Unique
-    private static final ModelResourceLocation MUSKET_MODEL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_inventory"));
-
-    @Shadow @Final private ItemModelShaper itemModelShaper;
+    private static final ModelResourceLocation MUSKET_MODEL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket"));
+    @Shadow @Final
+    private ItemModelShaper itemModelShaper;
 
     @ModifyVariable(method = "render", at = @At("HEAD"), argsOnly = true)
     private BakedModel guiModel(BakedModel defaultModel, ItemStack stack, ItemDisplayContext context) {
-        if (context == ItemDisplayContext.GUI && stack.is(ModRegistry.MUSKET))
-            return this.itemModelShaper.getModelManager().getModel(MUSKET_MODEL);
-        return defaultModel;
+        return context == ItemDisplayContext.GUI && stack.is(ModRegistry.MUSKET) ? this.itemModelShaper.getModelManager().getModel(MUSKET_MODEL) : defaultModel;
     }
 }

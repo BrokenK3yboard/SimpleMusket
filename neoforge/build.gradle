@@ -29,7 +29,21 @@ runs {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+repositories {
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+    exclude '.cache'
+}
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"

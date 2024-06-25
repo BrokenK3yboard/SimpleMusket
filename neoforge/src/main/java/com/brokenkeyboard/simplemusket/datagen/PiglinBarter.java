@@ -1,6 +1,5 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
-import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
@@ -13,7 +12,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -25,14 +23,11 @@ public class PiglinBarter extends LootModifier {
         super(conditions);
     }
 
-    @NotNull
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        if (!Config.BARTER_HELLFIRE_CARTRIDGE.get()) return generatedLoot;
-
         RandomSource random = context.getRandom();
         if (generatedLoot.size() == 1 && generatedLoot.getFirst().getItem() == Items.SPECTRAL_ARROW && random.nextDouble() < 0.25) {
-            int amount = random.nextInt(2) + 2;
+            int amount = random.nextInt(3) + 3;
             generatedLoot.set(0, new ItemStack(ModRegistry.HELLFIRE_CARTRIDGE, amount));
         }
         return generatedLoot;

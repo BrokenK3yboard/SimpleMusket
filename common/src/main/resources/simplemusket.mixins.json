@@ -5,6 +5,11 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EnchantmentHelperMixin",
+    "EnchantmentMixin",
+    "EntityDeflectMixin",
+    "IronGolemMixin",
+    "LivingEntityMixin",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"
   ],

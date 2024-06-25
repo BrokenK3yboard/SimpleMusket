@@ -3,11 +3,13 @@ package com.brokenkeyboard.simplemusket.entity.goal;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.EnumSet;
 
@@ -74,7 +76,8 @@ public class SawnOffGoal extends Goal {
                     MOB.setSawnoffCD(120);
                     MOB.setAttackCD(20);
                     MOB.setUsingSawnOff(false);
-                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE)); // FIX REPEATING
+                    int amount = EnchantmentHelper.getItemEnchantmentLevel(MOB.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModRegistry.REPEATING), stack);
+                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, amount));
                 }
             }
         }

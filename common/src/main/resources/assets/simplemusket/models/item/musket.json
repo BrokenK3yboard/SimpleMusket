@@ -32,6 +32,7 @@
         {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.60}, "model": "simplemusket:item/musket_loading_4"},
         {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.75}, "model": "simplemusket:item/musket_loading_5"},
         {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 0.90}, "model": "simplemusket:item/musket_loading_6"},
+        {"predicate": {"simplemusket:loading": 1, "simplemusket:load_stage": 1.0}, "model": "simplemusket:item/musket_loading_7"},
         {"predicate": {"simplemusket:loaded": 1}, "model": "simplemusket:item/musket_loaded"},
         {"predicate": {"simplemusket:aiming": 1}, "model": "simplemusket:item/musket_aiming"},
         {"predicate": {"simplemusket:sawnoff": 1}, "model": "simplemusket:item/musket_sawnoff"}

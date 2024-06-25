@@ -29,8 +29,7 @@ public class HatModel<T extends LivingEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(T t, float v, float v1, float v2, float v3, float v4) {
-    }
+    public void setupAnim(T t, float v, float v1, float v2, float v3, float v4) {}
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshDefinition = new MeshDefinition();

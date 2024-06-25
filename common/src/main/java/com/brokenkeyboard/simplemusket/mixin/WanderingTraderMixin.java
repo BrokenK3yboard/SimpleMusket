@@ -20,6 +20,6 @@ public abstract class WanderingTraderMixin extends AbstractVillager {
 
     @Inject(method = "registerGoals", at = @At("RETURN"))
     public void registerGoals(CallbackInfo ci) {
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, MusketPillager.class, 24F, 0.5, 0.5));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, MusketPillager.class, 40F, 0.5, 0.5));
     }
 }

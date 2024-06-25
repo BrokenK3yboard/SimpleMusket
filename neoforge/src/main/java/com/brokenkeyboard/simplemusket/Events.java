@@ -1,6 +1,5 @@
 package com.brokenkeyboard.simplemusket;
 
-import com.brokenkeyboard.simplemusket.datagen.conditions.HellfireCondition;
 import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.HatModel;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
@@ -12,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -23,9 +22,9 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -35,33 +34,24 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.List;
-
-import static com.brokenkeyboard.simplemusket.ModRegistry.MUSKET_PILLAGER;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class Events {
 
     @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
-
-        @SubscribeEvent
-        public static void onRegisterEvent(final RegisterEvent event) {
-            event.register(Registries.RECIPE_SERIALIZER, helper -> {
-                // helper.register(HellfireCondition.CODEC);
-            });
-        }
 
         @SubscribeEvent
         public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
@@ -71,18 +61,12 @@ public class Events {
 
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
-            Raid.RaiderType.create(MUSKET_PILLAGER.toString(), MUSKET_PILLAGER, new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
             ModRegistry.registerSensorGoal();
         }
 
         @SubscribeEvent
         public static void clientSetup(final FMLClientSetupEvent event) {
             event.enqueueWork(ModRegistry::registerItemProperties);
-        }
-
-        @SubscribeEvent
-        public static void onAttributeCreate(EntityAttributeCreationEvent event) {
-            event.put(ModRegistry.MUSKET_PILLAGER, MusketPillager.createAttributes().build());
         }
 
         @SubscribeEvent
@@ -114,6 +98,7 @@ public class Events {
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemCost(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F));
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemCost(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE, 4), 16, 1, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemCost(Items.EMERALD, 3), new ItemStack(ModRegistry.ENCHANTED_CARTRIDGE, 4), 16, 1, 0.05F));
         }
     }
 
@@ -126,11 +111,14 @@ public class Events {
             ItemStack stack = player.getItemInHand(event.getEntity().getUsedItemHand());
 
             if (stack.getItem() instanceof MusketItem && MusketItem.isLoaded(stack) && player.isUsingItem()) {
-                int deadeye = EnchantmentHelper.getTagEnchantmentLevel(player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(ModRegistry.DEADEYE), stack);
-                if (deadeye > 0) {
-                    float multiplier = 2 + deadeye;
-                    event.getInput().leftImpulse *= multiplier;
-                    event.getInput().forwardImpulse *= multiplier;
+                Optional<Registry<Enchantment>> registry = player.level().registryAccess().registry(Registries.ENCHANTMENT);
+                if (registry.isPresent()) {
+                    int deadeye = EnchantmentHelper.getTagEnchantmentLevel(registry.get().getHolderOrThrow(ModRegistry.DEADEYE), stack);
+                    if (deadeye > 0) {
+                        float multiplier = 2 + deadeye;
+                        event.getInput().leftImpulse *= multiplier;
+                        event.getInput().forwardImpulse *= multiplier;
+                    }
                 }
             }
         }
@@ -174,11 +162,6 @@ public class Events {
 
     @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class RegisterModels {
-
-        @SubscribeEvent
-        public static void registerModels(ModelEvent.RegisterAdditional event) {
-            event.register(ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_inventory")));
-        }
 
         @SubscribeEvent
         public static void armorLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

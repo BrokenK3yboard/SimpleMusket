@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/entity/raid/Raid$RaiderType",
+      "name": "SIMPLEMUSKET_GUNSLINGER",
+      "constructor": "(Ljava/util/function/Supplier;[I)V",
+      "parameters": {
+        "class": "com/brokenkeyboard/simplemusket/SimpleMusket",
+        "method": "getRaiderEntity"
+      }
+    }
+  ]
+}

@@ -15,7 +15,18 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.0.0"
+    modImplementation include("fuzs.extensibleenums:extensibleenums-fabric:7.0.1")
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+    exclude '.cache'
 }
 
 loom {
@@ -38,6 +49,14 @@ loom {
             setConfigName("Fabric Server")
             ideConfigGenerated(true)
             runDir("runs/server")
+        }
+        commonData {
+            client()
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}"
+            vmArg "-Dfabric-api.datagen.modid=simplemusket"
+            ideConfigGenerated(true)
+            runDir "build/datagen"
         }
     }
 }

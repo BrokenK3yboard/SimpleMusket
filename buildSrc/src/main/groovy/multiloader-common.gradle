@@ -82,7 +82,7 @@ processResources {
             "license": license,
             "description": project.description,
             "neoforge_version": neo_version,
-            "neoforge_loader_version_range": neo_loader_version_range,
+            "neo_loader_version_range": neo_loader_version_range,
             "credits": credits,
             "java_version": java_version
     ]

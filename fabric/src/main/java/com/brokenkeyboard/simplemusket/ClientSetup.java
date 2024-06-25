@@ -6,7 +6,6 @@ import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.network.ClientPacketHandler;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -22,7 +21,6 @@ public class ClientSetup implements ClientModInitializer {
         EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
         EntityRendererRegistry.register(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
-        ModelLoadingPlugin.register(new SMModelPlugin());
         ModRegistry.registerItemProperties();
 
         PayloadTypeRegistry.playC2S().register(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC);

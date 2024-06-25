@@ -96,10 +96,10 @@ public class MusketAttackGoal extends Goal {
 
             MOB.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-            if (!MusketItem.isLoaded(stack) && !moving) {
+            if (!MusketItem.isLoaded(stack) && !MOB.isReloading()/* && !moving*/) {
                 MOB.startUsingItem(hand);
                 MOB.setReloading(true);
-            } else if (!MusketItem.isLoaded(stack) && MOB.isUsingItem() && MOB.getTicksUsingItem() > Config.RELOAD_TIME.get()) {
+            } else if (MOB.isReloading() && MOB.isUsingItem() && MOB.getTicksUsingItem() > Config.RELOAD_TIME.get()) {
                 MOB.releaseUsingItem();
                 MOB.setReloading(false);
                 attackDelay = 50 + MOB.getRandom().nextInt(30);

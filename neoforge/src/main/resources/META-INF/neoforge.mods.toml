@@ -13,6 +13,7 @@ logoFile = "${mod_id}.png"
 credits = "${credits}"
 authors = "${mod_author}"
 description = '''${description}'''
+enumExtensions="META-INF/enumextensions.json"
 
 [[dependencies.${mod_id}]]
 modId = "neoforge"
@@ -27,3 +28,6 @@ type="required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
+
+[[mixins]]
+config = "simplemusket.mixins.json"

@@ -22,7 +22,6 @@ public class GLMProvider extends GlobalLootModifierProvider {
         add("bastion_loot", new BastionLoot(new LootItemCondition[] {
                 new AnyOfCondition.Builder(
                         new LootTableIdCondition.Builder(BASTION_OTHER),
-                        new LootTableIdCondition.Builder(HOGLIN_STABLE),
                         new LootTableIdCondition.Builder(BASTION_TREASURE),
                         new LootTableIdCondition.Builder(BASTION_BRIDGE)
                 ).build()
