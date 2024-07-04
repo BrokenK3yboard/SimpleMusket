@@ -165,7 +165,7 @@ public class Events {
 
         @SubscribeEvent
         public static void armorLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
+            event.registerLayerDefinition(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_pillager"), "overlay"), HatModel::createBodyLayer);
         }
     }
 }

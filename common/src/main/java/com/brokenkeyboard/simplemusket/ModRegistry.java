@@ -6,11 +6,10 @@ import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.mixin.VillagerHostilesSensorAccessor;
+import com.brokenkeyboard.simplemusket.platform.Services;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -69,8 +68,8 @@ public class ModRegistry {
             .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     public static final MobEffect HEX = addEffect(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hex"), new ModEffect(MobEffectCategory.HARMFUL, 15724742));
 
-    public static final Holder<MobEffect> HELLFIRE_EFFECT = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "armor_decrease"), ARMOR_DECREASE);
-    public static final Holder<MobEffect> HEX_EFFECT = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hex"), HEX);
+    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createArmorDecreaseEffect();
+    public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createHexEffect();
 
     public static final SoundEvent MUSKET_LOAD_0 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0")));
     public static final SoundEvent MUSKET_LOAD_1 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1")));

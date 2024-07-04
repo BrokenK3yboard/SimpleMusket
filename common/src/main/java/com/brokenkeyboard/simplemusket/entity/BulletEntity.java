@@ -93,7 +93,7 @@ public class BulletEntity extends Projectile {
 
         if (entity.hurt(bullet(this, this.getOwner()), (float) damage) && entity instanceof LivingEntity living) {
             if (bullet.is(ModRegistry.HELLFIRE_CARTRIDGE)) {
-                living.addEffect(new MobEffectInstance(ModRegistry.HELLFIRE_EFFECT, 600));
+                living.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE_EFFECT, 600));
             } else if (bullet.is(ModRegistry.ENCHANTED_CARTRIDGE)) {
                 living.addEffect(new MobEffectInstance(ModRegistry.HEX_EFFECT, 600));
             }

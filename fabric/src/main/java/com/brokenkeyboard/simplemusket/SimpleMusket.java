@@ -39,10 +39,10 @@ public class SimpleMusket implements ModInitializer {
 
         NeoForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.COMMON, Config.SPEC);
 
-        ModRegistry.registerEntity(bind(BuiltInRegistries.ENTITY_TYPE));
-        ModRegistry.registerItems(bind(BuiltInRegistries.ITEM));
-        ModRegistry.registerEffects(bind(BuiltInRegistries.MOB_EFFECT));
-        ModRegistry.registerSounds(bind(BuiltInRegistries.SOUND_EVENT));
+        ModRegistry.registerEntity(register(BuiltInRegistries.ENTITY_TYPE));
+        ModRegistry.registerItems(register(BuiltInRegistries.ITEM));
+        ModRegistry.registerEffects(register(BuiltInRegistries.MOB_EFFECT));
+        ModRegistry.registerSounds(register(BuiltInRegistries.SOUND_EVENT));
         ModRegistry.createEntityAttributes(FabricDefaultAttributeRegistry::register);
 
         BuiltInEnumFactories.createRaiderType(ModRegistry.MUSKET_PILLAGER.toString(), ModRegistry.MUSKET_PILLAGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
@@ -78,7 +78,7 @@ public class SimpleMusket implements ModInitializer {
         });
     }
 
-    private static <T> BiConsumer<ResourceLocation, T> bind(Registry<? super T> registry) {
+    private static <T> BiConsumer<ResourceLocation, T> register(Registry<? super T> registry) {
         return (location, t) -> Registry.register(registry, location, t);
     }
 }
