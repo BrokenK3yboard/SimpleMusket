@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.mixin;
 
+import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -22,8 +23,7 @@ public abstract class IronGolemMixin extends EntityDeflectMixin {
     @Override
     public void deflect(Projectile projectile, CallbackInfoReturnable<ProjectileDeflection> cir) {
         if (projectile instanceof BulletEntity bullet) {
-            ((IronGolem) (Object) this).hurt(bullet.bullet(bullet, projectile.getOwner()), (float) (bullet.getDamage() / 4));
-            bullet.setDeflected();
+            ((IronGolem) (Object) this).hurt(bullet.damageSource(bullet, projectile.getOwner()), bullet.getDamage() * 0.25F);
             cir.setReturnValue(BULLET_DEFLECTION);
         }
     }

@@ -4,7 +4,9 @@ import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
 import com.brokenkeyboard.simplemusket.entity.HatModel;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
+import com.brokenkeyboard.simplemusket.item.BulletDispenseBehavior;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.network.ClientPacketHandler;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
@@ -28,6 +30,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -43,6 +46,7 @@ import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +66,9 @@ public class Events {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             ModRegistry.registerSensorGoal();
+            DispenserBlock.registerBehavior(ModRegistry.CARTRIDGE, new BulletDispenseBehavior(ModRegistry.CARTRIDGE));
+            DispenserBlock.registerBehavior(ModRegistry.ENCHANTED_CARTRIDGE, new BulletDispenseBehavior(ModRegistry.ENCHANTED_CARTRIDGE));
+            DispenserBlock.registerBehavior(ModRegistry.HELLFIRE_CARTRIDGE, new BulletDispenseBehavior(ModRegistry.HELLFIRE_CARTRIDGE));
         }
 
         @SubscribeEvent
@@ -78,7 +85,11 @@ public class Events {
         @SubscribeEvent
         public static void register(final RegisterPayloadHandlersEvent event) {
             final PayloadRegistrar registrar = event.registrar("1");
-            registrar.playToClient(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC, NeoPacketHandler::handleData);
+            registrar.playToClient(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC, (data, context) -> {
+                String source = data.soundSource();
+                Vector3f pos = data.pos();
+                context.enqueueWork(() -> ClientPacketHandler.playSound(source, pos));
+            });
         }
     }
 

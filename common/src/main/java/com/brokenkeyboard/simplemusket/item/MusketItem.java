@@ -111,7 +111,6 @@ public class MusketItem extends ProjectileWeaponItem {
 
     @Override
     protected void shootProjectile(LivingEntity entity, Projectile projectile, int index, float power, float deviation, float v2, @Nullable LivingEntity target) {
-        projectile.setPos(entity.getX(), entity.getEyeY(), entity.getZ());
         if (entity instanceof Mob && target != null) {
             Vec3 direction = targetVec(entity, target);
             projectile.shoot(direction.x(), direction.y(), direction.z(), 4F, deviation);
@@ -123,9 +122,7 @@ public class MusketItem extends ProjectileWeaponItem {
     @Override
     protected Projectile createProjectile(Level level, LivingEntity entity, ItemStack weapon, ItemStack ammo, boolean isPlayer) {
         Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
-        float damage = ammo.is(ModRegistry.HELLFIRE_CARTRIDGE) ? 20 : 16;
-        float mult = !(entity instanceof Player) && Config.REDUCE_MOB_DAMAGE.get() ? 0.75F : 1F;
-        return new BulletEntity(level, entity, origin, damage * mult, ammo, weapon);
+        return new BulletEntity(level, entity, origin, ammo, weapon);
     }
 
     public static Vec3 targetVec(LivingEntity mob, LivingEntity target) {

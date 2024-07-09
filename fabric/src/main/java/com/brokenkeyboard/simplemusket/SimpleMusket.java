@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
+import com.brokenkeyboard.simplemusket.item.BulletDispenseBehavior;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import fuzs.extensibleenums.api.extensibleenums.v1.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -48,6 +50,10 @@ public class SimpleMusket implements ModInitializer {
         BuiltInEnumFactories.createRaiderType(ModRegistry.MUSKET_PILLAGER.toString(), ModRegistry.MUSKET_PILLAGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
         SpawnPlacements.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
         ModRegistry.registerSensorGoal();
+
+        DispenserBlock.registerBehavior(ModRegistry.CARTRIDGE, new BulletDispenseBehavior(ModRegistry.CARTRIDGE));
+        DispenserBlock.registerBehavior(ModRegistry.ENCHANTED_CARTRIDGE, new BulletDispenseBehavior(ModRegistry.ENCHANTED_CARTRIDGE));
+        DispenserBlock.registerBehavior(ModRegistry.HELLFIRE_CARTRIDGE, new BulletDispenseBehavior(ModRegistry.HELLFIRE_CARTRIDGE));
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> content.accept(ModRegistry.MUSKET));
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> content.accept(ModRegistry.CARTRIDGE));

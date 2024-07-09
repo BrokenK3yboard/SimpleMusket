@@ -24,8 +24,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void playSound(SoundSource source, ServerLevel level, Vec3 origin) {
-        boolean isPlayerSource = source.equals(SoundSource.PLAYERS);
-        PacketDistributor.sendToPlayersNear(level, null, origin.x, origin.y, origin.z, 128, new S2CSoundPayload(isPlayerSource, origin.toVector3f()));
+        PacketDistributor.sendToPlayersNear(level, null, origin.x, origin.y, origin.z, 128, new S2CSoundPayload(source.toString(), origin.toVector3f()));
     }
 
     @Override

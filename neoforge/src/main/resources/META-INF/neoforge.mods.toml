@@ -15,6 +15,9 @@ authors = "${mod_author}"
 description = '''${description}'''
 enumExtensions="META-INF/enumextensions.json"
 
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type="required"

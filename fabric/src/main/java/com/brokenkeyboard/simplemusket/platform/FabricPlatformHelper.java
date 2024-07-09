@@ -30,9 +30,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public void playSound(SoundSource source, ServerLevel level, Vec3 origin) {
-        boolean isPlayerSource = source.equals(SoundSource.PLAYERS);
         for (ServerPlayer serverPlayer : PlayerLookup.around(level, origin, 128)) {
-            ServerPlayNetworking.send(serverPlayer, new S2CSoundPayload(isPlayerSource, origin.toVector3f()));
+            ServerPlayNetworking.send(serverPlayer, new S2CSoundPayload(source.toString(), origin.toVector3f()));
         }
     }
 

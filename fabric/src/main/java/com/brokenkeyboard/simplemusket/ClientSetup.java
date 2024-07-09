@@ -26,6 +26,6 @@ public class ClientSetup implements ClientModInitializer {
         PayloadTypeRegistry.playC2S().register(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(S2CSoundPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> ClientPacketHandler.playSound(payload.playerSource(), payload.pos())));
+                context.client().execute(() -> ClientPacketHandler.playSound(payload.soundSource(), payload.pos())));
     }
 }
