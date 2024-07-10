@@ -68,8 +68,8 @@ public class ModRegistry {
             .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     public static final MobEffect HEX = addEffect(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hex"), new ModEffect(MobEffectCategory.HARMFUL, 15724742));
 
-    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createArmorDecreaseEffect();
-    public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createHexEffect();
+    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", ARMOR_DECREASE);
+    public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createEffectHolder("hex", HEX);
 
     public static final SoundEvent MUSKET_LOAD_0 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0")));
     public static final SoundEvent MUSKET_LOAD_1 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1")));

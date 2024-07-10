@@ -1,6 +1,5 @@
 package com.brokenkeyboard.simplemusket.platform;
 
-import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 import net.minecraft.core.Holder;
@@ -33,12 +32,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public Holder<MobEffect> createArmorDecreaseEffect() {
-        return EFFECTS.register("armor_decrease", () -> ModRegistry.ARMOR_DECREASE);
-    }
-
-    @Override
-    public Holder<MobEffect> createHexEffect() {
-        return EFFECTS.register("hex", () -> ModRegistry.HEX);
+    public Holder<MobEffect> createEffectHolder(String name, MobEffect effect) {
+        return EFFECTS.register(name, () -> effect);
     }
 }

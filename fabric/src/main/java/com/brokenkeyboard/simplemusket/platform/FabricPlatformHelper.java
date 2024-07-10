@@ -18,9 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.phys.Vec3;
 
-import static com.brokenkeyboard.simplemusket.ModRegistry.ARMOR_DECREASE;
-import static com.brokenkeyboard.simplemusket.ModRegistry.HEX;
-
 public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
@@ -41,12 +38,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public Holder<MobEffect> createArmorDecreaseEffect() {
-        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "armor_decrease"), ARMOR_DECREASE);
-    }
-
-    @Override
-    public Holder<MobEffect> createHexEffect() {
-        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hex"), HEX);
+    public Holder<MobEffect> createEffectHolder(String name, MobEffect effect) {
+        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name), effect);
     }
 }

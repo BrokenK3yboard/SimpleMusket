@@ -12,6 +12,5 @@ public interface IPlatformHelper {
     boolean isModLoaded(String modId);
     void playSound(SoundSource source, ServerLevel level, Vec3 origin);
     Entity getHitEntity(Entity entity);
-    Holder<MobEffect> createArmorDecreaseEffect();
-    Holder<MobEffect> createHexEffect();
+    Holder<MobEffect> createEffectHolder(String name, MobEffect effect);
 }
