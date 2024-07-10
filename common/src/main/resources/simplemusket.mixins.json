@@ -7,8 +7,6 @@
   "mixins": [
     "EnchantmentHelperMixin",
     "EnchantmentMixin",
-    "EntityDeflectMixin",
-    "IronGolemMixin",
     "LivingEntityMixin",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"

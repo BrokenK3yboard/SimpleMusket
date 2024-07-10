@@ -6,14 +6,17 @@ import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +37,12 @@ public class BulletEntity extends Projectile {
     private Vec3 initialPos;
     @Nullable
     private ItemStack weapon;
+
+    private static final ProjectileDeflection BULLET_DEFLECTION = (projectile, entity, randomSource) -> {
+        assert entity != null;
+        entity.level().playSound(null, entity, SoundEvents.IRON_GOLEM_HURT, entity.getSoundSource(), 1.0F, 1.0F);
+        ProjectileDeflection.REVERSE.deflect(projectile, entity, randomSource);
+    };
 
     public BulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
@@ -68,6 +77,18 @@ public class BulletEntity extends Projectile {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+
+    @Override
+    protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult result) {
+        if (result instanceof EntityHitResult entity && entity.getEntity() instanceof IronGolem golem) {
+            golem.hurt(damageSource(this, getOwner()), getDamage() * 0.25F);
+            if (golem != this.lastDeflectedBy && this.deflect(BULLET_DEFLECTION, golem, this.getOwner(), false)) {
+                this.lastDeflectedBy = golem;
+            }
+            return BULLET_DEFLECTION;
+        }
+        return super.hitTargetOrDeflectSelf(result);
+    }
 
     @Override
     protected void onHitEntity(EntityHitResult hitResult) {
@@ -119,7 +140,7 @@ public class BulletEntity extends Projectile {
     }
 
     public float getDamage() {
-        float baseDamage = bullet.getItem() == ModRegistry.HELLFIRE_CARTRIDGE ? 20F : 16F;
-        return this.getOwner() instanceof Mob && Config.REDUCE_MOB_DAMAGE.get() ? (float) (baseDamage * 0.75) : baseDamage;
+        float damage = bullet.getItem() == ModRegistry.HELLFIRE_CARTRIDGE ? 20F : 16F;
+        return this.getOwner() instanceof Mob && Config.REDUCE_MOB_DAMAGE.get() ? (float) (damage * 0.75) : damage;
     }
 }
