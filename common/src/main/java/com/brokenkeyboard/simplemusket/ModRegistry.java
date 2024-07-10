@@ -51,7 +51,7 @@ public class ModRegistry {
     public static final Item CARTRIDGE = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cartridge"), new BulletItem());
     public static final Item HELLFIRE_CARTRIDGE = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hellfire_cartridge"), new BulletItem());
     public static final Item ENCHANTED_CARTRIDGE = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "enchanted_cartridge"), new BulletItem());
-    public static final Item MUSKET_PILLAGER_EGG = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_pillager_spawn_egg"), new SpawnEggItem(MUSKET_PILLAGER, 5258034, 2960169, new Item.Properties()));
+    public static final Item MUSKET_PILLAGER_EGG = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_pillager_spawn_egg"), new SpawnEggItem(MUSKET_PILLAGER, 9804699, 5258034, new Item.Properties()));
 
     public static final TagKey<Item> MUSKET_ENCHANTABLE = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "enchantable/musket"));
     public static final TagKey<Enchantment> MUSKET_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "exclusive_set/musket"));
