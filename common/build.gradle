@@ -22,7 +22,7 @@ dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.6'
-    api("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.0.0") { transitive = false }
+    api("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.0.7") { transitive = false }
 }
 
 sourceSets.main.resources {

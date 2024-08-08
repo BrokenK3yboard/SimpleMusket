@@ -2,11 +2,11 @@ package com.brokenkeyboard.simplemusket;
 
 import com.brokenkeyboard.simplemusket.item.BulletDispenseBehavior;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
-import fuzs.extensibleenums.api.extensibleenums.v1.BuiltInEnumFactories;
+import fuzs.extensibleenums.api.v2.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
@@ -32,7 +32,7 @@ import net.neoforged.fml.config.ModConfig;
 import java.util.function.BiConsumer;
 
 import static com.brokenkeyboard.simplemusket.Constants.*;
-import static com.brokenkeyboard.simplemusket.ModRegistry.MUSKET_PILLAGER_EGG;
+import static com.brokenkeyboard.simplemusket.ModRegistry.*;
 
 public class SimpleMusket implements ModInitializer {
 
@@ -47,7 +47,10 @@ public class SimpleMusket implements ModInitializer {
         ModRegistry.registerSounds(register(BuiltInRegistries.SOUND_EVENT));
         ModRegistry.createEntityAttributes(FabricDefaultAttributeRegistry::register);
 
-        BuiltInEnumFactories.createRaiderType(ModRegistry.MUSKET_PILLAGER.toString(), ModRegistry.MUSKET_PILLAGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
+        Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "armor_decrease"), ARMOR_DECREASE);
+        Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hex"), HEX);
+
+        BuiltInEnumFactories.INSTANCE.createRaiderType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "gunslinger"), ModRegistry.MUSKET_PILLAGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
         SpawnPlacements.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
         ModRegistry.registerSensorGoal();
 
@@ -70,7 +73,7 @@ public class SimpleMusket implements ModInitializer {
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.WEAPONSMITH, 3, factories -> factories.add((entity, random) ->
                 new MerchantOffer(new ItemCost(Items.EMERALD, 3), new ItemStack(ModRegistry.ENCHANTED_CARTRIDGE, 4), 16, 1, 0.05F)));
 
-        LootTableEvents.MODIFY.register((key, tableBuilder, source) -> {
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, provider) -> {
             if (source.isBuiltin()) {
                 if (key.location().equals(BASTION_OTHER) || key.location().equals(BASTION_TREASURE) || key.location().equals(BASTION_BRIDGE)) {
                     tableBuilder.modifyPools(builder -> builder.add(LootItem.lootTableItem(ModRegistry.HELLFIRE_CARTRIDGE).setWeight(10)

@@ -42,7 +42,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -77,9 +77,9 @@ public class Events {
         }
 
         @SubscribeEvent
-        public static void spawnRegister(SpawnPlacementRegisterEvent event) {
+        public static void spawnRegister(RegisterSpawnPlacementsEvent event) {
             event.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                    PatrollingMonster::checkPatrollingMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+                    PatrollingMonster::checkPatrollingMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         }
 
         @SubscribeEvent
