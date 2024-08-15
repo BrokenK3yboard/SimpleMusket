@@ -23,7 +23,7 @@ import java.util.List;
 @Mixin(Enchantment.class)
 public class EnchantmentMixin {
 
-    @Inject(method = "modifyDamageFilteredValue", at = @At(value = "HEAD", shift = At.Shift.AFTER))
+    @Inject(method = "modifyDamageFilteredValue", at = @At(value = "HEAD"))
     private void modifyEnch(DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> $$0, ServerLevel serverLevel, int level, ItemStack stack, Entity entity,
                             DamageSource source, MutableFloat mutableFloat, CallbackInfo ci, @Local(ordinal = 0, argsOnly = true) LocalIntRef value) {
         if (entity instanceof LivingEntity living && living.hasEffect(ModRegistry.HEX_EFFECT)) {
