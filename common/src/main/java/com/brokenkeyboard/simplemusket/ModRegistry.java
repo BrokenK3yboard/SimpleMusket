@@ -146,7 +146,7 @@ public class ModRegistry {
 
     public static void registerSensorGoal() {
         Map<EntityType<?>, Float> map = new IdentityHashMap<>(VillagerHostilesSensorAccessor.getAcceptableDistance());
-        map.put(ModRegistry.MUSKET_PILLAGER, 40F);
+        map.put(ModRegistry.MUSKET_PILLAGER, 32.0F);
         VillagerHostilesSensorAccessor.setAcceptableDistance(ImmutableMap.copyOf(map));
     }
 
