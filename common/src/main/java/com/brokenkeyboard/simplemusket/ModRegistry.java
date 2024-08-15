@@ -1,6 +1,5 @@
 package com.brokenkeyboard.simplemusket;
 
-import com.brokenkeyboard.simplemusket.effect.ModEffect;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
@@ -149,5 +148,12 @@ public class ModRegistry {
         Map<EntityType<?>, Float> map = new IdentityHashMap<>(VillagerHostilesSensorAccessor.getAcceptableDistance());
         map.put(ModRegistry.MUSKET_PILLAGER, 40F);
         VillagerHostilesSensorAccessor.setAcceptableDistance(ImmutableMap.copyOf(map));
+    }
+
+    public static class ModEffect extends MobEffect {
+
+        public ModEffect(MobEffectCategory category, int color) {
+            super(category, color);
+        }
     }
 }
