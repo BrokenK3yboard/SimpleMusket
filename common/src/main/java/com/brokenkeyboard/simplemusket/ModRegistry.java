@@ -38,7 +38,6 @@ public class ModRegistry {
 
     public static final Map<ResourceLocation, EntityType<?>> ENTITIES = new HashMap<>();
     public static final Map<ResourceLocation, Item> ITEMS = new HashMap<>();
-    public static final Map<ResourceLocation, MobEffect> EFFECTS = new HashMap<>();
     public static final Map<ResourceLocation, SoundEvent> SOUNDS = new HashMap<>();
 
     public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "bullet_entity"),
@@ -63,12 +62,10 @@ public class ModRegistry {
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "raid/gunslinger_post_wave_3"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "raid/gunslinger_post_wave_5"));
 
-    public static final MobEffect ARMOR_DECREASE = addEffect(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "armor_decrease"), new ModEffect(MobEffectCategory.HARMFUL, 4595487)
-            .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
-    public static final MobEffect HEX = addEffect(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hex"), new ModEffect(MobEffectCategory.HARMFUL, 15724742));
-
-    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", ARMOR_DECREASE);
-    public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createEffectHolder("hex", HEX);
+    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease",
+            new ModEffect(MobEffectCategory.HARMFUL, 4595487)
+                    .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+    public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createEffectHolder("hex", new ModEffect(MobEffectCategory.HARMFUL, 15724742));
 
     public static final SoundEvent MUSKET_LOAD_0 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0")));
     public static final SoundEvent MUSKET_LOAD_1 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1")));
@@ -85,11 +82,6 @@ public class ModRegistry {
         return item;
     }
 
-    public static MobEffect addEffect(ResourceLocation location, MobEffect effect) {
-        EFFECTS.put(location, effect);
-        return effect;
-    }
-
     public static SoundEvent addSound(ResourceLocation location, SoundEvent sound) {
         SOUNDS.put(location, sound);
         return sound;
@@ -103,12 +95,6 @@ public class ModRegistry {
 
     public static void registerItems(BiConsumer<ResourceLocation, Item> consumer) {
         for (Map.Entry<ResourceLocation, Item> entry : ITEMS.entrySet()) {
-            consumer.accept(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public static void registerEffects(BiConsumer<ResourceLocation, MobEffect> consumer) {
-        for (Map.Entry<ResourceLocation, MobEffect> entry : EFFECTS.entrySet()) {
             consumer.accept(entry.getKey(), entry.getValue());
         }
     }

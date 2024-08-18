@@ -47,8 +47,8 @@ public class SimpleMusket {
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         register(Registries.ITEM, ModRegistry::registerItems, bus);
         register(Registries.ENTITY_TYPE, ModRegistry::registerEntity, bus);
-        register(Registries.MOB_EFFECT, ModRegistry::registerEffects, bus);
         register(Registries.SOUND_EVENT, ModRegistry::registerSounds, bus);
+        EFFECTS.register(bus);
         bus.addListener((EntityAttributeCreationEvent event) -> ModRegistry.createEntityAttributes((type, builder) -> event.put(type, builder.build())));
         GLM.register(bus);
         bus.addListener(this::addCreative);
