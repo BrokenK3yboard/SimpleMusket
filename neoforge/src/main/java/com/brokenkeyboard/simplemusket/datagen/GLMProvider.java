@@ -9,7 +9,7 @@ import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.brokenkeyboard.simplemusket.Constants.*;
+import static com.brokenkeyboard.simplemusket.ModRegistry.*;
 
 public class GLMProvider extends GlobalLootModifierProvider {
 

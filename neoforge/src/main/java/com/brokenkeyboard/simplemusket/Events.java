@@ -15,7 +15,6 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -54,13 +53,13 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 public class Events {
 
-    @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = ModRegistry.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
 
         @SubscribeEvent
         public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
-            event.registerEntityRenderer(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
+            event.registerEntityRenderer(ModRegistry.GUNSLINGER, MusketPillagerRenderer::new);
         }
 
         @SubscribeEvent
@@ -78,7 +77,7 @@ public class Events {
 
         @SubscribeEvent
         public static void spawnRegister(RegisterSpawnPlacementsEvent event) {
-            event.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+            event.register(ModRegistry.GUNSLINGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     PatrollingMonster::checkPatrollingMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         }
 
@@ -93,7 +92,7 @@ public class Events {
         }
     }
 
-    @EventBusSubscriber(modid = Constants.MOD_ID)
+    @EventBusSubscriber(modid = ModRegistry.MOD_ID)
     public static class CommonEvents {
 
         @SubscribeEvent
@@ -113,7 +112,7 @@ public class Events {
         }
     }
 
-    @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = ModRegistry.MOD_ID, value = Dist.CLIENT)
     public static class ClientEvents {
 
         @SubscribeEvent
@@ -171,12 +170,12 @@ public class Events {
         }
     }
 
-    @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = ModRegistry.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class RegisterModels {
 
         @SubscribeEvent
         public static void armorLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_pillager"), "overlay"), HatModel::createBodyLayer);
+            event.registerLayerDefinition(new ModelLayerLocation(ModRegistry.location("musket_pillager"), "overlay"), HatModel::createBodyLayer);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.Constants;
+import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -14,12 +14,12 @@ import net.minecraft.resources.ResourceLocation;
 
 public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerModel<MusketPillager>> {
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/gunslinger_layer.png");
+    public static final ResourceLocation TEXTURE = ModRegistry.location("textures/entity/gunslinger_layer.png");
     private final HatModel<MusketPillager> MODEL;
 
     public MusketPillagerLayer(LivingEntityRenderer<MusketPillager, IllagerModel<MusketPillager>> parent) {
         super(parent);
-        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("simplemusket", "musket_pillager"), "overlay")));
+        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(ModRegistry.location("musket_pillager"), "overlay")));
     }
 
     @Override

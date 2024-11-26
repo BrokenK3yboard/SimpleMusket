@@ -27,6 +27,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -36,41 +38,49 @@ import java.util.function.BiConsumer;
 @SuppressWarnings("unchecked")
 public class ModRegistry {
 
+    public static final String MOD_ID = "simplemusket";
+    public static final String MOD_NAME = "Simple Musket";
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+
     public static final Map<ResourceLocation, EntityType<?>> ENTITIES = new HashMap<>();
     public static final Map<ResourceLocation, Item> ITEMS = new HashMap<>();
     public static final Map<ResourceLocation, SoundEvent> SOUNDS = new HashMap<>();
 
-    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "bullet_entity"),
+    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(location("bullet_entity"),
             EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(5).build("bullet_entity"));
-    public static final EntityType<? extends MusketPillager> MUSKET_PILLAGER = (EntityType<MusketPillager>) addEntity(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_pillager"),
+    public static final EntityType<? extends MusketPillager> GUNSLINGER = (EntityType<MusketPillager>) addEntity(location("musket_pillager"),
             EntityType.Builder.of(MusketPillager::new, MobCategory.MONSTER).sized(0.6F, 1.95F).canSpawnFarFromPlayer().clientTrackingRange(8).build("musket_pillager"));
 
-    public static final Item MUSKET = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket"), new MusketItem(new Item.Properties().durability(256)));
-    public static final Item CARTRIDGE = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "cartridge"), new BulletItem());
-    public static final Item HELLFIRE_CARTRIDGE = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hellfire_cartridge"), new BulletItem());
-    public static final Item ENCHANTED_CARTRIDGE = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "enchanted_cartridge"), new BulletItem());
-    public static final Item MUSKET_PILLAGER_EGG = addItem(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_pillager_spawn_egg"), new SpawnEggItem(MUSKET_PILLAGER, 9804699, 5258034, new Item.Properties()));
+    public static final Item MUSKET = addItem(location("musket"), new MusketItem(new Item.Properties().durability(256)));
+    public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem());
+    public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem());
+    public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem());
+    public static final Item GUNSLINGER_EGG = addItem(location("musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
 
-    public static final TagKey<Item> MUSKET_ENCHANTABLE = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "enchantable/musket"));
-    public static final TagKey<Enchantment> MUSKET_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "exclusive_set/musket"));
-    public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "bullet"));
-    public static final ResourceKey<Enchantment> FIREPOWER = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "firepower"));
-    public static final ResourceKey<Enchantment> DEADEYE = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "deadeye"));
-    public static final ResourceKey<Enchantment> LONGSHOT = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "longshot"));
-    public static final ResourceKey<Enchantment> REPEATING = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "repeating"));
-    public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "raid/gunslinger_spawn_musket"));
-    public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "raid/gunslinger_post_wave_3"));
-    public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "raid/gunslinger_post_wave_5"));
+    public static final TagKey<Item> MUSKET_ENCHANTABLE = TagKey.create(Registries.ITEM, location("enchantable/musket"));
+    public static final TagKey<Enchantment> MUSKET_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, location("exclusive_set/musket"));
+    public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, location("bullet"));
+    public static final ResourceKey<Enchantment> FIREPOWER = ResourceKey.create(Registries.ENCHANTMENT, location("firepower"));
+    public static final ResourceKey<Enchantment> DEADEYE = ResourceKey.create(Registries.ENCHANTMENT, location("deadeye"));
+    public static final ResourceKey<Enchantment> LONGSHOT = ResourceKey.create(Registries.ENCHANTMENT, location("longshot"));
+    public static final ResourceKey<Enchantment> REPEATING = ResourceKey.create(Registries.ENCHANTMENT, location("repeating"));
+    public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_spawn_musket"));
+    public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_3"));
+    public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_5"));
 
-    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease",
-            new ModEffect(MobEffectCategory.HARMFUL, 4595487)
-                    .addAttributeModifier(Attributes.ARMOR, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ModEffect(MobEffectCategory.HARMFUL, 4595487)
+            .addAttributeModifier(Attributes.ARMOR, location("effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createEffectHolder("hex", new ModEffect(MobEffectCategory.HARMFUL, 15724742));
 
-    public static final SoundEvent MUSKET_LOAD_0 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load0")));
-    public static final SoundEvent MUSKET_LOAD_1 = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_load1")));
-    public static final SoundEvent MUSKET_READY = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_ready"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_ready")));
-    public static final SoundEvent MUSKET_FIRE = addSound(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_fire"), SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket_fire")));
+    public static final SoundEvent MUSKET_LOAD_0 = addSound(location("musket_load0"), SoundEvent.createVariableRangeEvent(location("musket_load0")));
+    public static final SoundEvent MUSKET_LOAD_1 = addSound(location("musket_load1"), SoundEvent.createVariableRangeEvent(location("musket_load1")));
+    public static final SoundEvent MUSKET_READY = addSound(location("musket_ready"), SoundEvent.createVariableRangeEvent(location("musket_ready")));
+    public static final SoundEvent MUSKET_FIRE = addSound(location("musket_fire"), SoundEvent.createVariableRangeEvent(location("musket_fire")));
+
+    public static final ResourceLocation BASTION_OTHER = ResourceLocation.withDefaultNamespace("chests/bastion_other");
+    public static final ResourceLocation BASTION_TREASURE = ResourceLocation.withDefaultNamespace("chests/bastion_treasure");
+    public static final ResourceLocation BASTION_BRIDGE = ResourceLocation.withDefaultNamespace("chests/bastion_bridge");
+    public static final ResourceLocation PIGLIN_BARTER = ResourceLocation.withDefaultNamespace("gameplay/piglin_bartering");
 
     public static EntityType<?> addEntity(ResourceLocation location, EntityType<?> type) {
         ENTITIES.put(location, type);
@@ -105,34 +115,37 @@ public class ModRegistry {
         }
     }
 
+    public static ResourceLocation location(String name) {
+        return ResourceLocation.fromNamespaceAndPath(ModRegistry.MOD_ID, name);
+    }
+
     public static void createEntityAttributes(BiConsumer<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> consumer) {
-        consumer.accept(MUSKET_PILLAGER, MusketPillager.createAttributes());
+        consumer.accept(GUNSLINGER, MusketPillager.createAttributes());
     }
 
     public static void registerItemProperties() {
-
-        ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "loading"),
+        ItemProperties.register(ModRegistry.MUSKET, location("loading"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
                         && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
-        ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "load_stage"),
+        ItemProperties.register(ModRegistry.MUSKET, location("load_stage"),
                 (stack, world, living, id) -> (living == null || MusketItem.isLoaded(stack)) ? 0.0F :
                         (float) (stack.getUseDuration(living) - living.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
 
-        ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "loaded"),
+        ItemProperties.register(ModRegistry.MUSKET, location("loaded"),
                 (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
-        ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "aiming"),
+        ItemProperties.register(ModRegistry.MUSKET, location("aiming"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
                         && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
-        ItemProperties.register(ModRegistry.MUSKET, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "sawnoff"),
+        ItemProperties.register(ModRegistry.MUSKET, location("sawnoff"),
                 (stack, world, living, id) -> living instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
     }
 
     public static void registerSensorGoal() {
         Map<EntityType<?>, Float> map = new IdentityHashMap<>(VillagerHostilesSensorAccessor.getAcceptableDistance());
-        map.put(ModRegistry.MUSKET_PILLAGER, 32.0F);
+        map.put(ModRegistry.GUNSLINGER, 32.0F);
         VillagerHostilesSensorAccessor.setAcceptableDistance(ImmutableMap.copyOf(map));
     }
 

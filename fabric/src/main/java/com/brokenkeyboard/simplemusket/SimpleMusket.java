@@ -31,7 +31,7 @@ import net.neoforged.fml.config.ModConfig;
 
 import java.util.function.BiConsumer;
 
-import static com.brokenkeyboard.simplemusket.Constants.*;
+import static com.brokenkeyboard.simplemusket.ModRegistry.*;
 
 public class SimpleMusket implements ModInitializer {
 
@@ -45,8 +45,8 @@ public class SimpleMusket implements ModInitializer {
         ModRegistry.registerSounds(register(BuiltInRegistries.SOUND_EVENT));
         ModRegistry.createEntityAttributes(FabricDefaultAttributeRegistry::register);
 
-        BuiltInEnumFactories.INSTANCE.createRaiderType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "gunslinger"), ModRegistry.MUSKET_PILLAGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
-        SpawnPlacements.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
+        BuiltInEnumFactories.INSTANCE.createRaiderType(ModRegistry.location("gunslinger"), ModRegistry.GUNSLINGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
+        SpawnPlacements.register(ModRegistry.GUNSLINGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
         ModRegistry.registerSensorGoal();
 
         DispenserBlock.registerBehavior(ModRegistry.CARTRIDGE, new BulletDispenseBehavior(ModRegistry.CARTRIDGE));
@@ -57,7 +57,7 @@ public class SimpleMusket implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> content.accept(ModRegistry.CARTRIDGE));
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> content.accept(ModRegistry.HELLFIRE_CARTRIDGE));
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(content -> content.accept(ModRegistry.ENCHANTED_CARTRIDGE));
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.SPAWN_EGGS).register(content -> content.accept(ModRegistry.MUSKET_PILLAGER_EGG));
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.SPAWN_EGGS).register(content -> content.accept(ModRegistry.GUNSLINGER_EGG));
 
         PayloadTypeRegistry.playS2C().register(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC);
 

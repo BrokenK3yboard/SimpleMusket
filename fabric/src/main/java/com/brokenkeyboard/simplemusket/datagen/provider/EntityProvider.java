@@ -17,8 +17,8 @@ public class EntityProvider extends EntityTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        this.tag(EntityTypeTags.ILLAGER).add(ModRegistry.MUSKET_PILLAGER);
-        this.tag(EntityTypeTags.RAIDERS).add(ModRegistry.MUSKET_PILLAGER);
-        this.tag(EntityTypeTags.ILLAGER_FRIENDS).add(ModRegistry.MUSKET_PILLAGER);
+        this.tag(EntityTypeTags.ILLAGER).add(ModRegistry.GUNSLINGER);
+        this.tag(EntityTypeTags.RAIDERS).add(ModRegistry.GUNSLINGER);
+        this.tag(EntityTypeTags.ILLAGER_FRIENDS).add(ModRegistry.GUNSLINGER);
     }
 }

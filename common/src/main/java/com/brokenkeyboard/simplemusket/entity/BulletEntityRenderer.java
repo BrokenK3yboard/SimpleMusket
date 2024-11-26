@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket.entity;
 
-import com.brokenkeyboard.simplemusket.Constants;
+import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -14,7 +14,7 @@ import org.joml.Matrix4f;
 
 public class BulletEntityRenderer extends EntityRenderer<BulletEntity> {
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/bullet.png");
+    private static final ResourceLocation TEXTURE = ModRegistry.location("textures/entity/bullet.png");
     private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE);
 
     public BulletEntityRenderer(EntityRendererProvider.Context context) {

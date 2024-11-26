@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.ModContainer;
@@ -35,11 +36,12 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-@Mod(Constants.MOD_ID)
+@Mod(ModRegistry.MOD_ID)
 public class SimpleMusket {
 
-    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Constants.MOD_ID);
-    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Constants.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, ModRegistry.MOD_ID);
+    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, ModRegistry.MOD_ID);
+    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, ModRegistry.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PiglinBarter>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
 
@@ -53,9 +55,7 @@ public class SimpleMusket {
         GLM.register(bus);
         bus.addListener(this::addCreative);
 
-        if (Services.PLATFORM.isModLoaded("consecration")) {
-            bus.addListener(this::enqueueIMC);
-        }
+        if (Services.PLATFORM.isModLoaded("consecration")) bus.addListener(this::imcConsecration);
     }
 
     public static <T> void register(ResourceKey<Registry<T>> registry, Consumer<BiConsumer<ResourceLocation, T>> source, IEventBus bus) {
@@ -71,18 +71,18 @@ public class SimpleMusket {
         }
 
         if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
-            event.accept(ModRegistry.MUSKET_PILLAGER_EGG);
+            event.accept(ModRegistry.GUNSLINGER_EGG);
         }
     }
 
-    public void enqueueIMC(InterModEnqueueEvent event) {
+    public void imcConsecration(InterModEnqueueEvent event) {
         InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
-                (livingEntity, damageSource) -> (damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.getBullet().is(ModRegistry.ENCHANTED_CARTRIDGE)));
+                (entity, source) -> (source.getDirectEntity() instanceof BulletEntity bullet && bullet.getBullet().is(ModRegistry.ENCHANTED_CARTRIDGE)));
     }
 
     public static Object getRaiderEntity(int idx, Class<?> type) {
         return type.cast(switch (idx) {
-            case 0 -> (Supplier<EntityType<? extends Raider>>) () -> ModRegistry.MUSKET_PILLAGER;
+            case 0 -> (Supplier<EntityType<? extends Raider>>) () -> ModRegistry.GUNSLINGER;
             case 1 -> new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3};
             default -> throw new IllegalArgumentException("Unexpected parameter index: " + idx);
         });

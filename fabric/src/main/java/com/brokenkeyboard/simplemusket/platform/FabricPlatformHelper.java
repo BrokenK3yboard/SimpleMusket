@@ -1,6 +1,6 @@
 package com.brokenkeyboard.simplemusket.platform;
 
-import com.brokenkeyboard.simplemusket.Constants;
+import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -9,7 +9,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -39,6 +38,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public Holder<MobEffect> createEffectHolder(String name, MobEffect effect) {
-        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name), effect);
+        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ModRegistry.location(name), effect);
     }
 }

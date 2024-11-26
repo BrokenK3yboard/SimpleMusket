@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import static com.brokenkeyboard.simplemusket.SimpleMusket.EFFECTS;
 
-public class ForgePlatformHelper implements IPlatformHelper {
+public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isModLoaded(String modId) {

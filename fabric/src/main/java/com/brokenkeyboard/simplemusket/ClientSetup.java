@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.resources.ResourceLocation;
 
 public class ClientSetup implements ClientModInitializer {
 
@@ -19,8 +18,8 @@ public class ClientSetup implements ClientModInitializer {
     public void onInitializeClient() {
 
         EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
-        EntityRendererRegistry.register(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
+        EntityRendererRegistry.register(ModRegistry.GUNSLINGER, MusketPillagerRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(ModRegistry.location("musket_pillager"), "overlay"), HatModel::createBodyLayer);
         ModRegistry.registerItemProperties();
 
         PayloadTypeRegistry.playC2S().register(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC);
