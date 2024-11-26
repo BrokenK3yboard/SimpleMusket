@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -80,6 +81,8 @@ public class SimpleMusket implements ModInitializer {
                 }
             }
         });
+
+        FabricLoader.getInstance().getObjectShare().put("usefulspyglass:" + ModRegistry.MUSKET, ModRegistry.AIMING_MUSKET);
     }
 
     private static <T> BiConsumer<ResourceLocation, T> register(Registry<? super T> registry) {

@@ -15,7 +15,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.ModContainer;
@@ -39,7 +38,6 @@ import java.util.function.Supplier;
 @Mod(ModRegistry.MOD_ID)
 public class SimpleMusket {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, ModRegistry.MOD_ID);
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, ModRegistry.MOD_ID);
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, ModRegistry.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
@@ -54,8 +52,7 @@ public class SimpleMusket {
         bus.addListener((EntityAttributeCreationEvent event) -> ModRegistry.createEntityAttributes((type, builder) -> event.put(type, builder.build())));
         GLM.register(bus);
         bus.addListener(this::addCreative);
-
-        if (Services.PLATFORM.isModLoaded("consecration")) bus.addListener(this::imcConsecration);
+        bus.addListener(this::sendIMC);
     }
 
     public static <T> void register(ResourceKey<Registry<T>> registry, Consumer<BiConsumer<ResourceLocation, T>> source, IEventBus bus) {
@@ -75,9 +72,15 @@ public class SimpleMusket {
         }
     }
 
-    public void imcConsecration(InterModEnqueueEvent event) {
-        InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
-                (entity, source) -> (source.getDirectEntity() instanceof BulletEntity bullet && bullet.getBullet().is(ModRegistry.ENCHANTED_CARTRIDGE)));
+    public void sendIMC(InterModEnqueueEvent event) {
+        if (Services.PLATFORM.isModLoaded("consecration")) {
+            InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
+                    (livingEntity, damageSource) -> (damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.getBullet().is(ModRegistry.ENCHANTED_CARTRIDGE)));
+        }
+
+        if (Services.PLATFORM.isModLoaded("usefulspyglass")) {
+            InterModComms.sendTo("usefulspyglass", "precision", () -> ModRegistry.AIMING_MUSKET);
+        }
     }
 
     public static Object getRaiderEntity(int idx, Class<?> type) {

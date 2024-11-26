@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
 public class ModRegistry {
@@ -81,6 +82,8 @@ public class ModRegistry {
     public static final ResourceLocation BASTION_TREASURE = ResourceLocation.withDefaultNamespace("chests/bastion_treasure");
     public static final ResourceLocation BASTION_BRIDGE = ResourceLocation.withDefaultNamespace("chests/bastion_bridge");
     public static final ResourceLocation PIGLIN_BARTER = ResourceLocation.withDefaultNamespace("gameplay/piglin_bartering");
+
+    public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem());
 
     public static EntityType<?> addEntity(ResourceLocation location, EntityType<?> type) {
         ENTITIES.put(location, type);
