@@ -116,7 +116,7 @@ public class ModRegistry {
     }
 
     public static ResourceLocation location(String name) {
-        return ResourceLocation.fromNamespaceAndPath(ModRegistry.MOD_ID, name);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static void createEntityAttributes(BiConsumer<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> consumer) {
