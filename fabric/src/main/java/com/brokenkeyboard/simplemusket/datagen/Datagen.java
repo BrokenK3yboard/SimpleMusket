@@ -2,6 +2,7 @@ package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.datagen.provider.*;
+import com.brokenkeyboard.simplemusket.enchantment.DamageDistanceEffect;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -68,6 +69,8 @@ public class Datagen implements DataGeneratorEntrypoint {
 
         context.register(ModRegistry.LONGSHOT, Enchantment.enchantment(Enchantment.definition(itemHolder, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchHolder.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(DAMAGE_DISTANCE, new DamageDistanceEffect(0.15F, LevelBasedValue.perLevel(1.0F, 0.66F)),
+                        LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, EntityPredicate.Builder.entity().of(BULLET_ENTITY).build()))
                 .build(ModRegistry.LONGSHOT.location()));
 
         context.register(ModRegistry.REPEATING, Enchantment.enchantment(Enchantment.definition(itemHolder, 1, 1, Enchantment.constantCost(20), Enchantment.constantCost(50), 8, EquipmentSlotGroup.MAINHAND))

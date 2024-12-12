@@ -3,6 +3,7 @@ package com.brokenkeyboard.simplemusket.platform;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
@@ -12,6 +13,9 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.function.UnaryOperator;
+
+import static com.brokenkeyboard.simplemusket.SimpleMusket.COMPONENTS;
 import static com.brokenkeyboard.simplemusket.SimpleMusket.EFFECTS;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
@@ -34,5 +38,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public Holder<MobEffect> createEffectHolder(String name, MobEffect effect) {
         return EFFECTS.register(name, () -> effect);
+    }
+
+    @Override
+    public <T> DataComponentType<T> createComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
+        DataComponentType<T> component = operator.apply(DataComponentType.builder()).build();
+        COMPONENTS.register(name, () -> component);
+        return component;
     }
 }

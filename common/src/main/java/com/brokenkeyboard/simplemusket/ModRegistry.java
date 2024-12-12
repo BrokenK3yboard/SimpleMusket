@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
+import com.brokenkeyboard.simplemusket.enchantment.DamageDistanceEffect;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
@@ -9,6 +10,7 @@ import com.brokenkeyboard.simplemusket.platform.Services;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -25,13 +27,16 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -68,6 +73,9 @@ public class ModRegistry {
     public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_spawn_musket"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_3"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_5"));
+
+    public static final DataComponentType<List<ConditionalEffect<DamageDistanceEffect>>> DAMAGE_DISTANCE = Services.PLATFORM.createComponent("damage_distance", builder ->
+            builder.persistent(ConditionalEffect.codec(DamageDistanceEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf()));
 
     public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ModEffect(MobEffectCategory.HARMFUL, 4595487)
             .addAttributeModifier(Attributes.ARMOR, location("effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));

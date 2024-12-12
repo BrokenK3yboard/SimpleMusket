@@ -2,8 +2,8 @@ package com.brokenkeyboard.simplemusket.entity;
 
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
+import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
 import com.brokenkeyboard.simplemusket.platform.Services;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -20,7 +20,6 @@ import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -33,8 +32,6 @@ public class BulletEntity extends Projectile {
 
     private int ticksAlive = 0;
     private ItemStack bullet = new ItemStack(ModRegistry.CARTRIDGE);
-    @Nullable
-    private Vec3 initialPos;
     @Nullable
     private ItemStack weapon;
 
@@ -53,7 +50,6 @@ public class BulletEntity extends Projectile {
         this(ModRegistry.BULLET_ENTITY, level);
         this.setOwner(owner);
         this.setPos(pos);
-        this.initialPos = pos;
         this.bullet = bullet;
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon.copy() : null;
     }
@@ -99,18 +95,13 @@ public class BulletEntity extends Projectile {
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
         float damage = getDamage();
+        DamageSource source = damageSource(this, owner);
 
-        if (weapon != null && initialPos != null) {
-            int longshot = EnchantmentHelper.getItemEnchantmentLevel(level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModRegistry.LONGSHOT), weapon);
-            double distance = Math.min(initialPos.distanceTo(entity.position()), 48);
-            if (longshot > 0 && distance >= 16) {
-                int longshotLevel = target instanceof LivingEntity living && living.hasEffect(ModRegistry.HEX_EFFECT) ? longshot + 2 : longshot;
-                double coefficient = ((0.029296875 * distance * distance) - (0.46875 * distance) + 15) / 3 * (3 + ((longshotLevel - 1) * 2)) / 100;
-                damage *= (float) (1 + coefficient);
-            }
+        if (this.level() instanceof ServerLevel serverLevel && weapon != null) {
+            damage = ModEnchantments.modifyDamageDistance(serverLevel, this.weapon, target, source, damage);
         }
 
-        if (entity.hurt(damageSource(this, owner), damage) && entity instanceof LivingEntity living) {
+        if (entity.hurt(source, damage) && entity instanceof LivingEntity living) {
             if (bullet.is(ModRegistry.HELLFIRE_CARTRIDGE)) {
                 living.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE_EFFECT, 600));
             } else if (bullet.is(ModRegistry.ENCHANTED_CARTRIDGE)) {

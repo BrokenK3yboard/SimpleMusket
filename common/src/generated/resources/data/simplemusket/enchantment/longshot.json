@@ -3,6 +3,27 @@
   "description": {
     "translate": "enchantment.simplemusket.longshot"
   },
+  "effects": {
+    "simplemusket:damage_distance": [
+      {
+        "effect": {
+          "base_damage_bonus": 0.15,
+          "level_damage_multiplier": {
+            "type": "minecraft:linear",
+            "base": 1.0,
+            "per_level_above_first": 0.66
+          }
+        },
+        "requirements": {
+          "condition": "minecraft:entity_properties",
+          "entity": "direct_attacker",
+          "predicate": {
+            "type": "simplemusket:bullet_entity"
+          }
+        }
+      }
+    ]
+  },
   "exclusive_set": "#minecraft:exclusive_set/damage",
   "max_cost": {
     "base": 60,

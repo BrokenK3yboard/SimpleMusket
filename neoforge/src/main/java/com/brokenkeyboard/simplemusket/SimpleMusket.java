@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 public class SimpleMusket {
 
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, ModRegistry.MOD_ID);
+    public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, ModRegistry.MOD_ID);
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, ModRegistry.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PiglinBarter>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
@@ -49,6 +50,7 @@ public class SimpleMusket {
         register(Registries.ENTITY_TYPE, ModRegistry::registerEntity, bus);
         register(Registries.SOUND_EVENT, ModRegistry::registerSounds, bus);
         EFFECTS.register(bus);
+        COMPONENTS.register(bus);
         bus.addListener((EntityAttributeCreationEvent event) -> ModRegistry.createEntityAttributes((type, builder) -> event.put(type, builder.build())));
         GLM.register(bus);
         bus.addListener(this::addCreative);

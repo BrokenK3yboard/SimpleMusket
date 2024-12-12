@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +17,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.UnaryOperator;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -39,5 +42,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public Holder<MobEffect> createEffectHolder(String name, MobEffect effect) {
         return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ModRegistry.location(name), effect);
+    }
+
+    @Override
+    public <T> DataComponentType<T> createComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
+        return Registry.register(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, ModRegistry.location(name), operator.apply(DataComponentType.builder()).build());
     }
 }

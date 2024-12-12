@@ -1,4 +1,4 @@
-// 1.21	2024-06-25T16:47:32.1366118	Simple Musket/Tags for minecraft:enchantment
+// 1.21.1	2024-12-12T01:07:03.3387336	Simple Musket/Tags for minecraft:enchantment
 b45413cb24819303f7f891227e2287361f3e417b data\minecraft\tags\enchantment\exclusive_set\damage.json
 68bc52ff9704943c23526c04f9236c8a31aac6ef data\simplemusket\tags\enchantment\exclusive_set\musket.json
 c1d59cfa4e5480ce69c9ecf88623ee7924b561f4 data\minecraft\tags\enchantment\non_treasure.json
