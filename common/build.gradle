@@ -1,13 +1,18 @@
 plugins {
     id 'multiloader-common'
-    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
+    id 'net.neoforged.moddev'
 }
 
-minecraft {
-    version(minecraft_version)
-    def aw = file("src/main/resources/${mod_id}.accesswidener")
-    if(aw.exists()){
-        accessWideners(aw)
+neoForge {
+    neoFormVersion = neo_form_version
+    // Automatically enable AccessTransformers if the file exists
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
     }
 }
 
@@ -22,7 +27,7 @@ dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.6'
-    api("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.1.2") { transitive = false }
+    api("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.1.3") { transitive = false }
 }
 
 sourceSets.main.resources {

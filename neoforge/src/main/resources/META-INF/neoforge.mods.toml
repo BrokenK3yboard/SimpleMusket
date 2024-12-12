@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "${neo_loader_version_range}"
+loaderVersion = "${neoforge_loader_version_range}"
 license = "${license}"
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 
@@ -18,10 +18,13 @@ enumExtensions="META-INF/enumextensions.json"
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"
 
+[[mixins]]
+config = "simplemusket.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type="required"
-versionRange = "${neo_loader_version_range}"
+versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -31,6 +34,3 @@ type="required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
-
-[[mixins]]
-config = "simplemusket.mixins.json"
