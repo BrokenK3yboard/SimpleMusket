@@ -1,5 +1,7 @@
 package com.brokenkeyboard.simplemusket;
 
+import com.brokenkeyboard.simplemusket.enchantment.AmmoCountEffect;
+import com.brokenkeyboard.simplemusket.enchantment.ComponentKillEffect;
 import com.brokenkeyboard.simplemusket.enchantment.DamageDistanceEffect;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
@@ -8,6 +10,7 @@ import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.mixin.VillagerHostilesSensorAccessor;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
@@ -74,8 +77,15 @@ public class ModRegistry {
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_3"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_5"));
 
-    public static final DataComponentType<List<ConditionalEffect<DamageDistanceEffect>>> DAMAGE_DISTANCE = Services.PLATFORM.createComponent("damage_distance", builder ->
+    static {
+        Services.PLATFORM.createEntityEffectComponent("component_kill", ComponentKillEffect.CODEC);
+    }
+
+    public static final DataComponentType<List<ConditionalEffect<DamageDistanceEffect>>> DAMAGE_DISTANCE = Services.PLATFORM.createEnchantmentComponent("damage_distance", builder ->
             builder.persistent(ConditionalEffect.codec(DamageDistanceEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf()));
+    public static final DataComponentType<List<ConditionalEffect<AmmoCountEffect>>> AMMO_COUNT = Services.PLATFORM.createEnchantmentComponent("ammo_count", builder ->
+            builder.persistent(ConditionalEffect.codec(AmmoCountEffect.CODEC, LootContextParamSets.ENCHANTED_ENTITY).listOf()));
+    public static final DataComponentType<Integer> AMMO_BONUS = Services.PLATFORM.createDataComponent("ammo_bonus", builder -> builder.persistent(Codec.INT));
 
     public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ModEffect(MobEffectCategory.HARMFUL, 4595487)
             .addAttributeModifier(Attributes.ARMOR, location("effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));

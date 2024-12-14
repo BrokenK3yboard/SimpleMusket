@@ -20,6 +20,7 @@ import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -51,7 +52,7 @@ public class BulletEntity extends Projectile {
         this.setOwner(owner);
         this.setPos(pos);
         this.bullet = bullet;
-        this.weapon = weapon != null && level instanceof ServerLevel ? weapon.copy() : null;
+        this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 
     @Override
@@ -97,8 +98,8 @@ public class BulletEntity extends Projectile {
         float damage = getDamage();
         DamageSource source = damageSource(this, owner);
 
-        if (this.level() instanceof ServerLevel serverLevel && weapon != null) {
-            damage = ModEnchantments.modifyDamageDistance(serverLevel, this.weapon, target, source, damage);
+        if (this.level() instanceof ServerLevel && weapon != null) {
+            damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);
         }
 
         if (entity.hurt(source, damage) && entity instanceof LivingEntity living) {
@@ -106,6 +107,10 @@ public class BulletEntity extends Projectile {
                 living.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE_EFFECT, 600));
             } else if (bullet.is(ModRegistry.ENCHANTED_CARTRIDGE)) {
                 living.addEffect(new MobEffectInstance(ModRegistry.HEX_EFFECT, 600));
+            }
+
+            if (level() instanceof ServerLevel serverLevel) {
+                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, living, source, this.getWeaponItem());
             }
         }
         this.discard();

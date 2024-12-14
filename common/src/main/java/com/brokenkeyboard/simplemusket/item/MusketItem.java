@@ -2,6 +2,7 @@ package com.brokenkeyboard.simplemusket.item;
 
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
+import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.core.Registry;
@@ -71,8 +72,8 @@ public class MusketItem extends ProjectileWeaponItem {
             if (!projectiles.isEmpty()) {
                 ItemStack stack1 = projectiles.getFirst();
                 Item bullet = getAllSupportedProjectiles().test(stack1) ? stack1.getItem() : ModRegistry.CARTRIDGE;
-                int amount = EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModRegistry.REPEATING), stack);
-                setAmmo(stack, new ItemStack(bullet, amount + 1));
+                int amount = level instanceof ServerLevel ? ModEnchantments.modifyAmmoCount(stack, 1) : 1;
+                setAmmo(stack, new ItemStack(bullet, amount));
             }
         }
     }
@@ -133,17 +134,17 @@ public class MusketItem extends ProjectileWeaponItem {
     public static void spawnParticles(Level level, LivingEntity entity, Vec3 direction) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
+        RandomSource random = entity.getRandom();
         Vec3 side = Vec3.directionFromRotation(0, entity.getYRot() + (entity.getUsedItemHand() == InteractionHand.MAIN_HAND ? 90 : -90));
         Vec3 down = Vec3.directionFromRotation(entity.getXRot() + 90, entity.getYRot());
         Vec3 pos = entity.getEyePosition().add(side.add(down).scale(0.15));
 
         for (int i = 0; i < 10; i++) {
-            RandomSource random = entity.getRandom();
             double t = Math.pow(random.nextFloat(), 1.5);
-            Vec3 p = pos.add(direction.scale(1.25 + t));
-            p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
-            Vec3 v = direction.scale(0.1 * (1 - t));
-            serverLevel.sendParticles(ParticleTypes.POOF, p.x, p.y, p.z, (int)v.x, v.y, v.z, 0, 1);
+            Vec3 smokePos = pos.add(direction.scale(1.25 + t));
+            smokePos = smokePos.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
+            Vec3 smokeVec = direction.scale(0.1 * (1 - t));
+            serverLevel.sendParticles(ParticleTypes.POOF, smokePos.x, smokePos.y, smokePos.z, 0, smokeVec.x, smokeVec.y, smokeVec.z, 1);
         }
     }
 

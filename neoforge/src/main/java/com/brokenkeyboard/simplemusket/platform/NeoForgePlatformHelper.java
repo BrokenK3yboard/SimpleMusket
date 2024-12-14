@@ -2,12 +2,14 @@ package com.brokenkeyboard.simplemusket.platform;
 
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -15,8 +17,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.function.UnaryOperator;
 
-import static com.brokenkeyboard.simplemusket.SimpleMusket.COMPONENTS;
-import static com.brokenkeyboard.simplemusket.SimpleMusket.EFFECTS;
+import static com.brokenkeyboard.simplemusket.SimpleMusket.*;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
@@ -41,9 +42,21 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T> DataComponentType<T> createComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
+    public <T> DataComponentType<T> createDataComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
         DataComponentType<T> component = operator.apply(DataComponentType.builder()).build();
-        COMPONENTS.register(name, () -> component);
+        DATA_COMPONENTS.register(name, () -> component);
         return component;
+    }
+
+    @Override
+    public <T> DataComponentType<T> createEnchantmentComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
+        DataComponentType<T> component = operator.apply(DataComponentType.builder()).build();
+        ENCHANTMENT_COMPONENTS.register(name, () -> component);
+        return component;
+    }
+
+    @Override
+    public <T extends EnchantmentEntityEffect> void createEntityEffectComponent(String name, MapCodec<T> codec) {
+        ENCHANTMENT_ENTITY_COMPONENTS.register(name, () -> codec);
     }
 }

@@ -2,6 +2,8 @@ package com.brokenkeyboard.simplemusket.datagen.provider;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.datagen.Datagen;
+import com.brokenkeyboard.simplemusket.enchantment.AmmoCountEffect;
+import com.brokenkeyboard.simplemusket.enchantment.ComponentKillEffect;
 import com.brokenkeyboard.simplemusket.enchantment.DamageDistanceEffect;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+import net.minecraft.world.item.enchantment.EnchantmentTarget;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.minecraft.world.item.enchantment.providers.SingleEnchantment;
@@ -55,6 +58,9 @@ public class RegistryProvider extends FabricDynamicRegistryProvider {
                 .build(ModRegistry.LONGSHOT.location()));
 
         entries.add(ModRegistry.REPEATING, Enchantment.enchantment(Enchantment.definition(itemHolder, 1, 1, Enchantment.constantCost(20), Enchantment.constantCost(50), 8, EquipmentSlotGroup.MAINHAND))
+                .exclusiveWith(enchHolder.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .withEffect(AMMO_COUNT, new AmmoCountEffect(LevelBasedValue.constant(1F), LevelBasedValue.constant(1F)))
+                .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new ComponentKillEffect())
                 .build(ModRegistry.REPEATING.location()));
 
         entries.add(GUNSLINGER_SPAWN_MUSKET, new SingleEnchantment(enchHolder.getOrThrow(ModRegistry.FIREPOWER), ConstantInt.of(1)));
