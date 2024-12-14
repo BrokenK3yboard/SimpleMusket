@@ -4,7 +4,6 @@ import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.TimeUtil;
@@ -15,12 +14,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.EnumSet;
 import java.util.Objects;
-import java.util.Optional;
 
 public class MusketAttackGoal<T extends Mob> extends Goal {
 
@@ -113,10 +109,9 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
                 if (attackDelay > 0) {
                     --attackDelay;
                 } else if (hasLOS) {
-                    Optional<Registry<Enchantment>> registry = MOB.level().registryAccess().registry(Registries.ENCHANTMENT);
-                    int deadeye = registry.map(enchantments -> EnchantmentHelper.getItemEnchantmentLevel(enchantments.getHolderOrThrow(ModRegistry.DEADEYE), stack)).orElse(0);
+                    MOB.level().registryAccess().registry(Registries.ENCHANTMENT);
                     float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
-                    musket.fire(MOB.level(), MOB, hand, stack, 4.0F, (deadeye > 0 ? (float) (deviation * (1 - (0.125 + 0.125 * deviation))) : deviation), MOB.getTarget(), SoundSource.HOSTILE);
+                    musket.fire(MOB.level(), MOB, hand, stack, 4.0F, deviation, MOB.getTarget(), SoundSource.HOSTILE);
                 }
             }
         }

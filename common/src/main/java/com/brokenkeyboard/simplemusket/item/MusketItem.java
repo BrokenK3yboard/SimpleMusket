@@ -5,10 +5,8 @@ import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
-import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -23,14 +21,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 public class MusketItem extends ProjectileWeaponItem {
@@ -65,7 +60,7 @@ public class MusketItem extends ProjectileWeaponItem {
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         if (isLoaded(stack)) {
             int aimTicks = getUseDuration(stack, entity) - timeLeft;
-            float deviation = 12 - getUsePerc(entity, stack, aimTicks) * 12;
+            float deviation = 12 - Math.clamp(aimTicks / Config.AIM_TIME.get(), 0, 1) * 12;
             fire(level, entity, entity.getUsedItemHand(), stack, 4F, deviation, null, SoundSource.PLAYERS);
         } else if (getUseDuration(stack, entity) - timeLeft >= Config.RELOAD_TIME.get()) {
             List<ItemStack> projectiles = draw(stack, entity.getProjectile(stack), entity);
@@ -146,16 +141,6 @@ public class MusketItem extends ProjectileWeaponItem {
             Vec3 smokeVec = direction.scale(0.1 * (1 - t));
             serverLevel.sendParticles(ParticleTypes.POOF, smokePos.x, smokePos.y, smokePos.z, 0, smokeVec.x, smokeVec.y, smokeVec.z, 1);
         }
-    }
-
-    public static float getUsePerc(LivingEntity entity, ItemStack stack, int useTime) {
-        Optional<Registry<Enchantment>> registry = entity.level().registryAccess().registry(Registries.ENCHANTMENT);
-        if (registry.isPresent()) {
-            int deadeye = EnchantmentHelper.getItemEnchantmentLevel(registry.get().getHolderOrThrow(ModRegistry.DEADEYE), stack);
-            int maxUse = deadeye > 0 ? (int) Math.floor(Math.max(Config.AIM_TIME.get() * (1 - (0.2 + 0.1 * (deadeye - 1))), 1)) : Config.AIM_TIME.get();
-            return Math.clamp((float) useTime / maxUse, 0, 1);
-        }
-        return Math.clamp((float) useTime / Config.AIM_TIME.get(), 0, 1);
     }
 
     public static void setAmmo(ItemStack stack, ItemStack bullet) {

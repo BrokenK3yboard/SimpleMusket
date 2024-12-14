@@ -70,7 +70,6 @@ public class ModRegistry {
     public static final TagKey<Enchantment> MUSKET_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, location("exclusive_set/musket"));
     public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, location("bullet"));
     public static final ResourceKey<Enchantment> FIREPOWER = ResourceKey.create(Registries.ENCHANTMENT, location("firepower"));
-    public static final ResourceKey<Enchantment> DEADEYE = ResourceKey.create(Registries.ENCHANTMENT, location("deadeye"));
     public static final ResourceKey<Enchantment> LONGSHOT = ResourceKey.create(Registries.ENCHANTMENT, location("longshot"));
     public static final ResourceKey<Enchantment> REPEATING = ResourceKey.create(Registries.ENCHANTMENT, location("repeating"));
     public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_spawn_musket"));

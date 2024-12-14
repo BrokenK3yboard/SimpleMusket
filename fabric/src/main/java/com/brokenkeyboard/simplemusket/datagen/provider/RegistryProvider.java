@@ -48,9 +48,6 @@ public class RegistryProvider extends FabricDynamicRegistryProvider {
                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, EntityPredicate.Builder.entity().of(BULLET_ENTITY).build()))
                 .build(ModRegistry.FIREPOWER.location()));
 
-        entries.add(ModRegistry.DEADEYE, Enchantment.enchantment(Enchantment.definition(itemHolder, 5, 3, Enchantment.dynamicCost(12, 20), Enchantment.constantCost(50), 2, EquipmentSlotGroup.MAINHAND))
-                .build(ModRegistry.DEADEYE.location()));
-
         entries.add(ModRegistry.LONGSHOT, Enchantment.enchantment(Enchantment.definition(itemHolder, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
                 .exclusiveWith(enchHolder.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
                 .withEffect(DAMAGE_DISTANCE, new DamageDistanceEffect(0.15F, LevelBasedValue.perLevel(1.0F, 0.66F)),

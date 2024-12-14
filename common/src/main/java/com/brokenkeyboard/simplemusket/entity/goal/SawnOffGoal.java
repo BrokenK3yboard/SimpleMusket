@@ -1,16 +1,16 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
+import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.EnumSet;
 
@@ -68,8 +68,8 @@ public class SawnOffGoal extends Goal {
                     musket.fire(MOB.level(), MOB, hand, stack, 4.0F, deviation, MOB.getTarget(), SoundSource.HOSTILE);
                     MOB.setSawnoffCD(120);
                     MOB.setUsingSawnOff(false);
-                    int amount = EnchantmentHelper.getItemEnchantmentLevel(MOB.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModRegistry.REPEATING), stack);
-                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, amount + 1));
+                    int amount = this.MOB.level() instanceof ServerLevel ? ModEnchantments.modifyAmmoCount(stack, 1) : 1;
+                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, amount));
                 }
             }
         }
