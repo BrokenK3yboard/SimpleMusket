@@ -7,7 +7,8 @@ public class Config {
     public static final ModConfigSpec SPEC;
     public static ModConfigSpec.IntValue RELOAD_TIME;
     public static ModConfigSpec.IntValue AIM_TIME;
-    public static ModConfigSpec.BooleanValue REDUCE_MOB_DAMAGE;
+    public static ModConfigSpec.DoubleValue BULLET_DAMAGE;
+    public static ModConfigSpec.DoubleValue MOB_DAMAGE_MULT;
 
     static {
         ModConfigSpec.Builder configBuilder = new ModConfigSpec.Builder();
@@ -19,14 +20,18 @@ public class Config {
 
         RELOAD_TIME = builder
                 .comment("The number of ticks needed to reload a musket. 20 ticks = 1 second.")
-                .defineInRange("Musket reload time", 40, 40, 80);
+                .defineInRange("Musket reload time", 30, 20, 80);
 
         AIM_TIME = builder
                 .comment("The number of ticks needed to aim a musket. 20 ticks = 1 second.")
-                .defineInRange("Musket aim time", 60, 40, 80);
+                .defineInRange("Musket aim time", 30, 20, 80);
 
-        REDUCE_MOB_DAMAGE = builder
-                .comment("If enabled, the amount of damage dealt by mobs armed with muskets is reduced by 25%.")
-                .define("Reduced Pillager bullet damage", false);
+        BULLET_DAMAGE = builder
+                .comment("The amount of damage dealt by bullets.")
+                .defineInRange("Bullet damage", 16D, 12D, 32D);
+
+        MOB_DAMAGE_MULT = builder
+                .comment("Damage multiplier applied to bullets fired by mobs.")
+                .defineInRange("Mob bullet damage multiplier", 1D, 0.8D, 1.2D);
     }
 }

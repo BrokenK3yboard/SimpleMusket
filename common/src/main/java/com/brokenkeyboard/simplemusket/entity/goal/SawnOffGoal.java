@@ -3,6 +3,7 @@ package com.brokenkeyboard.simplemusket.entity.goal;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -65,7 +66,8 @@ public class SawnOffGoal extends Goal {
                         MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, 1));
                     }
                     float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
-                    musket.fire(MOB.level(), MOB, hand, stack, 4.0F, deviation, MOB.getTarget(), SoundSource.HOSTILE);
+                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).VELOCITY;
+                    musket.fire(MOB.level(), MOB, hand, stack, velocity, deviation, MOB.getTarget(), SoundSource.HOSTILE);
                     MOB.setSawnoffCD(120);
                     MOB.setUsingSawnOff(false);
                     int amount = this.MOB.level() instanceof ServerLevel ? ModEnchantments.modifyAmmoCount(stack, 1) : 1;

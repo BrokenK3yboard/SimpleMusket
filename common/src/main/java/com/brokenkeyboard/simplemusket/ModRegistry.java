@@ -55,15 +55,19 @@ public class ModRegistry {
     public static final Map<ResourceLocation, Item> ITEMS = new HashMap<>();
     public static final Map<ResourceLocation, SoundEvent> SOUNDS = new HashMap<>();
 
-    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(location("bullet_entity"),
-            EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(5).build("bullet_entity"));
+    public static final EntityType.Builder<BulletEntity> BULLET_BUILDER = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20);
+    static {
+        Services.PLATFORM.disableVelocityUpdate(BULLET_BUILDER);
+    }
+
+    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(location("bullet_entity"), BULLET_BUILDER.build("bullet_entity"));
     public static final EntityType<? extends MusketPillager> GUNSLINGER = (EntityType<MusketPillager>) addEntity(location("musket_pillager"),
             EntityType.Builder.of(MusketPillager::new, MobCategory.MONSTER).sized(0.6F, 1.95F).canSpawnFarFromPlayer().clientTrackingRange(8).build("musket_pillager"));
 
     public static final Item MUSKET = addItem(location("musket"), new MusketItem(new Item.Properties().durability(256)));
-    public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem());
-    public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem());
-    public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem());
+    public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem(6F));
+    public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem(6F));
+    public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem(8F));
     public static final Item GUNSLINGER_EGG = addItem(location("musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
 
     public static final TagKey<Item> MUSKET_ENCHANTABLE = TagKey.create(Registries.ITEM, location("enchantable/musket"));

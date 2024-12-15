@@ -13,6 +13,7 @@
   "effect.simplemusket.armor_decrease": "Armor Decrease",
   "effect.simplemusket.hex": "Hex",
   "entity.simplemusket.musket_pillager": "Gunslinger",
+  "entity.simplemusket.bullet_entity": "Bullet",
   "death.attack.bullet": "%1$s was shot by %2$s",
   "death.attack.bullet.item": "%1$s was shot by %2$s using %3$s",
   "subtitles.item.simplemusket.musket.loading": "Musket loading",

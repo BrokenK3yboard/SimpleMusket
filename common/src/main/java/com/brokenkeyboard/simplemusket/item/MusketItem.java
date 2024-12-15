@@ -60,8 +60,9 @@ public class MusketItem extends ProjectileWeaponItem {
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         if (isLoaded(stack)) {
             int aimTicks = getUseDuration(stack, entity) - timeLeft;
+            float velocity = ((BulletItem) getLoadedAmmo(stack).getItem()).VELOCITY;
             float deviation = 12 - Math.clamp(aimTicks / Config.AIM_TIME.get(), 0, 1) * 12;
-            fire(level, entity, entity.getUsedItemHand(), stack, 4F, deviation, null, SoundSource.PLAYERS);
+            fire(level, entity, entity.getUsedItemHand(), stack, velocity, deviation, null, SoundSource.PLAYERS);
         } else if (getUseDuration(stack, entity) - timeLeft >= Config.RELOAD_TIME.get()) {
             List<ItemStack> projectiles = draw(stack, entity.getProjectile(stack), entity);
             if (!projectiles.isEmpty()) {
@@ -88,30 +89,25 @@ public class MusketItem extends ProjectileWeaponItem {
         }
     }
 
-    public void fire(Level level, LivingEntity entity, InteractionHand hand, ItemStack stack, float power, float deviation, @Nullable LivingEntity target, SoundSource source) {
+    public void fire(Level level, LivingEntity entity, InteractionHand hand, ItemStack stack, float velocity, float deviation, @Nullable LivingEntity target, SoundSource source) {
         if (!(level instanceof ServerLevel serverLevel) || (entity instanceof Mob && target == null)) return;
         ChargedProjectiles projectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
         if (projectiles != null && !projectiles.isEmpty()) {
-            this.shoot(serverLevel, entity, hand, stack, projectiles.getItems(), power, deviation, entity instanceof Player, target);
+            this.shoot(serverLevel, entity, hand, stack, projectiles.getItems(), velocity, deviation, entity instanceof Player, target);
             ItemStack bullet = getLoadedAmmo(stack);
-            setAmmo(stack, new ItemStack(stack.getItem(), bullet.getCount() - 1));
+            setAmmo(stack, new ItemStack(bullet.getItem(), bullet.getCount() - 1));
         }
         spawnParticles(level, entity, entity instanceof Mob ? targetVec(entity, target) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
         Services.PLATFORM.playSound(source, serverLevel, entity.position());
     }
 
     @Override
-    protected int getDurabilityUse(ItemStack stack) {
-        return stack.is(ModRegistry.HELLFIRE_CARTRIDGE) ? 3 : 1;
-    }
-
-    @Override
     protected void shootProjectile(LivingEntity entity, Projectile projectile, int index, float power, float deviation, float v2, @Nullable LivingEntity target) {
         if (entity instanceof Mob && target != null) {
             Vec3 direction = targetVec(entity, target);
-            projectile.shoot(direction.x(), direction.y(), direction.z(), 4F, deviation);
+            projectile.shoot(direction.x(), direction.y(), direction.z(), power, deviation);
         } else if (entity instanceof Player) {
-            projectile.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, 4F, deviation);
+            projectile.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, power, deviation);
         }
     }
 
@@ -153,7 +149,7 @@ public class MusketItem extends ProjectileWeaponItem {
     }
 
     public static boolean isLoaded(ItemStack stack) {
-        return !getLoadedAmmo(stack).is(ItemStack.EMPTY.getItem());
+        return BULLETS.test(getLoadedAmmo(stack));
     }
 
     @Override

@@ -82,7 +82,7 @@ public class SimpleMusket {
     public void sendIMC(InterModEnqueueEvent event) {
         if (Services.PLATFORM.isModLoaded("consecration")) {
             InterModComms.sendTo("consecration", "holy_attack", () -> (BiFunction<LivingEntity, DamageSource, Boolean>)
-                    (livingEntity, damageSource) -> (damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.getBullet().is(ModRegistry.ENCHANTED_CARTRIDGE)));
+                    (livingEntity, damageSource) -> (damageSource.getDirectEntity() instanceof BulletEntity bullet && bullet.getBullet().equals(ModRegistry.ENCHANTED_CARTRIDGE)));
         }
 
         if (Services.PLATFORM.isModLoaded("usefulspyglass")) {

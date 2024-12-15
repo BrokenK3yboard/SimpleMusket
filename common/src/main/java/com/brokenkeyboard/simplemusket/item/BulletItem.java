@@ -12,8 +12,11 @@ import net.minecraft.world.phys.Vec3;
 
 public class BulletItem extends Item implements ProjectileItem {
 
-    public BulletItem() {
+    public final float VELOCITY;
+
+    public BulletItem(float speed) {
         super(new Item.Properties());
+        VELOCITY = speed;
     }
 
     @Override
@@ -24,6 +27,6 @@ public class BulletItem extends Item implements ProjectileItem {
 
     @Override
     public ProjectileItem.DispenseConfig createDispenseConfig() {
-        return DispenseConfig.builder().uncertainty(0.5F).power(4F).build();
+        return DispenseConfig.builder().uncertainty(0.5F).power(VELOCITY).build();
     }
 }

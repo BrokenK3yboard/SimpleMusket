@@ -3,8 +3,16 @@ package com.brokenkeyboard.simplemusket.entity;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
+import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.platform.Services;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -19,6 +27,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -32,7 +41,8 @@ import javax.annotation.Nullable;
 public class BulletEntity extends Projectile {
 
     private int ticksAlive = 0;
-    private ItemStack bullet = new ItemStack(ModRegistry.CARTRIDGE);
+    private BulletItem bullet = (BulletItem) ModRegistry.CARTRIDGE;
+    private float damage;
     @Nullable
     private ItemStack weapon;
 
@@ -51,7 +61,8 @@ public class BulletEntity extends Projectile {
         this(ModRegistry.BULLET_ENTITY, level);
         this.setOwner(owner);
         this.setPos(pos);
-        this.bullet = bullet;
+        if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
+        this.damage = (float) (owner instanceof Mob ? Config.BULLET_DAMAGE.get() * Config.MOB_DAMAGE_MULT.get() : Config.BULLET_DAMAGE.get());
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 
@@ -67,8 +78,18 @@ public class BulletEntity extends Projectile {
             this.hasImpulse = true;
         }
 
-        Vec3 vec3 = this.getDeltaMovement();
-        this.setPos(this.getX() + vec3.x, this.getY() + vec3.y, this.getZ() + vec3.z);
+        float inertia = 1F;
+
+        if (isInWater()) {
+            inertia = 0.6F;
+            for(int j = 0; j < 4; ++j) {
+                this.level().addParticle(ParticleTypes.BUBBLE, getX(), getY(), getZ(),
+                        getDeltaMovement().x * -0.2, getDeltaMovement().y * -0.2, getDeltaMovement().z * -0.2);
+            }
+        }
+
+        this.setDeltaMovement(this.getDeltaMovement().scale(inertia));
+        this.setPos(this.position().add(this.getDeltaMovement()));
         this.checkInsideBlocks();
     }
 
@@ -78,7 +99,7 @@ public class BulletEntity extends Projectile {
     @Override
     protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult result) {
         if (result instanceof EntityHitResult entity && entity.getEntity() instanceof IronGolem golem) {
-            golem.hurt(damageSource(this, getOwner()), getDamage() * 0.25F);
+            golem.hurt(damageSource(this, getOwner()), damage * 0.25F);
             if (golem != this.lastDeflectedBy && this.deflect(BULLET_DEFLECTION, golem, this.getOwner(), false)) {
                 this.lastDeflectedBy = golem;
             }
@@ -92,10 +113,10 @@ public class BulletEntity extends Projectile {
         Entity entity = hitResult.getEntity();
         Entity target = Services.PLATFORM.getHitEntity(entity);
         Entity owner = this.getOwner();
-        boolean raiderFF = (owner instanceof Raider && target instanceof Raider) && (this.lastDeflectedBy == null);
+        boolean raiderFF = owner instanceof Raider && target instanceof Raider && this.lastDeflectedBy == null;
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
-        float damage = getDamage();
+        float damage = Config.BULLET_DAMAGE.get().floatValue();
         DamageSource source = damageSource(this, owner);
 
         if (this.level() instanceof ServerLevel && weapon != null) {
@@ -103,9 +124,9 @@ public class BulletEntity extends Projectile {
         }
 
         if (entity.hurt(source, damage) && entity instanceof LivingEntity living) {
-            if (bullet.is(ModRegistry.HELLFIRE_CARTRIDGE)) {
+            if (bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) {
                 living.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE_EFFECT, 600));
-            } else if (bullet.is(ModRegistry.ENCHANTED_CARTRIDGE)) {
+            } else if (bullet.equals(ModRegistry.ENCHANTED_CARTRIDGE)) {
                 living.addEffect(new MobEffectInstance(ModRegistry.HEX_EFFECT, 600));
             }
 
@@ -131,12 +152,30 @@ public class BulletEntity extends Projectile {
         return level().damageSources().source(ModRegistry.BULLET, bullet, attacker);
     }
 
-    public ItemStack getBullet() {
+    public Item getBullet() {
         return bullet;
     }
 
-    public float getDamage() {
-        float damage = bullet.getItem() == ModRegistry.HELLFIRE_CARTRIDGE ? 20F : 16F;
-        return this.getOwner() instanceof Mob && Config.REDUCE_MOB_DAMAGE.get() ? (float) (damage * 0.75) : damage;
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
+        Vec3 position = entity.getPositionBase();
+        Entity owner = getOwner();
+        return new ClientboundAddEntityPacket(getId(), getUUID(), position.x(), position.y(), position.z(),
+                entity.getLastSentXRot(), entity.getLastSentYRot(), getType(), owner != null ? owner.getId() : 0,
+                entity.getLastSentMovement().scale(3.9F / bullet.VELOCITY), 0);
+    }
+
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        setDeltaMovement(new Vec3(packet.getXa(), packet.getYa(), packet.getZa()).scale(1F / 3.9F));
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
+        super.onSyncedDataUpdated(accessor);
+        if (level().isClientSide) {
+            setDeltaMovement(getDeltaMovement().scale(bullet.VELOCITY));
+        }
     }
 }

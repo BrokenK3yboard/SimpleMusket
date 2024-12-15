@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
@@ -58,5 +59,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public <T extends EnchantmentEntityEffect> void createEntityEffectComponent(String name, MapCodec<T> codec) {
         ENCHANTMENT_ENTITY_COMPONENTS.register(name, () -> codec);
+    }
+
+    @Override
+    public void disableVelocityUpdate(EntityType.Builder<?> builder) {
+        builder.setShouldReceiveVelocityUpdates(false);
     }
 }

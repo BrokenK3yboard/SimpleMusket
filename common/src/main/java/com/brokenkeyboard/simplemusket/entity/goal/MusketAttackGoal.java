@@ -3,6 +3,7 @@ package com.brokenkeyboard.simplemusket.entity.goal;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundSource;
@@ -110,8 +111,9 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
                     --attackDelay;
                 } else if (hasLOS) {
                     MOB.level().registryAccess().registry(Registries.ENCHANTMENT);
+                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).VELOCITY;
                     float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
-                    musket.fire(MOB.level(), MOB, hand, stack, 4.0F, deviation, MOB.getTarget(), SoundSource.HOSTILE);
+                    musket.fire(MOB.level(), MOB, hand, stack, velocity, deviation, MOB.getTarget(), SoundSource.HOSTILE);
                 }
             }
         }
