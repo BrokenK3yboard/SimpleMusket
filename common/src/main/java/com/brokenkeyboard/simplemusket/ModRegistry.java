@@ -92,7 +92,6 @@ public class ModRegistry {
 
     public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ModEffect(MobEffectCategory.HARMFUL, 4595487)
             .addAttributeModifier(Attributes.ARMOR, location("effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
-    public static final Holder<MobEffect> HEX_EFFECT = Services.PLATFORM.createEffectHolder("hex", new ModEffect(MobEffectCategory.HARMFUL, 15724742));
 
     public static final SoundEvent MUSKET_LOAD_0 = addSound(location("musket_load0"), SoundEvent.createVariableRangeEvent(location("musket_load0")));
     public static final SoundEvent MUSKET_LOAD_1 = addSound(location("musket_load1"), SoundEvent.createVariableRangeEvent(location("musket_load1")));

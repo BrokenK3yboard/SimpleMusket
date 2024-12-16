@@ -6,8 +6,6 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EnchantmentHelperMixin",
-    "EnchantmentMixin",
-    "LivingEntityMixin",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"
   ],

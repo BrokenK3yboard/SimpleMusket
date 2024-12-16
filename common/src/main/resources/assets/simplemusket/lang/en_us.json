@@ -1,7 +1,7 @@
 {
   "item.simplemusket.musket": "Musket",
   "item.simplemusket.cartridge": "Cartridge",
-  "item.simplemusket.enchanted_cartridge": "Hex Cartridge",
+  "item.simplemusket.enchanted_cartridge": "Enchanted Cartridge",
   "item.simplemusket.hellfire_cartridge": "Hellfire Cartridge",
   "item.simplemusket.musket_pillager_spawn_egg": "Gunslinger Spawn Egg",
   "enchantment.simplemusket.firepower": "Firepower",
@@ -11,7 +11,6 @@
   "enchantment.simplemusket.repeating.desc": "Muskets can fire twice per reload. Bonus increased when reloading after a kill.",
   "enchantment.simplemusket.longshot.desc": "Bullets fired from a musket deal more damage the further they travel.",
   "effect.simplemusket.armor_decrease": "Armor Decrease",
-  "effect.simplemusket.hex": "Hex",
   "entity.simplemusket.musket_pillager": "Gunslinger",
   "entity.simplemusket.bullet_entity": "Bullet",
   "death.attack.bullet": "%1$s was shot by %2$s",

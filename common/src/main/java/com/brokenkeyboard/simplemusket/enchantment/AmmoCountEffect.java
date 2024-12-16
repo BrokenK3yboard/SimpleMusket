@@ -15,6 +15,11 @@ public record AmmoCountEffect(LevelBasedValue base, LevelBasedValue bonus) {
             .apply(instance, AmmoCountEffect::new));
 
     public float process(int level, ItemStack weapon, float ammoCount) {
-        return weapon.remove(AMMO_BONUS) != null ? ammoCount + base.calculate(level) + bonus.calculate(level) : ammoCount + base.calculate(level);
+        if (weapon.has(AMMO_BONUS)) {
+            int value = weapon.getOrDefault(AMMO_BONUS, 0);
+            weapon.remove(AMMO_BONUS);
+            return ammoCount + base.calculate(level) + bonus.calculate(level) + value;
+        }
+        return ammoCount + base.calculate(level);
     }
 }
