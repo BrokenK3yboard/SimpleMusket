@@ -49,7 +49,7 @@ public class MusketItem extends ProjectileWeaponItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if ((isLoaded(stack) || !player.getProjectile(stack).isEmpty()) && !player.isEyeInFluid(FluidTags.WATER)) {
+        if ((isLoaded(stack) || !player.getProjectile(stack).isEmpty()) && !player.isEyeInFluid(FluidTags.WATER) && !player.isEyeInFluid(FluidTags.LAVA)) {
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
         }
@@ -58,11 +58,12 @@ public class MusketItem extends ProjectileWeaponItem {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
+        if (entity.isEyeInFluid(FluidTags.WATER) || entity.isEyeInFluid(FluidTags.LAVA)) return;
         if (isLoaded(stack)) {
             int aimTicks = getUseDuration(stack, entity) - timeLeft;
             float velocity = ((BulletItem) getLoadedAmmo(stack).getItem()).VELOCITY;
-            float deviation = 12 - Math.clamp(aimTicks / Config.AIM_TIME.get(), 0, 1) * 12;
-            fire(level, entity, entity.getUsedItemHand(), stack, velocity, deviation, null, SoundSource.PLAYERS);
+            float inaccuracy = 12 - Math.clamp(aimTicks / Config.AIM_TIME.get(), 0, 1) * 12;
+            fire(level, entity, entity.getUsedItemHand(), stack, velocity, inaccuracy, null, SoundSource.PLAYERS);
         } else if (getUseDuration(stack, entity) - timeLeft >= Config.RELOAD_TIME.get()) {
             List<ItemStack> projectiles = draw(stack, entity.getProjectile(stack), entity);
             if (!projectiles.isEmpty()) {
@@ -76,7 +77,9 @@ public class MusketItem extends ProjectileWeaponItem {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int timeLeft) {
+        if (entity.isEyeInFluid(FluidTags.WATER) || entity.isEyeInFluid(FluidTags.LAVA)) entity.stopUsingItem();
         int useTime = getUseDuration(stack, entity) - timeLeft;
+
         SoundSource source = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
         if (!isLoaded(stack)) {
             if (Math.floor(Config.RELOAD_TIME.get() * 0.12) == useTime) {
@@ -89,32 +92,32 @@ public class MusketItem extends ProjectileWeaponItem {
         }
     }
 
-    public void fire(Level level, LivingEntity entity, InteractionHand hand, ItemStack stack, float velocity, float deviation, @Nullable LivingEntity target, SoundSource source) {
-        if (!(level instanceof ServerLevel serverLevel) || (entity instanceof Mob && target == null)) return;
+    public void fire(Level level, LivingEntity shooter, InteractionHand hand, ItemStack stack, float velocity, float inaccuracy, @Nullable LivingEntity target, SoundSource source) {
+        if (!(level instanceof ServerLevel serverLevel) || (shooter instanceof Mob && target == null)) return;
         ChargedProjectiles projectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
         if (projectiles != null && !projectiles.isEmpty()) {
-            this.shoot(serverLevel, entity, hand, stack, projectiles.getItems(), velocity, deviation, entity instanceof Player, target);
+            this.shoot(serverLevel, shooter, hand, stack, projectiles.getItems(), velocity, inaccuracy, shooter instanceof Player, target);
             ItemStack bullet = getLoadedAmmo(stack);
             setAmmo(stack, new ItemStack(bullet.getItem(), bullet.getCount() - 1));
         }
-        spawnParticles(level, entity, entity instanceof Mob ? targetVec(entity, target) : Vec3.directionFromRotation(entity.getXRot(), entity.getYRot()));
-        Services.PLATFORM.playSound(source, serverLevel, entity.position());
+        spawnParticles(level, shooter, shooter instanceof Mob ? targetVec(shooter, target) : Vec3.directionFromRotation(shooter.getXRot(), shooter.getYRot()));
+        Services.PLATFORM.playSound(source, serverLevel, shooter.position());
     }
 
     @Override
-    protected void shootProjectile(LivingEntity entity, Projectile projectile, int index, float power, float deviation, float v2, @Nullable LivingEntity target) {
-        if (entity instanceof Mob && target != null) {
-            Vec3 direction = targetVec(entity, target);
-            projectile.shoot(direction.x(), direction.y(), direction.z(), power, deviation);
-        } else if (entity instanceof Player) {
-            projectile.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0F, power, deviation);
+    protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity, float inaccuracy, float angle, @Nullable LivingEntity target) {
+        if (shooter instanceof Mob && target != null) {
+            Vec3 direction = targetVec(shooter, target);
+            projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, inaccuracy);
+        } else if (shooter instanceof Player) {
+            projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0F, velocity, inaccuracy);
         }
     }
 
     @Override
-    protected Projectile createProjectile(Level level, LivingEntity entity, ItemStack weapon, ItemStack ammo, boolean isPlayer) {
-        Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
-        return new BulletEntity(level, entity, origin, ammo, weapon);
+    protected Projectile createProjectile(Level level, LivingEntity shooter, ItemStack weapon, ItemStack ammo, boolean isPlayer) {
+        Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+        return new BulletEntity(level, shooter, origin, ammo, weapon);
     }
 
     public static Vec3 targetVec(LivingEntity mob, LivingEntity target) {

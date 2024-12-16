@@ -43,8 +43,10 @@ public class BulletEntity extends Projectile {
     private int ticksAlive = 0;
     private BulletItem bullet = (BulletItem) ModRegistry.CARTRIDGE;
     private float damage;
+    private float velocityPerc = 1F;
     @Nullable
     private ItemStack weapon;
+    private boolean speedUpdated = false;
 
     private static final ProjectileDeflection BULLET_DEFLECTION = (projectile, entity, randomSource) -> {
         assert entity != null;
@@ -72,24 +74,31 @@ public class BulletEntity extends Projectile {
         if (ticksAlive > 300) this.discard();
         ticksAlive++;
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+        Vec3 movement = getDeltaMovement();
+        float inertia = 1F;
 
         if (hitresult.getType() != HitResult.Type.MISS) {
             this.hitTargetOrDeflectSelf(hitresult);
             this.hasImpulse = true;
         }
 
-        float inertia = 1F;
-
         if (isInWater()) {
-            inertia = 0.6F;
+            inertia = 0.8F;
+            velocityPerc *= 0.8F;
             for(int j = 0; j < 4; ++j) {
                 this.level().addParticle(ParticleTypes.BUBBLE, getX(), getY(), getZ(),
-                        getDeltaMovement().x * -0.2, getDeltaMovement().y * -0.2, getDeltaMovement().z * -0.2);
+                        movement.x * -0.2, movement.y * -0.2, movement.z * -0.2);
             }
         }
 
-        this.setDeltaMovement(this.getDeltaMovement().scale(inertia));
-        this.setPos(this.position().add(this.getDeltaMovement()));
+        if (velocityPerc < 0.2F) {
+            this.discard();
+        } else if (velocityPerc < 0.5F) {
+            this.setNoGravity(false);
+        }
+
+        this.setDeltaMovement(movement.scale(inertia));
+        this.setPos(position().add(movement));
         this.checkInsideBlocks();
     }
 
@@ -116,8 +125,8 @@ public class BulletEntity extends Projectile {
         boolean raiderFF = owner instanceof Raider && target instanceof Raider && this.lastDeflectedBy == null;
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
-        float damage = Config.BULLET_DAMAGE.get().floatValue();
         DamageSource source = damageSource(this, owner);
+        damage *= velocityPerc;
 
         if (this.level() instanceof ServerLevel && weapon != null) {
             damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);
@@ -166,14 +175,16 @@ public class BulletEntity extends Projectile {
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
-        setDeltaMovement(new Vec3(packet.getXa(), packet.getYa(), packet.getZa()).scale(1F / 3.9F));
+        Vec3 velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
+        setDeltaMovement(velocity.scale(1.0 / 3.9));
     }
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
         super.onSyncedDataUpdated(accessor);
-        if (level().isClientSide) {
+        if (!getDeltaMovement().equals(Vec3.ZERO) && level().isClientSide && !speedUpdated) {
             setDeltaMovement(getDeltaMovement().scale(bullet.VELOCITY));
+            speedUpdated = true;
         }
     }
 }
