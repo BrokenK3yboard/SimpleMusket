@@ -18,6 +18,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 
@@ -60,6 +62,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public <T extends EnchantmentEntityEffect> void createEntityEffectComponent(String name, MapCodec<T> codec) {
         Registry.register(BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE, ModRegistry.location(name), codec);
+    }
+
+    @Override
+    public <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer) {
+        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ModRegistry.location(name), serializer);
     }
 
     @Override

@@ -1,8 +1,8 @@
-// 1.21.1	2024-12-13T22:36:25.2061373	Simple Musket/DynamicData
+// 1.21.1	2024-12-17T22:56:30.9411088	Simple Musket/DynamicData
 6d127e5961d036e74a38dff34873203b63b8ffba data\simplemusket\enchantment_provider\raid\gunslinger_spawn_musket.json
 b1a2a7604fd1f3d1f39da3e6f4417a2a0091da35 data\simplemusket\enchantment_provider\raid\gunslinger_post_wave_5.json
-82f132152b31dad4d11bdd4e98bd0279c68d62bb data\simplemusket\enchantment\repeating.json
-0fcaa398bc1df613ec3e456795d05689b14b0990 data\simplemusket\enchantment\longshot.json
+a0d8e4dc01288b52f0c18c5686c9451e9a3fa195 data\simplemusket\enchantment\repeating.json
+5f011455e86ce750ce2f5e784ff42f968aaa02b5 data\simplemusket\enchantment\longshot.json
 9ad5848f90a67a47aa42f9aee52678f72c258ba8 data\simplemusket\damage_type\bullet.json
-61c5a6d9a90b4d198ed06602b2fc58b746dd5898 data\simplemusket\enchantment\firepower.json
+59819ed31931e7b5d9164d81c7283c1760840a3b data\simplemusket\enchantment\firepower.json
 5b022da722ec858b223c5028818ea4de9bb9ae59 data\simplemusket\enchantment_provider\raid\gunslinger_post_wave_3.json

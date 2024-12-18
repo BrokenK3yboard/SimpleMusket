@@ -16,8 +16,7 @@ public class EnchantProvider extends EnchantmentTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(ModRegistry.MUSKET_EXCLUSIVE).add(ModRegistry.FIREPOWER);
-        tag(EnchantmentTags.DAMAGE_EXCLUSIVE).add(ModRegistry.FIREPOWER).add(ModRegistry.LONGSHOT);
+        tag(ModRegistry.MUSKET_EXCLUSIVE).add(ModRegistry.FIREPOWER).add(ModRegistry.LONGSHOT).add(ModRegistry.REPEATING);
         tag(EnchantmentTags.NON_TREASURE).add(ModRegistry.FIREPOWER).add(ModRegistry.LONGSHOT).add(ModRegistry.REPEATING);
     }
 }

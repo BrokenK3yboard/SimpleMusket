@@ -6,6 +6,7 @@ import com.brokenkeyboard.simplemusket.enchantment.DamageDistanceEffect;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
+import com.brokenkeyboard.simplemusket.item.EnchCartridgeRecipe;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.mixin.VillagerHostilesSensorAccessor;
 import com.brokenkeyboard.simplemusket.platform.Services;
@@ -30,6 +31,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
@@ -69,6 +72,9 @@ public class ModRegistry {
     public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem(5F));
     public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem(6.25F));
     public static final Item GUNSLINGER_EGG = addItem(location("musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
+
+    public static final RecipeSerializer<EnchCartridgeRecipe> ENCH_CARTRIDGE_CRAFTING = Services.PLATFORM.createRecipeSerializer("crafting_special_enchanted_cartidge",
+            new SimpleCraftingRecipeSerializer<>(EnchCartridgeRecipe::new));
 
     public static final TagKey<Item> MUSKET_ENCHANTABLE = TagKey.create(Registries.ITEM, location("enchantable/musket"));
     public static final TagKey<Enchantment> MUSKET_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, location("exclusive_set/musket"));

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.InterModComms;
@@ -42,6 +43,7 @@ public class SimpleMusket {
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, ModRegistry.MOD_ID);
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ModRegistry.MOD_ID);
     public static final DeferredRegister.DataComponents ENCHANTMENT_COMPONENTS = DeferredRegister.createDataComponents(Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, ModRegistry.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, ModRegistry.MOD_ID);
     public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENCHANTMENT_ENTITY_COMPONENTS = DeferredRegister.create(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, ModRegistry.MOD_ID);
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, ModRegistry.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
@@ -56,6 +58,7 @@ public class SimpleMusket {
         DATA_COMPONENTS.register(bus);
         ENCHANTMENT_COMPONENTS.register(bus);
         ENCHANTMENT_ENTITY_COMPONENTS.register(bus);
+        RECIPE_SERIALIZERS.register(bus);
         bus.addListener((EntityAttributeCreationEvent event) -> ModRegistry.createEntityAttributes((type, builder) -> event.put(type, builder.build())));
         GLM.register(bus);
         bus.addListener(this::addCreative);

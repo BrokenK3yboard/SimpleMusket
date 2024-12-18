@@ -10,6 +10,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
@@ -59,6 +61,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public <T extends EnchantmentEntityEffect> void createEntityEffectComponent(String name, MapCodec<T> codec) {
         ENCHANTMENT_ENTITY_COMPONENTS.register(name, () -> codec);
+    }
+
+    @Override
+    public <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer) {
+        RECIPE_SERIALIZERS.register(name, () -> serializer);
+        return serializer;
     }
 
     @Override

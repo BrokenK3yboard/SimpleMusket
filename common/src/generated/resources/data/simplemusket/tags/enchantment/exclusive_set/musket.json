@@ -1,5 +1,7 @@
 {
   "values": [
-    "simplemusket:firepower"
+    "simplemusket:firepower",
+    "simplemusket:longshot",
+    "simplemusket:repeating"
   ]
 }

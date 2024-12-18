@@ -12,7 +12,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
@@ -43,19 +42,19 @@ public class RegistryProvider extends FabricDynamicRegistryProvider {
         entries.add(ModRegistry.BULLET, Datagen.BULLET);
 
         entries.add(ModRegistry.FIREPOWER, Enchantment.enchantment(Enchantment.definition(itemHolder, 10, 5, Enchantment.dynamicCost(1, 10), Enchantment.dynamicCost(16, 10), 1, EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(enchHolder.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .exclusiveWith(enchHolder.getOrThrow(MUSKET_EXCLUSIVE))
                 .withEffect(EnchantmentEffectComponents.ARMOR_EFFECTIVENESS, new AddValue(LevelBasedValue.perLevel(-0.1F)),
                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, EntityPredicate.Builder.entity().of(BULLET_ENTITY).build()))
                 .build(ModRegistry.FIREPOWER.location()));
 
         entries.add(ModRegistry.LONGSHOT, Enchantment.enchantment(Enchantment.definition(itemHolder, 2, 2, Enchantment.dynamicCost(10, 20), Enchantment.dynamicCost(60, 20), 4, EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(enchHolder.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .exclusiveWith(enchHolder.getOrThrow(MUSKET_EXCLUSIVE))
                 .withEffect(DAMAGE_DISTANCE, new DamageDistanceEffect(0.15F, LevelBasedValue.perLevel(1.0F, 0.66F)),
                         LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, EntityPredicate.Builder.entity().of(BULLET_ENTITY).build()))
                 .build(ModRegistry.LONGSHOT.location()));
 
         entries.add(ModRegistry.REPEATING, Enchantment.enchantment(Enchantment.definition(itemHolder, 1, 1, Enchantment.constantCost(20), Enchantment.constantCost(50), 8, EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(enchHolder.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                .exclusiveWith(enchHolder.getOrThrow(MUSKET_EXCLUSIVE))
                 .withEffect(AMMO_COUNT, new AmmoCountEffect(LevelBasedValue.constant(1F), LevelBasedValue.constant(1F)))
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK, EnchantmentTarget.ATTACKER, EnchantmentTarget.VICTIM, new ComponentKillEffect())
                 .build(ModRegistry.REPEATING.location()));
