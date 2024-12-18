@@ -1,4 +1,4 @@
-// 1.21	2024-06-24T19:57:21.6436082	Global Loot Modifiers : simplemusket
+// 1.21.1	2024-12-18T00:43:31.4323091	Global Loot Modifiers : simplemusket
 ae8c5817aa6556ef852b7a53baf622a3da358bf7 data/neoforge/loot_modifiers/global_loot_modifiers.json
 896f1265b9d1177411cf26583b3cb415ee56cfab data/simplemusket/loot_modifiers/bastion_loot.json
 ecc699d79e6f1b1359ba87e951a4cba55ef619ca data/simplemusket/loot_modifiers/piglin_barter.json

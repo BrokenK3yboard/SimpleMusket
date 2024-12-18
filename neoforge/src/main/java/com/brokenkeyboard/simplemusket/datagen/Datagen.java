@@ -9,6 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(modid = ModRegistry.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Datagen {
 
-    private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder();
+    static final RegistrySetBuilder BUILDER = new RegistrySetBuilder().add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, DataProvider::bootstrap);
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
@@ -27,6 +28,7 @@ public class Datagen {
 
         if (event.includeServer()) {
             generator.addProvider(true, new GLMProvider(output, lookupProvider));
+            generator.addProvider(true, new DataProvider(output, lookupProvider));
         }
     }
 }
