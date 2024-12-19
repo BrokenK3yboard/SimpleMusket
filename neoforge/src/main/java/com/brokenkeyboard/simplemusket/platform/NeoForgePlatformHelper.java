@@ -31,7 +31,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void playSound(SoundSource source, ServerLevel level, Vec3 origin) {
-        PacketDistributor.sendToPlayersNear(level, null, origin.x, origin.y, origin.z, 128, new S2CSoundPayload(source.toString(), origin.toVector3f()));
+        PacketDistributor.sendToPlayersNear(level, null, origin.x, origin.y, origin.z, 64, new S2CSoundPayload(source.toString(), origin.toVector3f()));
     }
 
     @Override

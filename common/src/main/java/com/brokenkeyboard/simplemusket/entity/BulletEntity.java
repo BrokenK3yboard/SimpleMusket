@@ -42,7 +42,7 @@ public class BulletEntity extends Projectile {
 
     private int ticksAlive = 0;
     private BulletItem bullet = (BulletItem) ModRegistry.CARTRIDGE;
-    private float damage;
+    private float damage = Config.BULLET_DAMAGE.get().floatValue();
     private float velocityPerc = 1F;
     @Nullable
     private ItemStack weapon;
@@ -64,7 +64,7 @@ public class BulletEntity extends Projectile {
         this.setOwner(owner);
         this.setPos(pos);
         if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
-        this.damage = (float) (owner instanceof Mob ? Config.BULLET_DAMAGE.get() * Config.MOB_DAMAGE_MULT.get() : Config.BULLET_DAMAGE.get());
+        if (this.bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) damage *= 1.25F;
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 
@@ -126,7 +126,7 @@ public class BulletEntity extends Projectile {
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
         DamageSource source = damageSource(this, owner);
-        damage *= velocityPerc;
+        damage = owner instanceof Mob ? (float) (damage * velocityPerc * Config.MOB_DAMAGE_MULT.get()) : damage * velocityPerc;
 
         if (this.level() instanceof ServerLevel && weapon != null) {
             damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);

@@ -69,8 +69,8 @@ public class ModRegistry {
 
     public static final Item MUSKET = addItem(location("musket"), new MusketItem(new Item.Properties().durability(256)));
     public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem(5F));
-    public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem(5F));
-    public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem(6.25F));
+    public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem(6F));
+    public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem(7.5F));
     public static final Item GUNSLINGER_EGG = addItem(location("musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
 
     public static final RecipeSerializer<EnchCartridgeRecipe> ENCH_CARTRIDGE_CRAFTING = Services.PLATFORM.createRecipeSerializer("crafting_special_enchanted_cartidge",
@@ -109,7 +109,8 @@ public class ModRegistry {
     public static final ResourceLocation BASTION_BRIDGE = ResourceLocation.withDefaultNamespace("chests/bastion_bridge");
     public static final ResourceLocation PIGLIN_BARTER = ResourceLocation.withDefaultNamespace("gameplay/piglin_bartering");
 
-    public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem());
+    public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem())
+            && entity.getUseItem().getUseDuration(entity) - entity.getTicksUsingItem() > Config.AIM_TIME.get();
 
     public static EntityType<?> addEntity(ResourceLocation location, EntityType<?> type) {
         ENTITIES.put(location, type);
