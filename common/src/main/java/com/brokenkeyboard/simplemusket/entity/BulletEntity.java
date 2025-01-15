@@ -14,7 +14,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +23,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.Item;
@@ -48,12 +46,6 @@ public class BulletEntity extends Projectile {
     private ItemStack weapon;
     private boolean speedUpdated = false;
 
-    private static final ProjectileDeflection BULLET_DEFLECTION = (projectile, entity, randomSource) -> {
-        assert entity != null;
-        entity.level().playSound(null, entity, SoundEvents.IRON_GOLEM_HURT, entity.getSoundSource(), 1.0F, 1.0F);
-        ProjectileDeflection.REVERSE.deflect(projectile, entity, randomSource);
-    };
-
     public BulletEntity(EntityType<? extends BulletEntity> type, Level level) {
         super(type, level);
         this.setNoGravity(true);
@@ -65,6 +57,7 @@ public class BulletEntity extends Projectile {
         this.setPos(pos);
         if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
         if (this.bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) damage *= 1.25F;
+        if (owner instanceof MusketPillager mob && mob.isUsingSawnOff()) damage *= 0.6F;
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 
@@ -106,18 +99,6 @@ public class BulletEntity extends Projectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
-    protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult result) {
-        if (result instanceof EntityHitResult entity && entity.getEntity() instanceof IronGolem golem) {
-            golem.hurt(damageSource(this, getOwner()), damage * 0.25F);
-            if (golem != this.lastDeflectedBy && this.deflect(BULLET_DEFLECTION, golem, this.getOwner(), false)) {
-                this.lastDeflectedBy = golem;
-            }
-            return BULLET_DEFLECTION;
-        }
-        return super.hitTargetOrDeflectSelf(result);
-    }
-
-    @Override
     protected void onHitEntity(EntityHitResult hitResult) {
         Entity entity = hitResult.getEntity();
         Entity target = Services.PLATFORM.getHitEntity(entity);
@@ -126,7 +107,7 @@ public class BulletEntity extends Projectile {
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
         DamageSource source = damageSource(this, owner);
-        damage = owner instanceof Mob ? (float) (damage * velocityPerc * Config.MOB_DAMAGE_MULT.get()) : damage * velocityPerc;
+        damage = getDamageScaling() * velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
 
         if (this.level() instanceof ServerLevel && weapon != null) {
             damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);
@@ -161,6 +142,18 @@ public class BulletEntity extends Projectile {
 
     public Item getBullet() {
         return bullet;
+    }
+
+    protected float getDamageScaling() {
+        if (getOwner() instanceof Mob) {
+            float multiplier = switch (level().getDifficulty()) {
+                case EASY, PEACEFUL -> 0.5F;
+                case NORMAL -> 0.75F;
+                default -> 1F;
+            };
+            return damage * (multiplier * Config.MOB_DAMAGE_MULT.get().floatValue());
+        }
+        return damage;
     }
 
     @Override

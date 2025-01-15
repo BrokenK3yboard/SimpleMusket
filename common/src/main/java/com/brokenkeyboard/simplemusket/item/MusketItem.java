@@ -100,14 +100,19 @@ public class MusketItem extends ProjectileWeaponItem {
             ItemStack bullet = getLoadedAmmo(stack);
             setAmmo(stack, new ItemStack(bullet.getItem(), bullet.getCount() - 1));
         }
-        spawnParticles(level, shooter, shooter instanceof Mob ? targetVec(shooter, target) : Vec3.directionFromRotation(shooter.getXRot(), shooter.getYRot()));
+
+        Vec3 direction = shooter instanceof Mob ? mobTargetVec(shooter, target) : Vec3.directionFromRotation(shooter.getXRot(), shooter.getYRot());
+        Vec3 side = Vec3.directionFromRotation(0, shooter.getYRot() + (hand == InteractionHand.MAIN_HAND ? 90 : -90));
+        Vec3 down = Vec3.directionFromRotation(shooter.getXRot() + 90, shooter.getYRot());
+        Vec3 smokePos = shooter.getEyePosition().add(side.add(down).scale(0.15));
+        spawnParticles(level, smokePos, direction);
         Services.PLATFORM.playSound(source, serverLevel, shooter.position());
     }
 
     @Override
     protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity, float inaccuracy, float angle, @Nullable LivingEntity target) {
         if (shooter instanceof Mob && target != null) {
-            Vec3 direction = targetVec(shooter, target);
+            Vec3 direction = mobTargetVec(shooter, target);
             projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, inaccuracy);
         } else if (shooter instanceof Player) {
             projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0F, velocity, inaccuracy);
@@ -120,22 +125,18 @@ public class MusketItem extends ProjectileWeaponItem {
         return new BulletEntity(level, shooter, origin, ammo, weapon);
     }
 
-    public static Vec3 targetVec(LivingEntity mob, LivingEntity target) {
+    public static Vec3 mobTargetVec(LivingEntity mob, LivingEntity target) {
         double vecY = target.getBoundingBox().minY + target.getBbHeight() * 0.7f - mob.getY() - mob.getEyeHeight();
         return new Vec3(target.getX() - mob.getX(), vecY, target.getZ() - mob.getZ()).normalize();
     }
 
-    public static void spawnParticles(Level level, LivingEntity entity, Vec3 direction) {
+    public static void spawnParticles(Level level, Vec3 position, Vec3 direction) {
         if (!(level instanceof ServerLevel serverLevel)) return;
-
-        RandomSource random = entity.getRandom();
-        Vec3 side = Vec3.directionFromRotation(0, entity.getYRot() + (entity.getUsedItemHand() == InteractionHand.MAIN_HAND ? 90 : -90));
-        Vec3 down = Vec3.directionFromRotation(entity.getXRot() + 90, entity.getYRot());
-        Vec3 pos = entity.getEyePosition().add(side.add(down).scale(0.15));
+        RandomSource random = level.getRandom();
 
         for (int i = 0; i < 10; i++) {
             double t = Math.pow(random.nextFloat(), 1.5);
-            Vec3 smokePos = pos.add(direction.scale(1.25 + t));
+            Vec3 smokePos = position.add(direction.scale(1.25 + t));
             smokePos = smokePos.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
             Vec3 smokeVec = direction.scale(0.1 * (1 - t));
             serverLevel.sendParticles(ParticleTypes.POOF, smokePos.x, smokePos.y, smokePos.z, 0, smokeVec.x, smokeVec.y, smokeVec.z, 1);

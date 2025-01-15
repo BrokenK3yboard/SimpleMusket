@@ -5,6 +5,6 @@
     "type": "simplemusket:musket_pillager",
     "maxCount": 1,
     "minCount": 1,
-    "weight": 60
+    "weight": 15
   }
 }

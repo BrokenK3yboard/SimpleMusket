@@ -63,12 +63,12 @@ public class ModRegistry {
         Services.PLATFORM.disableVelocityUpdate(BULLET_BUILDER);
     }
 
-    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(location("bullet_entity"), BULLET_BUILDER.build("bullet_entity"));
+    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(location("bullet"), BULLET_BUILDER.build("bullet"));
     public static final EntityType<? extends MusketPillager> GUNSLINGER = (EntityType<MusketPillager>) addEntity(location("musket_pillager"),
             EntityType.Builder.of(MusketPillager::new, MobCategory.MONSTER).sized(0.6F, 1.95F).canSpawnFarFromPlayer().clientTrackingRange(8).build("musket_pillager"));
 
     public static final Item MUSKET = addItem(location("musket"), new MusketItem(new Item.Properties().durability(256)));
-    public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem(5F));
+    public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem(6F));
     public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem(6F));
     public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem(7.5F));
     public static final Item GUNSLINGER_EGG = addItem(location("musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
@@ -82,7 +82,7 @@ public class ModRegistry {
     public static final ResourceKey<Enchantment> FIREPOWER = ResourceKey.create(Registries.ENCHANTMENT, location("firepower"));
     public static final ResourceKey<Enchantment> LONGSHOT = ResourceKey.create(Registries.ENCHANTMENT, location("longshot"));
     public static final ResourceKey<Enchantment> REPEATING = ResourceKey.create(Registries.ENCHANTMENT, location("repeating"));
-    public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_spawn_musket"));
+    public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("gunslinger_spawn_musket"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_3"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_5"));
 
@@ -96,7 +96,7 @@ public class ModRegistry {
             builder.persistent(ConditionalEffect.codec(AmmoCountEffect.CODEC, LootContextParamSets.ENCHANTED_ENTITY).listOf()));
     public static final DataComponentType<Integer> AMMO_BONUS = Services.PLATFORM.createDataComponent("ammo_bonus", builder -> builder.persistent(Codec.INT));
 
-    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ModEffect(MobEffectCategory.HARMFUL, 4595487)
+    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ArmorDecreaseEffect(MobEffectCategory.HARMFUL, 4595487)
             .addAttributeModifier(Attributes.ARMOR, location("effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
 
     public static final SoundEvent MUSKET_LOAD_0 = addSound(location("musket_load0"), SoundEvent.createVariableRangeEvent(location("musket_load0")));
@@ -110,7 +110,7 @@ public class ModRegistry {
     public static final ResourceLocation PIGLIN_BARTER = ResourceLocation.withDefaultNamespace("gameplay/piglin_bartering");
 
     public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem())
-            && entity.getUseItem().getUseDuration(entity) - entity.getTicksUsingItem() > Config.AIM_TIME.get();
+            && entity.getUseItem().getUseDuration(entity) - entity.getUseItemRemainingTicks() > Config.AIM_TIME.get();
 
     public static EntityType<?> addEntity(ResourceLocation location, EntityType<?> type) {
         ENTITIES.put(location, type);
@@ -179,9 +179,9 @@ public class ModRegistry {
         VillagerHostilesSensorAccessor.setAcceptableDistance(ImmutableMap.copyOf(map));
     }
 
-    public static class ModEffect extends MobEffect {
+    public static class ArmorDecreaseEffect extends MobEffect {
 
-        public ModEffect(MobEffectCategory category, int color) {
+        public ArmorDecreaseEffect(MobEffectCategory category, int color) {
             super(category, color);
         }
     }

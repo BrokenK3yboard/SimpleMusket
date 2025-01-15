@@ -96,7 +96,7 @@ public class SimpleMusket {
     public static Object getRaiderEntity(int idx, Class<?> type) {
         return type.cast(switch (idx) {
             case 0 -> (Supplier<EntityType<? extends Raider>>) () -> ModRegistry.GUNSLINGER;
-            case 1 -> new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3};
+            case 1 -> new int[] {0, 0, 0, 0, 0, 1, 1, 2};
             default -> throw new IllegalArgumentException("Unexpected parameter index: " + idx);
         });
     }

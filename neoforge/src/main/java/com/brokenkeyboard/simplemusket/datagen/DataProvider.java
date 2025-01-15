@@ -34,7 +34,7 @@ public class DataProvider extends DatapackBuiltinEntriesProvider {
 
         context.register(GUNSLINGER_SPAWNS, new BiomeModifiers.AddSpawnsBiomeModifier(
                 biome.getOrThrow(biome.getOrThrow(BiomeTags.HAS_PILLAGER_OUTPOST).key()),
-                List.of(new MobSpawnSettings.SpawnerData(ModRegistry.GUNSLINGER, 60, 1, 1))
+                List.of(new MobSpawnSettings.SpawnerData(ModRegistry.GUNSLINGER, 15, 1, 1))
         ));
     }
 }

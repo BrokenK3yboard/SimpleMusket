@@ -50,8 +50,8 @@ public class SimpleMusket implements ModInitializer {
         ModRegistry.registerSounds(register(BuiltInRegistries.SOUND_EVENT));
         ModRegistry.createEntityAttributes(FabricDefaultAttributeRegistry::register);
 
-        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.HAS_PILLAGER_OUTPOST), MobCategory.MONSTER, GUNSLINGER, 60, 1, 1);
-        BuiltInEnumFactories.INSTANCE.createRaiderType(ModRegistry.location("gunslinger"), ModRegistry.GUNSLINGER, new int[] {0, 1, 1, 1, 2, 2, 2, 2, 3});
+        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.HAS_PILLAGER_OUTPOST), MobCategory.MONSTER, GUNSLINGER, 15, 1, 1);
+        BuiltInEnumFactories.INSTANCE.createRaiderType(ModRegistry.location("gunslinger"), ModRegistry.GUNSLINGER, new int[] {0, 0, 0, 0, 0, 1, 1, 2});
         SpawnPlacements.register(ModRegistry.GUNSLINGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
         ModRegistry.registerSensorGoal();
 

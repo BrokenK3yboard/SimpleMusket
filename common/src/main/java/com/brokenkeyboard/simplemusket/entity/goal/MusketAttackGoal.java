@@ -36,22 +36,22 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
+    protected boolean isHoldingMusket() {
+        return MOB.isHolding(stack -> stack.getItem() instanceof MusketItem);
+    }
+
+    protected boolean isValidTarget() {
+        return MOB.getTarget() != null && MOB.getTarget().isAlive();
+    }
+
     @Override
     public boolean canUse() {
         return this.isValidTarget() && this.isHoldingMusket() && !(MOB instanceof MusketPillager && MOB.distanceToSqr(Objects.requireNonNull(MOB.getTarget())) <= 100);
     }
 
-    protected boolean isHoldingMusket() {
-        return MOB.isHolding(stack -> stack.getItem() instanceof MusketItem);
-    }
-
     @Override
     public boolean canContinueToUse() {
         return this.isValidTarget() && (this.canUse() || !MOB.getNavigation().isDone()) && this.isHoldingMusket();
-    }
-
-    private boolean isValidTarget() {
-        return MOB.getTarget() != null && MOB.getTarget().isAlive();
     }
 
     @Override
@@ -109,7 +109,7 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
             } else if (MusketItem.isLoaded(stack)) {
                 if (attackDelay > 0) {
                     --attackDelay;
-                } else if (hasLOS) {
+                } else if (hasLOS && seeTime > Config.AIM_TIME.get()) {
                     MOB.level().registryAccess().registry(Registries.ENCHANTMENT);
                     float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).VELOCITY;
                     float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);

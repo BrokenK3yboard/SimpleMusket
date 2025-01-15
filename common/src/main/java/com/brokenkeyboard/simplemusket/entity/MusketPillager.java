@@ -54,9 +54,9 @@ public class MusketPillager extends AbstractIllager {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SawnOffGoal(this, 10.0F));
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 10.0F, 1.0F, 1.2F));
-        this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 10.0F));
+        this.goalSelector.addGoal(1, new SawnOffGoal(this, 8.0F));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 8.0F, 1.0F, 1.2F));
+        this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 8.0F));
         this.goalSelector.addGoal(4, new MusketAttackGoal<>(this, 1.0F, 24.0F));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
@@ -154,6 +154,17 @@ public class MusketPillager extends AbstractIllager {
         ItemStack stack = new ItemStack(ModRegistry.MUSKET);
         MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE));
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
+    }
+
+    @Override
+    protected void enchantSpawnedWeapon(ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {
+        super.enchantSpawnedWeapon(level, random, difficulty);
+        if (random.nextInt(300) == 0) {
+            ItemStack stack = this.getMainHandItem();
+            if (stack.is(ModRegistry.MUSKET)) {
+                EnchantmentHelper.enchantItemFromProvider(stack, level.registryAccess(), ModRegistry.GUNSLINGER_SPAWN_MUSKET, difficulty, random);
+            }
+        }
     }
 
     @Override

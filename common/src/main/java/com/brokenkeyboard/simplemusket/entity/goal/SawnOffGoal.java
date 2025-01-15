@@ -57,7 +57,7 @@ public class SawnOffGoal extends Goal {
 
             if (!this.MOB.isUsingSawnOff()) {
                 MOB.setUsingSawnOff(true);
-                attackDelay = 20;
+                attackDelay = 20 + MOB.getRandom().nextInt(30);
             } else {
                 if (this.attackDelay > 0) {
                     --this.attackDelay;
