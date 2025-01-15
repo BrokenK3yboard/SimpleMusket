@@ -26,11 +26,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -45,7 +47,7 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.List;
 
-import static com.brokenkeyboard.simplemusket.ModRegistry.MUSKET_PILLAGER;
+import static com.brokenkeyboard.simplemusket.ModRegistry.GUNSLINGER;
 
 @SuppressWarnings("unused")
 public class Events {
@@ -64,13 +66,13 @@ public class Events {
         @SubscribeEvent
         public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
-            event.registerEntityRenderer(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
+            event.registerEntityRenderer(ModRegistry.GUNSLINGER, MusketPillagerRenderer::new);
         }
 
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             event.enqueueWork(Network::register);
-            Raid.RaiderType.create(MUSKET_PILLAGER.toString(), MUSKET_PILLAGER, new int[]{0, 2, 2, 2, 3, 3, 3, 4, 4});
+            Raid.RaiderType.create(GUNSLINGER.toString(), GUNSLINGER, new int[] {0, 0, 0, 0, 0, 1, 1, 2});
             ModRegistry.registerSensorGoal();
         }
 
@@ -81,12 +83,12 @@ public class Events {
 
         @SubscribeEvent
         public static void onAttributeCreate(EntityAttributeCreationEvent event) {
-            event.put(ModRegistry.MUSKET_PILLAGER, MusketPillager.createAttributes().build());
+            event.put(ModRegistry.GUNSLINGER, MusketPillager.createAttributes().build());
         }
 
         @SubscribeEvent
         public static void spawnRegister(SpawnPlacementRegisterEvent event) {
-            event.register(ModRegistry.MUSKET_PILLAGER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+            event.register(ModRegistry.GUNSLINGER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     PatrollingMonster::checkPatrollingMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
         }
     }
@@ -107,26 +109,12 @@ public class Events {
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F));
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE, 4), 16, 1, 0.05F));
+            trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 3), new ItemStack(ModRegistry.ENCHANTED_CARTRIDGE, 4), 16, 1, 0.05F));
         }
     }
 
     @Mod.EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
     public static class ClientEvents {
-
-        @SubscribeEvent
-        public static void onMovementUpdate(MovementInputUpdateEvent event) {
-            Player player = event.getEntity();
-            ItemStack stack = player.getItemInHand(event.getEntity().getUsedItemHand());
-
-            if (stack.getItem() instanceof MusketItem && MusketItem.isLoaded(stack) && player.isUsingItem()) {
-                int deadeye = EnchantmentHelper.getTagEnchantmentLevel(ModRegistry.DEADEYE, stack);
-                if (deadeye > 0) {
-                    float multiplier = 2 + deadeye;
-                    event.getInput().leftImpulse *= multiplier;
-                    event.getInput().forwardImpulse *= multiplier;
-                }
-            }
-        }
 
         @SubscribeEvent
         public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
@@ -175,7 +163,7 @@ public class Events {
 
         @SubscribeEvent
         public static void armorLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
+            event.registerLayerDefinition(new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "musket_pillager"), "overlay"), HatModel::createBodyLayer);
         }
     }
 }

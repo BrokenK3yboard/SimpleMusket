@@ -1,0 +1,12 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "simplemusket:craft_enchanted",
+      "values": [
+        "simplemusket:craft_enchanted"
+      ]
+    }
+  ],
+  "type": "simplemusket:crafting_special_enchanted_cartidge",
+  "category": "misc"
+}

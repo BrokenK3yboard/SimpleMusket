@@ -20,6 +20,6 @@ public class EntityTags extends EntityTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        this.tag(EntityTypeTags.RAIDERS).add(ModRegistry.MUSKET_PILLAGER);
+        this.tag(EntityTypeTags.RAIDERS).add(ModRegistry.GUNSLINGER);
     }
 }

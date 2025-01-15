@@ -4,7 +4,6 @@ import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import org.jetbrains.annotations.NotNull;
 
 public class FirepowerEnchantment extends Enchantment {
 
@@ -12,19 +11,23 @@ public class FirepowerEnchantment extends Enchantment {
         super(Rarity.COMMON, category, slots);
     }
 
+    @Override
     public int getMinCost(int level) {
         return 1 + (level - 1) * 10;
     }
 
+    @Override
     public int getMaxCost(int level) {
         return this.getMinCost(level) + 15;
     }
 
+    @Override
     public int getMaxLevel() {
         return 5;
     }
 
-    public boolean checkCompatibility(@NotNull Enchantment ench) {
-        return super.checkCompatibility(ench) && ench != ModRegistry.LONGSHOT && ench != ModRegistry.BLAST;
+    @Override
+    public boolean checkCompatibility(Enchantment ench) {
+        return super.checkCompatibility(ench) && ench != ModRegistry.LONGSHOT && ench != ModRegistry.REPEATING;
     }
 }

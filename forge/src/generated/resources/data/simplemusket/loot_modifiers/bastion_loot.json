@@ -10,10 +10,6 @@
         },
         {
           "condition": "forge:loot_table_id",
-          "loot_table_id": "minecraft:chests/bastion_hoglin_stable"
-        },
-        {
-          "condition": "forge:loot_table_id",
           "loot_table_id": "minecraft:chests/bastion_treasure"
         },
         {

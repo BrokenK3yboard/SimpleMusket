@@ -1,7 +1,7 @@
 package com.brokenkeyboard.simplemusket.datagen.conditions;
 
+import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.Constants;
-import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 
@@ -19,6 +19,6 @@ public class EnchantedCondition implements ICondition {
 
     @Override
     public boolean test(IContext context) {
-        return Services.PLATFORM.isModLoaded("consecration");
+        return Config.CRAFT_ENCHANTED_CARTRIDGE.get();
     }
 }

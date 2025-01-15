@@ -9,6 +9,7 @@
     "WanderingTraderMixin"
   ],
   "client": [
+    "GuiMixin",
     "ItemRendererMixin"
   ],
   "server": [

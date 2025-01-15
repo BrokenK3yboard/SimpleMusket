@@ -2,13 +2,15 @@ package com.brokenkeyboard.simplemusket.entity.goal;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.EnumSet;
 
@@ -24,33 +26,24 @@ public class SawnOffGoal extends Goal {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
-    protected boolean isHoldingMusket() {
-        return this.MOB.isHolding(is -> is.getItem() instanceof MusketItem);
-    }
-
     @Override
     public void stop() {
         super.stop();
         MOB.setUsingSawnOff(false);
     }
 
+    @Override
     public boolean canUse() {
-        return this.isValidTarget() && this.isHoldingMusket() && MOB.getSawnoffCD() <= 0;
-    }
-
-    public boolean canContinueToUse() {
-        return this.isValidTarget() && (this.canUse() || !this.MOB.getNavigation().isDone()) && this.isHoldingMusket() && MOB.getSawnoffCD() <= 0;
-    }
-
-    protected boolean isValidTarget() {
         LivingEntity target = MOB.getTarget();
-        return target != null && target.isAlive() && MOB.distanceToSqr(target) <= ATTACK_RANGE;
+        return target != null && target.isAlive() && MOB.distanceToSqr(target) <= ATTACK_RANGE && MOB.isHolding(is -> is.getItem() instanceof MusketItem) && MOB.getSawnoffCD() <= 0;
     }
 
+    @Override
     public boolean requiresUpdateEveryTick() {
         return true;
     }
 
+    @Override
     public void tick() {
         LivingEntity target = MOB.getTarget();
 
@@ -63,23 +56,21 @@ public class SawnOffGoal extends Goal {
 
             if (!this.MOB.isUsingSawnOff()) {
                 MOB.setUsingSawnOff(true);
-                attackDelay = 20;
+                attackDelay = 20 + MOB.getRandom().nextInt(30);
             } else {
                 if (this.attackDelay > 0) {
                     --this.attackDelay;
-                } else if (hasLOS) {
-                    if (!MusketItem.hasAmmo(stack)) {
+                } else if (hasLOS && stack.getItem() instanceof MusketItem musket) {
+                    if (!MusketItem.isLoaded(stack)) {
                         MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, 1));
                     }
-                    if (!MusketItem.isLoaded(stack)) {
-                        MusketItem.setLoaded(stack, true);
-                    }
-                    MOB.useMusket(stack);
-                    MOB.setSawnoffCD(120);
-                    MOB.setAttackCD(20);
+                    float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
+                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).VELOCITY;
+                    musket.fire(MOB.level(), MOB, hand, stack, velocity, deviation, MOB.getTarget(), SoundSource.HOSTILE);
+                    MOB.setSawnoffCD(160);
                     MOB.setUsingSawnOff(false);
-                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.REPEATING, stack) + 1));
-                    MusketItem.setLoaded(stack, true);
+                    int amount = this.MOB.level() instanceof ServerLevel ? MusketItem.getAmmoCount(stack) : 1;
+                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, amount));
                 }
             }
         }

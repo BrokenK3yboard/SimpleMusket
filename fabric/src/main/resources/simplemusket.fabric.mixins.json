@@ -5,10 +5,10 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "LivingEntityFabricMixin"
   ],
   "client": [
     "ItemInHandRendererMixin",
-    "LocalPlayerMixin",
     "PlayerRendererMixin"
   ],
   "server": [

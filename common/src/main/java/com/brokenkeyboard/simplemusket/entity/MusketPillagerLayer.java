@@ -19,7 +19,7 @@ public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerMode
 
     public MusketPillagerLayer(LivingEntityRenderer<MusketPillager, IllagerModel<MusketPillager>> parent) {
         super(parent);
-        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay")));
+        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "musket_pillager"), "overlay")));
     }
 
     @Override

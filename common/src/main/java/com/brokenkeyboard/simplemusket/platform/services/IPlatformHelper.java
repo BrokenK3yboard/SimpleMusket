@@ -5,6 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -16,4 +19,6 @@ public interface IPlatformHelper {
     void playSound(SoundEvent sound, SoundSource source, ServerLevel level, Vec3 origin);
     EnchantmentCategory musketCategory();
     Entity getHitEntity(Entity entity);
+    EntityType<? extends BulletEntity> createBulletEntity();
+    <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer);
 }

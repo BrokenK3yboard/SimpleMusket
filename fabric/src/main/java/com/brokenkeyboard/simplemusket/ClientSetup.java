@@ -21,8 +21,8 @@ public class ClientSetup implements ClientModInitializer {
     public void onInitializeClient() {
 
         EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
-        EntityRendererRegistry.register(ModRegistry.MUSKET_PILLAGER, MusketPillagerRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(new ResourceLocation("simplemusket", "musket_pillager"), "overlay"), HatModel::createBodyLayer);
+        EntityRendererRegistry.register(ModRegistry.GUNSLINGER, MusketPillagerRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "musket_pillager"), "overlay"), HatModel::createBodyLayer);
         ModelLoadingPlugin.register(new SMModelPlugin());
         ModRegistry.registerItemProperties();
 

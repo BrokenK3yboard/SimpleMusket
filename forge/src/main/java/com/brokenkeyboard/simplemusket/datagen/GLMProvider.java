@@ -7,8 +7,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 
-import static com.brokenkeyboard.simplemusket.Constants.*;
-
 public class GLMProvider extends GlobalLootModifierProvider {
 
     public GLMProvider(PackOutput output) {
@@ -19,15 +17,14 @@ public class GLMProvider extends GlobalLootModifierProvider {
     protected void start() {
         add("bastion_loot", new BastionLoot(new LootItemCondition[] {
                 new AnyOfCondition.Builder(
-                        new LootTableIdCondition.Builder(BASTION_OTHER),
-                        new LootTableIdCondition.Builder(HOGLIN_STABLE),
-                        new LootTableIdCondition.Builder(BASTION_TREASURE),
-                        new LootTableIdCondition.Builder(BASTION_BRIDGE)
+                        new LootTableIdCondition.Builder(Constants.BASTION_OTHER),
+                        new LootTableIdCondition.Builder(Constants.BASTION_TREASURE),
+                        new LootTableIdCondition.Builder(Constants.BASTION_BRIDGE)
                 ).build()
         }));
 
         add("piglin_barter", new PiglinBarter(new LootItemCondition[] {
-                new AnyOfCondition.Builder(new LootTableIdCondition.Builder(PIGLIN_BARTER)).build()
+                new AnyOfCondition.Builder(new LootTableIdCondition.Builder(Constants.PIGLIN_BARTER)).build()
         }));
     }
 }
