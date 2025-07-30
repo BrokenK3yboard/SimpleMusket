@@ -3,7 +3,7 @@ package com.brokenkeyboard.simplemusket;
 import com.brokenkeyboard.simplemusket.datagen.Conditions;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPacket;
-import fuzs.extensibleenums.api.extensibleenums.v1.BuiltInEnumFactories;
+import fuzs.extensibleenums.api.v1.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;

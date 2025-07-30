@@ -5,7 +5,7 @@ import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
-import fuzs.extensibleenums.api.extensibleenums.v1.BuiltInEnumFactories;
+import fuzs.extensibleenums.api.v1.BuiltInEnumFactories;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -60,7 +60,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public EnchantmentCategory musketCategory() {
-        return BuiltInEnumFactories.createEnchantmentCategory("MUSKET", item -> item instanceof MusketItem);
+        return BuiltInEnumFactories.createEnchantmentCategory("musket", item -> item instanceof MusketItem);
     }
 
     @Override

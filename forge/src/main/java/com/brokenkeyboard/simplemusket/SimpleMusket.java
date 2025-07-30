@@ -53,10 +53,7 @@ public class SimpleMusket {
         GLM.register(bus);
 
         bus.addListener(this::addCreative);
-
-        if (Services.PLATFORM.isModLoaded("consecration")) {
-            bus.addListener(this::enqueueIMC);
-        }
+        bus.addListener(this::enqueueIMC);
     }
 
     public static <T> void register(IEventBus bus, ResourceKey<Registry<T>> registry, Consumer<BiConsumer<ResourceLocation, T>> source) {

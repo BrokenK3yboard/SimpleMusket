@@ -37,6 +37,5 @@
         "extensibleenums": "*"
     },
     "suggests": {
-        "another-mod": "*"
     }
 }

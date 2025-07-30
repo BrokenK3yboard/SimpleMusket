@@ -5,6 +5,7 @@ import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.mixin.DamageSourcesInvoker;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
@@ -138,7 +139,7 @@ public class BulletEntity extends Projectile {
     }
 
     public DamageSource damageSource(BulletEntity bullet, @Nullable Entity attacker) {
-        return level().damageSources().source(Constants.BULLET, bullet, attacker);
+        return ((DamageSourcesInvoker)level().damageSources()).invokeSource(Constants.BULLET, bullet, attacker);
     }
 
     public Item getBullet() {
