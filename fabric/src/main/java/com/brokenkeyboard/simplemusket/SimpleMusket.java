@@ -82,7 +82,6 @@ public class SimpleMusket implements ModInitializer {
             }
         });
 
-        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.HAS_PILLAGER_OUTPOST), MobCategory.MONSTER, GUNSLINGER, 15, 1, 1);
         BuiltInEnumFactories.createRaiderType(ModRegistry.GUNSLINGER.toString(), ModRegistry.GUNSLINGER, new int[] {0, 0, 0, 0, 0, 1, 1, 2});
         FabricDefaultAttributeRegistry.register(ModRegistry.GUNSLINGER, MusketPillager.createAttributes());
         ModRegistry.registerSensorGoal();
