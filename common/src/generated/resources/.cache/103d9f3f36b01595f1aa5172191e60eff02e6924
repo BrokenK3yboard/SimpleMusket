@@ -1,0 +1,9 @@
+// 1.21.1	2025-08-02T03:54:46.6510287	Registries
+ee58e0ee44952c5829cca049354b823d225d81cc data/minecraft/worldgen/structure/pillager_outpost.json
+8c0552f1c742ad4d1b731aaf58f6139e43bd63f2 data/simplemusket/damage_type/bullet.json
+dabd1827bb246c252819f998aa7f85c2561c1ff9 data/simplemusket/enchantment/firepower.json
+d94afa7bd471af9032d87ff6b5d2df460a16715b data/simplemusket/enchantment/longshot.json
+a0d8e4dc01288b52f0c18c5686c9451e9a3fa195 data/simplemusket/enchantment/repeating.json
+6d127e5961d036e74a38dff34873203b63b8ffba data/simplemusket/enchantment_provider/gunslinger_spawn_musket.json
+6d127e5961d036e74a38dff34873203b63b8ffba data/simplemusket/enchantment_provider/raid/gunslinger_post_wave_3.json
+3a6b009fe966b320b6b9eb1466158480a74aa69c data/simplemusket/enchantment_provider/raid/gunslinger_post_wave_5.json

@@ -1,4 +1,4 @@
-package com.brokenkeyboard.simplemusket.datagen.provider;
+package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.item.EnchCartridgeRecipe;
@@ -15,8 +15,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
-    public RecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider);
+    public RecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
     }
 
     @Override

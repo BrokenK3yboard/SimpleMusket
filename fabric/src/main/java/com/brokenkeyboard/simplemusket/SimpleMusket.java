@@ -5,8 +5,6 @@ import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import fuzs.extensibleenums.api.v2.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -16,8 +14,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BiomeTags;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.PatrollingMonster;
@@ -50,7 +46,6 @@ public class SimpleMusket implements ModInitializer {
         ModRegistry.registerSounds(register(BuiltInRegistries.SOUND_EVENT));
         ModRegistry.createEntityAttributes(FabricDefaultAttributeRegistry::register);
 
-        BiomeModifications.addSpawn(BiomeSelectors.tag(BiomeTags.HAS_PILLAGER_OUTPOST), MobCategory.MONSTER, GUNSLINGER, 15, 1, 1);
         BuiltInEnumFactories.INSTANCE.createRaiderType(ModRegistry.location("gunslinger"), ModRegistry.GUNSLINGER, new int[] {0, 0, 0, 0, 0, 1, 1, 2});
         SpawnPlacements.register(ModRegistry.GUNSLINGER, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PatrollingMonster::checkPatrollingMonsterSpawnRules);
         ModRegistry.registerSensorGoal();

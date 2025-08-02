@@ -33,6 +33,10 @@ neoForge {
             data()
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
+        commonData {
+            data()
+            programArguments.addAll '--mod', mod_id, '--all', '--output', file('../common/src/generated/resources').getAbsolutePath(), '--existing', file('../common/src/generated/resources').getAbsolutePath(), '--input', 'commonData'
+        }
         server {
             server()
         }

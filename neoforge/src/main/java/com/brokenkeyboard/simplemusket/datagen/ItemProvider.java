@@ -1,4 +1,4 @@
-package com.brokenkeyboard.simplemusket.datagen.provider;
+package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
@@ -11,8 +11,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ItemProvider extends ItemTagsProvider {
 
-    public ItemProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> completableFuture, CompletableFuture<TagLookup<Block>> completableFuture2) {
-        super(packOutput, completableFuture, completableFuture2);
+    public ItemProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, CompletableFuture<TagLookup<Block>> registries1) {
+        super(output, registries, registries1);
     }
 
     @Override
