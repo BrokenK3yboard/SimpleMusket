@@ -39,7 +39,7 @@ public class Network {
     }
 
     public static void S2CSound(SoundEvent sound, SoundSource source, ResourceKey<Level> dimension, Vec3 origin) {
-        instance.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(origin.x, origin.y, origin.z, 128, dimension)),
+        instance.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(origin.x, origin.y, origin.z, 64, dimension)),
                 new S2CSoundPacket(sound, source, origin.toVector3f()));
     }
 }
