@@ -4,62 +4,91 @@ import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.worldgen.PillagerOutpostPools;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.heightproviders.ConstantHeight;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride;
+import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.List;
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Datagen {
 
-    static final ResourceKey<BiomeModifier> GUNSLINGER_SPAWNS = ResourceKey.create(
-            ForgeRegistries.Keys.BIOME_MODIFIERS,
-            new ResourceLocation(Constants.MOD_ID, "gunslinger_spawn"));
-
     static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.DAMAGE_TYPE, Datagen::bootstrap)
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
-                HolderGetter<Biome> biome = context.lookup(Registries.BIOME);
-                context.register(GUNSLINGER_SPAWNS, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(biome.getOrThrow(
-                        biome.getOrThrow(BiomeTags.HAS_PILLAGER_OUTPOST).key()),
-                        List.of(new MobSpawnSettings.SpawnerData(ModRegistry.GUNSLINGER, 15, 1, 1))));
-            });
+            .add(Registries.DAMAGE_TYPE, Datagen::damageTypeBootstrap)
+            .add(Registries.STRUCTURE, Datagen::structureBootstrap);
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
+
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-        DatapackBuiltinEntriesProvider provider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), BUILDER, Set.of(Constants.MOD_ID));
-        CompletableFuture<HolderLookup.Provider> lookupProvider = provider.getRegistryProvider();
 
         if (event.includeServer()) {
-            generator.addProvider(true, new Recipes(output));
-            generator.addProvider(true, provider);
-            generator.addProvider(true, new DamageTags(output, lookupProvider, event.getExistingFileHelper()));
-            generator.addProvider(true, new EntityTags(output, lookupProvider, event.getExistingFileHelper()));
-            generator.addProvider(true, new GLMProvider(output));
+            if (event.getInputs().contains(Path.of("commonData"))) {
+                DatapackBuiltinEntriesProvider provider = new DatapackBuiltinEntriesProvider(output, event.getLookupProvider(), BUILDER, Set.of(Constants.MOD_ID));
+                CompletableFuture<HolderLookup.Provider> lookupProvider = provider.getRegistryProvider();
+                generator.addProvider(true, provider);
+                generator.addProvider(true, new DamageTags(output, lookupProvider, event.getExistingFileHelper()));
+                generator.addProvider(true, new EntityTags(output, lookupProvider, event.getExistingFileHelper()));
+            } else {
+                generator.addProvider(true, new Recipes(output));
+                generator.addProvider(true, new GLMProvider(output));
+            }
         }
     }
 
-    protected static void bootstrap(BootstapContext<DamageType> context) {
+    protected static void damageTypeBootstrap(BootstapContext<DamageType> context) {
         context.register(Constants.BULLET, Constants.BULLET_DAMAGE_TYPE);
+    }
+
+    protected static void structureBootstrap(BootstapContext<Structure> context) {
+        HolderGetter<Biome> biomeHolder = context.lookup(Registries.BIOME);
+        HolderGetter<StructureTemplatePool> templatePoolHolder = context.lookup(Registries.TEMPLATE_POOL);
+
+        context.register(BuiltinStructures.PILLAGER_OUTPOST, new JigsawStructure(
+                structure(
+                        biomeHolder.getOrThrow(BiomeTags.HAS_PILLAGER_OUTPOST),
+                        Map.of(MobCategory.MONSTER, new StructureSpawnOverride(StructureSpawnOverride.BoundingBoxType.STRUCTURE,
+                                WeightedRandomList.create(
+                                        new MobSpawnSettings.SpawnerData(EntityType.PILLAGER, 5, 1, 1),
+                                        new MobSpawnSettings.SpawnerData(ModRegistry.GUNSLINGER, 1, 1, 1)))
+                        ),
+                        GenerationStep.Decoration.SURFACE_STRUCTURES,
+                        TerrainAdjustment.BEARD_THIN
+                ),
+                templatePoolHolder.getOrThrow(PillagerOutpostPools.START), 7, ConstantHeight.of(VerticalAnchor.absolute(0)), true, Heightmap.Types.WORLD_SURFACE_WG)
+        );
+    }
+
+    private static Structure.StructureSettings structure(HolderSet<Biome> biomes, Map<MobCategory, StructureSpawnOverride> spawnOverrides, GenerationStep.Decoration step, TerrainAdjustment terrainAdaptation) {
+        return new Structure.StructureSettings(biomes, spawnOverrides, step, terrainAdaptation);
     }
 }

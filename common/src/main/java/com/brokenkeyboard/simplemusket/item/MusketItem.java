@@ -124,7 +124,7 @@ public class MusketItem extends ProjectileWeaponItem {
         Vec3 down = Vec3.directionFromRotation(shooter.getXRot() + 90, shooter.getYRot());
         Vec3 smokePos = shooter.getEyePosition().add(side.add(down).scale(0.15));
         spawnParticles(level, smokePos, direction);
-        Services.PLATFORM.playSound(ModRegistry.MUSKET_FIRE, source, (ServerLevel) level, shooter.position());
+        Services.PLATFORM.playSound(ModRegistry.MUSKET_FIRE, source, serverLevel, shooter.position());
         stack.hurtAndBreak(1, shooter, (user) -> user.broadcastBreakEvent(user.getUsedItemHand()));
     }
 
