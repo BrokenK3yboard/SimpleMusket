@@ -109,7 +109,7 @@ public class BulletEntity extends Projectile {
         DamageSource source = damageSource(this, owner);
         int longshot = weapon != null ? EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.LONGSHOT, weapon) : 0;
         double distance = owner != null ? Mth.clamp(owner.distanceTo(entity), 0, 48) : 0;
-        damage = velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
+        damage = damage * velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
 
         if (this.level() instanceof ServerLevel && weapon != null && longshot > 0 && distance >= 16) {
             double coef = Math.max(((0.1953125D * 0.15F * distance * distance) - (3.125D * 0.15F * distance) + (0.15F * 100)) * (1 + 0.66F * (longshot - 1)) / 100, 0);
