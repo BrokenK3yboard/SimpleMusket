@@ -22,5 +22,6 @@ public class EntityProvider extends EntityTypeTagsProvider {
         this.tag(EntityTypeTags.ILLAGER).add(ModRegistry.GUNSLINGER);
         this.tag(EntityTypeTags.RAIDERS).add(ModRegistry.GUNSLINGER);
         this.tag(EntityTypeTags.ILLAGER_FRIENDS).add(ModRegistry.GUNSLINGER);
+        this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(ModRegistry.BULLET_ENTITY);
     }
 }
