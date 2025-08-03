@@ -1,0 +1,20 @@
+{
+  "item.simplemusket.musket": "Мушкет",
+  "item.simplemusket.copper_bullet": "Медная пуля",
+  "item.simplemusket.iron_bullet": "Железная пуля",
+  "item.simplemusket.gold_bullet": "Золотая пуля",
+  "item.simplemusket.netherite_bullet": "Незеритовая пуля",
+  "item.simplemusket.generic_bullet": "Пуля",
+  "item.simplemusket.musket_pillager_spawn_egg": "Яйцо призыва мушкетёра",
+  "enchantment.simplemusket.firepower": "Огневая мощь",
+  "enchantment.simplemusket.deadeye": "Меткость",
+  "enchantment.simplemusket.repeating": "Перезарядка",
+  "enchantment.simplemusket.longshot": "Дальность",
+  "enchantment.simplemusket.firepower.desc": "Увеличивает бронебойность пуль, выпущенных из мушкета, на 10% за уровень.",
+  "enchantment.simplemusket.deadeye.desc": "Уменьшает время прицеливания и перезарядки мушкета на 10% за уровень.",
+  "enchantment.simplemusket.repeating.desc": "Позволяет мушкету произвести дополнительный выстрел за перезарядку.",
+  "enchantment.simplemusket.longshot.desc": "Пули, выпущенные из мушкета, наносят тем больше урона, чем дальше они летят.",
+  "entity.simplemusket.musket_pillager": "Разбойник",
+  "death.attack.bullet": "%1$s был застрелен %2$s",
+  "death.attack.bullet.item": "%1$s был застрелен %2$s с помощью %3$s"
+}
