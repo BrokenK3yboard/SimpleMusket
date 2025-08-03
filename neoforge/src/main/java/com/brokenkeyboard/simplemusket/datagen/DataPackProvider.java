@@ -53,7 +53,7 @@ import static com.brokenkeyboard.simplemusket.ModRegistry.*;
 
 public class DataPackProvider extends DatapackBuiltinEntriesProvider {
 
-    public static final DamageType BULLET = new DamageType("bullet", DamageScaling.NEVER, 0.5F);
+    public static final DamageType BULLET = new DamageType("bullet", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.5F);
 
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.DAMAGE_TYPE, DataPackProvider::damageTypeBC)

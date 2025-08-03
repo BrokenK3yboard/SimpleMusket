@@ -57,7 +57,7 @@ public class BulletEntity extends Projectile {
         this.setPos(pos);
         if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
         if (this.bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) damage *= 1.25F;
-        if (owner instanceof MusketPillager mob && mob.isUsingSawnOff()) damage *= 0.6F;
+        if (owner instanceof Mob) damage *= Config.MOB_DAMAGE_MULT.get();
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 
@@ -107,7 +107,7 @@ public class BulletEntity extends Projectile {
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
         DamageSource source = damageSource(this, owner);
-        damage = getDamageScaling() * velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
+        damage = velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
 
         if (this.level() instanceof ServerLevel && weapon != null) {
             damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);
@@ -125,9 +125,10 @@ public class BulletEntity extends Projectile {
         this.discard();
     }
 
+    @Nullable
     @Override
     public ItemStack getWeaponItem() {
-        return this.weapon;
+        return weapon;
     }
 
     @Override
@@ -142,18 +143,6 @@ public class BulletEntity extends Projectile {
 
     public Item getBullet() {
         return bullet;
-    }
-
-    protected float getDamageScaling() {
-        if (getOwner() instanceof Mob) {
-            float multiplier = switch (level().getDifficulty()) {
-                case EASY, PEACEFUL -> 0.5F;
-                case NORMAL -> 0.75F;
-                default -> 1F;
-            };
-            return damage * (multiplier * Config.MOB_DAMAGE_MULT.get().floatValue());
-        }
-        return damage;
     }
 
     @Override
