@@ -28,7 +28,7 @@ public class Config {
 
         BULLET_DAMAGE = builder
                 .comment("The amount of damage dealt by bullets.")
-                .defineInRange("Bullet damage", 16D, 12D, 24D);
+                .defineInRange("Bullet damage", 16D, 16D, 24D);
 
         MOB_DAMAGE_MULT = builder
                 .comment("Damage multiplier applied to bullets fired by mobs.")

@@ -107,7 +107,7 @@ public class BulletEntity extends Projectile {
         boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
         if (raiderFF || playerFF) return;
         DamageSource source = damageSource(this, owner);
-        damage = velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
+        damage = damage * velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
 
         if (this.level() instanceof ServerLevel && weapon != null) {
             damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);
