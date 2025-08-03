@@ -57,7 +57,7 @@ public class BulletEntity extends Projectile {
         this.setPos(pos);
         if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
         if (this.bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) damage *= 1.25F;
-        if (owner instanceof MusketPillager mob && mob.isUsingSawnOff()) damage *= 0.6F;
+        if (owner instanceof Mob) damage *= Config.MOB_DAMAGE_MULT.get();
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 
@@ -109,7 +109,7 @@ public class BulletEntity extends Projectile {
         DamageSource source = damageSource(this, owner);
         int longshot = weapon != null ? EnchantmentHelper.getItemEnchantmentLevel(ModRegistry.LONGSHOT, weapon) : 0;
         double distance = owner != null ? Mth.clamp(owner.distanceTo(entity), 0, 48) : 0;
-        damage = getDamageScaling() * velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
+        damage = velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
 
         if (this.level() instanceof ServerLevel && weapon != null && longshot > 0 && distance >= 16) {
             double coef = Math.max(((0.1953125D * 0.15F * distance * distance) - (3.125D * 0.15F * distance) + (0.15F * 100)) * (1 + 0.66F * (longshot - 1)) / 100, 0);
@@ -149,18 +149,6 @@ public class BulletEntity extends Projectile {
     @Nullable
     public ItemStack getWeapon() {
         return weapon;
-    }
-
-    protected float getDamageScaling() {
-        if (getOwner() instanceof Mob) {
-            float multiplier = switch (level().getDifficulty()) {
-                case EASY, PEACEFUL -> 0.5F;
-                case NORMAL -> 0.75F;
-                default -> 1F;
-            };
-            return damage * (multiplier * Config.MOB_DAMAGE_MULT.get().floatValue());
-        }
-        return damage;
     }
 
     public static float applyArmorPiercing(float damage, float armor, float toughness, BulletEntity bullet) {

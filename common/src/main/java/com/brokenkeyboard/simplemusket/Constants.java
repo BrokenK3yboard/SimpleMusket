@@ -24,5 +24,5 @@ public class Constants {
     public static final ResourceLocation CRAFT_HELLFIRE = new ResourceLocation(Constants.MOD_ID, "craft_hellfire");
 
     public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MOD_ID, "bullet"));
-    public static final DamageType BULLET_DAMAGE_TYPE = new DamageType("bullet", DamageScaling.NEVER, 0.5F);
+    public static final DamageType BULLET_DAMAGE_TYPE = new DamageType("bullet", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.5F);
 }

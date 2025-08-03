@@ -36,7 +36,7 @@ public class Config {
 
         MOB_DAMAGE_MULT = builder
                 .comment("Damage multiplier applied to bullets fired by mobs.")
-                .defineInRange("Mob bullet damage multiplier", 0.8D, 0.8D, 1.2D);
+                .defineInRange("Mob bullet damage multiplier", 0.45D, 0.45D, 1.0D);
 
         CRAFT_ENCHANTED_CARTRIDGE = builder
                 .comment("If enabled, enchanted cartridges are craftable.")
