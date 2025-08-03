@@ -21,5 +21,6 @@ public class EntityTags extends EntityTypeTagsProvider {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
         this.tag(EntityTypeTags.RAIDERS).add(ModRegistry.GUNSLINGER);
+        this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(ModRegistry.BULLET_ENTITY);
     }
 }

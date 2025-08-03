@@ -6,8 +6,6 @@ import com.brokenkeyboard.simplemusket.network.S2CSoundPacket;
 import fuzs.extensibleenums.api.v1.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
@@ -18,8 +16,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BiomeTags;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -34,8 +30,6 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.function.BiConsumer;
-
-import static com.brokenkeyboard.simplemusket.ModRegistry.GUNSLINGER;
 
 public class SimpleMusket implements ModInitializer {
 
