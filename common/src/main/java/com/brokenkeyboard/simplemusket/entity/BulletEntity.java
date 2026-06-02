@@ -57,7 +57,7 @@ public class BulletEntity extends Projectile {
         this.setPos(pos);
         if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
         if (this.bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) damage *= 1.25F;
-        if (owner instanceof Mob) damage *= Config.MOB_DAMAGE_MULT.get();
+        if (owner instanceof Mob) damage *= Config.MOB_DAMAGE_MULTIPLIER.get();
         this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
     }
 

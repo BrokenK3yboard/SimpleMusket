@@ -5,13 +5,16 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractSkeletonMixin",
     "EnchantmentHelperMixin",
+    "MobAccessor",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"
   ],
   "client": [
     "GuiMixin",
-    "ItemRendererMixin"
+    "ItemRendererMixin",
+    "SkeletonModelMixin"
   ],
   "server": [
   ],

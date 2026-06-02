@@ -11,7 +11,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = ModRegistry.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ModRegistry.MOD_ID)
 public class Datagen {
 
     @SubscribeEvent

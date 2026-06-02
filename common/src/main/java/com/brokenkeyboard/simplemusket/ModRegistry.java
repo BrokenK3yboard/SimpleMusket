@@ -108,6 +108,7 @@ public class ModRegistry {
     public static final ResourceLocation BASTION_TREASURE = ResourceLocation.withDefaultNamespace("chests/bastion_treasure");
     public static final ResourceLocation BASTION_BRIDGE = ResourceLocation.withDefaultNamespace("chests/bastion_bridge");
     public static final ResourceLocation PIGLIN_BARTER = ResourceLocation.withDefaultNamespace("gameplay/piglin_bartering");
+    public static final ResourceLocation SKELETON_ID = ResourceLocation.withDefaultNamespace("entities/skeleton");
 
     public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem())
             && entity.getUseItem().getUseDuration(entity) - entity.getUseItemRemainingTicks() > Config.AIM_TIME.get();

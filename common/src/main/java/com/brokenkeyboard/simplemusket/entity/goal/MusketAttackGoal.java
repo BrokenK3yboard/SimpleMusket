@@ -2,7 +2,6 @@ package com.brokenkeyboard.simplemusket.entity.goal;
 
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
-import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import net.minecraft.core.registries.Registries;
@@ -17,7 +16,6 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
-import java.util.Objects;
 
 public class MusketAttackGoal<T extends Mob> extends Goal {
 
@@ -46,12 +44,17 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
 
     @Override
     public boolean canUse() {
-        return this.isValidTarget() && this.isHoldingMusket() && !(MOB instanceof MusketPillager && MOB.distanceToSqr(Objects.requireNonNull(MOB.getTarget())) <= 100);
+        return this.isValidTarget() && this.isHoldingMusket();
     }
 
     @Override
     public boolean canContinueToUse() {
         return this.isValidTarget() && (this.canUse() || !MOB.getNavigation().isDone()) && this.isHoldingMusket();
+    }
+
+    public void start() {
+        super.start();
+        MOB.setAggressive(true);
     }
 
     @Override

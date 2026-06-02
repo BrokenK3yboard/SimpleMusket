@@ -2,6 +2,7 @@ package com.brokenkeyboard.simplemusket;
 
 import com.brokenkeyboard.simplemusket.datagen.BastionLoot;
 import com.brokenkeyboard.simplemusket.datagen.PiglinBarter;
+import com.brokenkeyboard.simplemusket.datagen.SkeletonLoot;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import com.mojang.serialization.MapCodec;
@@ -48,6 +49,7 @@ public class SimpleMusket {
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, ModRegistry.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PiglinBarter>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<SkeletonLoot>> SKELETON_LOOT = GLM.register("skeleton_loot", SkeletonLoot.CODEC);
 
     public SimpleMusket(ModContainer container, IEventBus bus) {
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

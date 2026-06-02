@@ -30,5 +30,9 @@ public class GLMProvider extends GlobalLootModifierProvider {
         add("piglin_barter", new PiglinBarter(new LootItemCondition[] {
                 new AnyOfCondition.Builder(new LootTableIdCondition.Builder(PIGLIN_BARTER)).build()
         }));
+
+        add("skeleton_loot", new SkeletonLoot(new LootItemCondition[] {
+                new AnyOfCondition.Builder(new LootTableIdCondition.Builder(SKELETON_ID)).build()
+        }));
     }
 }
