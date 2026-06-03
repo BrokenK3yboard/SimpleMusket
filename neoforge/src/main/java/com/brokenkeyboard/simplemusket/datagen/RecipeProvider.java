@@ -1,13 +1,11 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
-import com.brokenkeyboard.simplemusket.item.EnchCartridgeRecipe;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 
@@ -47,6 +45,16 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy("has_paper", has(Items.PAPER))
                 .save(output);
 
-        SpecialRecipeBuilder.special(EnchCartridgeRecipe::new).save(output, ModRegistry.location("enchanted_cartridge"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.ENCHANTED_CARTRIDGE, 4)
+                .define('M', Items.GOLD_INGOT)
+                .define('G', Items.GUNPOWDER)
+                .define('P', Items.PAPER)
+                .pattern(" M ")
+                .pattern(" G ")
+                .pattern(" P ")
+                .unlockedBy("has_gold_ingot", has(Items.GOLD_INGOT))
+                .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
+                .unlockedBy("has_paper", has(Items.PAPER))
+                .save(output);
     }
 }

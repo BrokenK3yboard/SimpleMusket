@@ -1,4 +1,24 @@
 {
-  "type": "simplemusket:crafting_special_enchanted_cartidge",
-  "category": "misc"
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:gunpowder"
+    },
+    "M": {
+      "item": "minecraft:gold_ingot"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    " M ",
+    " G ",
+    " P "
+  ],
+  "result": {
+    "count": 4,
+    "id": "simplemusket:enchanted_cartridge"
+  }
 }
