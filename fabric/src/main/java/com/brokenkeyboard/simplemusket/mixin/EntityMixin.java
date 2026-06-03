@@ -2,7 +2,8 @@ package com.brokenkeyboard.simplemusket.mixin;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
@@ -13,12 +14,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-    @ModifyReturnValue(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("RETURN"))
-    private ItemEntity spawnAtLocation(ItemEntity original) {
-        Entity entity = (Entity) (Object) this;
-        if (original.getItem().is(Items.ARROW) && entity instanceof AbstractSkeleton skeleton && skeleton.isHolding(stack1 -> stack1.getItem() instanceof MusketItem)) {
-            original.setItem(new ItemStack(ModRegistry.CARTRIDGE, original.getItem().getCount()));
-        }
-        return original;
+    @WrapOperation(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
+    private ItemEntity spawnAtLocation(Entity entity, ItemStack stack, float offsetY, Operation<ItemEntity> original) {
+        boolean modifyDrop = stack.is(Items.ARROW) && entity instanceof AbstractSkeleton skeleton && skeleton.isHolding(stack1 -> stack1.getItem() instanceof MusketItem);
+        return original.call(entity, modifyDrop ? new ItemStack(ModRegistry.CARTRIDGE, stack.getCount()) : stack, offsetY);
     }
 }
