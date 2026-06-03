@@ -1,7 +1,8 @@
 {
   "entries": [
     "simplemusket:piglin_barter",
-    "simplemusket:bastion_loot"
+    "simplemusket:bastion_loot",
+    "simplemusket:skeleton_loot"
   ],
   "replace": false
 }

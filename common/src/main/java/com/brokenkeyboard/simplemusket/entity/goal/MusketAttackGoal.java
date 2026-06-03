@@ -53,6 +53,12 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
     }
 
     @Override
+    public void start() {
+        super.start();
+        MOB.setAggressive(true);
+    }
+
+    @Override
     public void stop() {
         super.stop();
         MOB.setAggressive(false);

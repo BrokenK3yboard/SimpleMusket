@@ -23,7 +23,7 @@ public class Network {
 
     public static void register() {
 
-        SimpleChannel network = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Constants.MOD_ID, "messages"))
+        SimpleChannel network = NetworkRegistry.ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "messages"))
                 .networkProtocolVersion(() -> "1")
                 .clientAcceptedVersions(string -> true)
                 .serverAcceptedVersions(string -> true)

@@ -47,11 +47,11 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
                 .addCondition(new EnchantedCondition())
                 .addRecipe(recipe -> SpecialRecipeBuilder.special(ModRegistry.ENCH_CARTRIDGE_CRAFTING)
                         .save(recipe, "enchanted_catridge"))
-                .build(consumer, new ResourceLocation(Constants.MOD_ID, "enchanted_cartridge"));
+                .build(consumer, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "enchanted_cartridge"));
     }
 
     private void cartridgeRecipe(Item bulletItem, Item ingredient, ICondition condition, Consumer<FinishedRecipe> consumer) {
-        ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, bulletItem.toString());
+        ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, bulletItem.toString());
 
         ConditionalRecipe.builder().addCondition(condition).addRecipe(
                 ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, 8)

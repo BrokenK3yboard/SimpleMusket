@@ -7,7 +7,7 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 
 public class EnchantedCondition implements ICondition {
 
-    private static final ResourceLocation NAME = new ResourceLocation(Constants.MOD_ID, "craft_enchanted");
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "craft_enchanted");
     public static final ConditionSerializer<EnchantedCondition> SERIALIZER = new ConditionSerializer<>(NAME, EnchantedCondition::new);
 
     public EnchantedCondition() {

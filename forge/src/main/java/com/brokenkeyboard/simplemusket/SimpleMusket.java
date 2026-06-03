@@ -2,6 +2,7 @@ package com.brokenkeyboard.simplemusket;
 
 import com.brokenkeyboard.simplemusket.datagen.BastionLoot;
 import com.brokenkeyboard.simplemusket.datagen.PiglinBarter;
+import com.brokenkeyboard.simplemusket.datagen.SkeletonLoot;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import com.mojang.serialization.Codec;
@@ -40,6 +41,7 @@ public class SimpleMusket {
     public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Constants.MOD_ID);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
+    public static final RegistryObject<Codec<? extends IGlobalLootModifier>> SKELETON_LOOT = GLM.register("skeleton_loot", SkeletonLoot.CODEC);
 
     public SimpleMusket() {
         FMLJavaModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);

@@ -12,7 +12,8 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue FIND_HELLFIRE_CARTRIDGE;
     public static ForgeConfigSpec.BooleanValue BARTER_HELLFIRE_CARTRIDGE;
     public static ForgeConfigSpec.DoubleValue BULLET_DAMAGE;
-    public static ForgeConfigSpec.DoubleValue MOB_DAMAGE_MULT;
+    public static ForgeConfigSpec.DoubleValue MOB_DAMAGE_MULTIPLIER;
+    public static ForgeConfigSpec.DoubleValue SKELETON_MUSKET_SPAWN_CHANCE;
 
     static {
         ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
@@ -34,9 +35,13 @@ public class Config {
                 .comment("The amount of damage dealt by bullets.")
                 .defineInRange("Bullet damage", 16D, 16D, 24D);
 
-        MOB_DAMAGE_MULT = builder
+        MOB_DAMAGE_MULTIPLIER = builder
                 .comment("Damage multiplier applied to bullets fired by mobs.")
                 .defineInRange("Mob bullet damage multiplier", 0.45D, 0.45D, 1.0D);
+
+        SKELETON_MUSKET_SPAWN_CHANCE = builder
+                .comment("Chance for a skeleton to spawn with a musket instead of a bow.")
+                .defineInRange("Skeleton musket spawn chance", 0.05D, 0D, 1D);
 
         CRAFT_ENCHANTED_CARTRIDGE = builder
                 .comment("If enabled, enchanted cartridges are craftable.")

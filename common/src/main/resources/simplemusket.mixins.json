@@ -6,12 +6,14 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "DamageSourcesInvoker",
+    "MobAccessor",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"
   ],
   "client": [
     "GuiMixin",
-    "ItemRendererMixin"
+    "ItemRendererMixin",
+    "SkeletonModelMixin"
   ],
   "server": [
   ],

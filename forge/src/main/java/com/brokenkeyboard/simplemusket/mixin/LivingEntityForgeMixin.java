@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class LivingEntityForgeMixin {
 
     @WrapOperation(method = "getDamageAfterArmorAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatRules;getDamageAfterAbsorb(FFF)F"))
-    private float applyArmorPiercing(float damage, float armor, float toughness, Operation<Float> original, @Local(argsOnly = true) DamageSource source) {
-        return source.is(Constants.BULLET) ? BulletEntity.applyArmorPiercing(damage, armor, toughness, (BulletEntity)source.getDirectEntity()) : original.call(damage, armor, toughness);
+    private float applyArmorPiercing(float damage, float totalArmor, float toughnessAttribute, Operation<Float> original, @Local(argsOnly = true) DamageSource source) {
+        return source.is(Constants.BULLET) ? BulletEntity.applyArmorPiercing(damage, totalArmor, toughnessAttribute, (BulletEntity)source.getDirectEntity()) : original.call(damage, totalArmor, toughnessAttribute);
     }
 }

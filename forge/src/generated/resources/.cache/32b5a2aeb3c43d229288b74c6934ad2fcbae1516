@@ -1,4 +1,5 @@
-// 1.20.1	2025-01-11T04:27:42.2911609	Global Loot Modifiers : simplemusket
-ae8c5817aa6556ef852b7a53baf622a3da358bf7 data/forge/loot_modifiers/global_loot_modifiers.json
+// 1.20.1	2026-06-01T20:04:59.07905928	Global Loot Modifiers : simplemusket
+47db0d7de3768b0628fd683c3aea9bf192a2f13f data/forge/loot_modifiers/global_loot_modifiers.json
 ed94bbe59ef8af2959c1469eabd9841965055c8e data/simplemusket/loot_modifiers/bastion_loot.json
 ca74361a9cca43ea1efb2beeae4fceaf6b13aeee data/simplemusket/loot_modifiers/piglin_barter.json
+07828f9b0318bc36bf2a3ce63651b018dd7c9ea1 data/simplemusket/loot_modifiers/skeleton_loot.json

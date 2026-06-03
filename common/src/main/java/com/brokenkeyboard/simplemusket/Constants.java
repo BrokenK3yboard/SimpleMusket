@@ -18,6 +18,7 @@ public class Constants {
     public static final ResourceLocation BASTION_TREASURE = new ResourceLocation("minecraft:chests/bastion_treasure");
     public static final ResourceLocation BASTION_BRIDGE = new ResourceLocation("minecraft:chests/bastion_bridge");
     public static final ResourceLocation PIGLIN_BARTER = new ResourceLocation("minecraft:gameplay/piglin_bartering");
+    public static final ResourceLocation SKELETON_ID = new ResourceLocation("entities/skeleton");
 
     public static final ResourceLocation CRAFT_CARTRIDGE = new ResourceLocation(Constants.MOD_ID, "craft_cartridge");
     public static final ResourceLocation CRAFT_ENCHANTED = new ResourceLocation(Constants.MOD_ID, "craft_enchanted");

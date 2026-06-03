@@ -7,6 +7,8 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 
+import static com.brokenkeyboard.simplemusket.Constants.SKELETON_ID;
+
 public class GLMProvider extends GlobalLootModifierProvider {
 
     public GLMProvider(PackOutput output) {
@@ -25,6 +27,11 @@ public class GLMProvider extends GlobalLootModifierProvider {
 
         add("piglin_barter", new PiglinBarter(new LootItemCondition[] {
                 new AnyOfCondition.Builder(new LootTableIdCondition.Builder(Constants.PIGLIN_BARTER)).build()
+        }));
+
+
+        add("skeleton_loot", new SkeletonLoot(new LootItemCondition[] {
+                new AnyOfCondition.Builder(new LootTableIdCondition.Builder(SKELETON_ID)).build()
         }));
     }
 }

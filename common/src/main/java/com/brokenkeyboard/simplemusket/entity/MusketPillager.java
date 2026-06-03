@@ -142,6 +142,7 @@ public class MusketPillager extends AbstractIllager {
     }
 
     @Override
+    @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficulty, MobSpawnType type, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         RandomSource randomsource = accessor.getRandom();
         this.populateDefaultEquipmentSlots(randomsource, difficulty);
