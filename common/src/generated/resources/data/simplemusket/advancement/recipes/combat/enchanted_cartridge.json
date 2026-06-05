@@ -1,21 +1,21 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_gold_ingot": {
-      "conditions": {
-        "items": [
-          {
-            "items": "minecraft:gold_ingot"
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
     "has_gunpowder": {
       "conditions": {
         "items": [
           {
             "items": "minecraft:gunpowder"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_minecraft:gold_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:gold_ingot"
           }
         ]
       },
@@ -41,7 +41,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_gold_ingot",
+      "has_minecraft:gold_ingot",
       "has_gunpowder",
       "has_paper"
     ]

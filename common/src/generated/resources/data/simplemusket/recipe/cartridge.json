@@ -2,18 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
     "G": {
       "item": "minecraft:gunpowder"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
     },
     "P": {
       "item": "minecraft:paper"
     }
   },
   "pattern": [
-    " I ",
+    " C ",
     " G ",
     " P "
   ],

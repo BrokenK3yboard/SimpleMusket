@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.enchantment.AmmoCountEffect;
 import com.brokenkeyboard.simplemusket.enchantment.ComponentKillEffect;
@@ -62,7 +63,7 @@ public class DataPackProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.STRUCTURE, DataPackProvider::structureBootstrap);
 
     public DataPackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, BUILDER, Set.of(ModRegistry.MOD_ID, "minecraft"));
+        super(output, registries, BUILDER, Set.of(Constants.MOD_ID, "minecraft"));
     }
 
     protected static void damageTypeBC(BootstrapContext<DamageType> context) {

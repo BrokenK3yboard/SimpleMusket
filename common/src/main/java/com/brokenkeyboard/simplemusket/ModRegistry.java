@@ -22,6 +22,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
@@ -34,8 +35,6 @@ import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -44,12 +43,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-@SuppressWarnings("unchecked")
 public class ModRegistry {
-
-    public static final String MOD_ID = "simplemusket";
-    public static final String MOD_NAME = "Simple Musket";
-    public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
     public static final Map<ResourceLocation, EntityType<?>> ENTITIES = new HashMap<>();
     public static final Map<ResourceLocation, Item> ITEMS = new HashMap<>();
@@ -60,8 +54,8 @@ public class ModRegistry {
         Services.PLATFORM.disableVelocityUpdate(BULLET_BUILDER);
     }
 
-    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = (EntityType<BulletEntity>) addEntity(location("bullet"), BULLET_BUILDER.build("bullet"));
-    public static final EntityType<? extends MusketPillager> GUNSLINGER = (EntityType<MusketPillager>) addEntity(location("musket_pillager"),
+    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = addEntity(location("bullet"), BULLET_BUILDER.build("bullet"));
+    public static final EntityType<? extends MusketPillager> GUNSLINGER = addEntity(location("musket_pillager"),
             EntityType.Builder.of(MusketPillager::new, MobCategory.MONSTER).sized(0.6F, 1.95F).canSpawnFarFromPlayer().clientTrackingRange(8).build("musket_pillager"));
 
     public static final Item MUSKET = addItem(location("musket"), new MusketItem(new Item.Properties().durability(256)));
@@ -107,7 +101,7 @@ public class ModRegistry {
     public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem())
             && entity.getUseItem().getUseDuration(entity) - entity.getUseItemRemainingTicks() > Config.AIM_TIME.get();
 
-    public static EntityType<?> addEntity(ResourceLocation location, EntityType<?> type) {
+    public static <T extends Entity> EntityType<T> addEntity(ResourceLocation location, EntityType<T> type) {
         ENTITIES.put(location, type);
         return type;
     }
@@ -141,7 +135,7 @@ public class ModRegistry {
     }
 
     public static ResourceLocation location(String name) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
     }
 
     public static void createEntityAttributes(BiConsumer<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> consumer) {
@@ -149,28 +143,28 @@ public class ModRegistry {
     }
 
     public static void registerItemProperties() {
-        ItemProperties.register(ModRegistry.MUSKET, location("loading"),
+        ItemProperties.register(MUSKET, location("loading"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
                         && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
-        ItemProperties.register(ModRegistry.MUSKET, location("load_stage"),
+        ItemProperties.register(MUSKET, location("load_stage"),
                 (stack, world, living, id) -> (living == null || MusketItem.isLoaded(stack)) ? 0.0F :
                         (float) (stack.getUseDuration(living) - living.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
 
-        ItemProperties.register(ModRegistry.MUSKET, location("loaded"),
+        ItemProperties.register(MUSKET, location("loaded"),
                 (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
-        ItemProperties.register(ModRegistry.MUSKET, location("aiming"),
+        ItemProperties.register(MUSKET, location("aiming"),
                 (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
                         && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
 
-        ItemProperties.register(ModRegistry.MUSKET, location("sawnoff"),
+        ItemProperties.register(MUSKET, location("sawnoff"),
                 (stack, world, living, id) -> living instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
     }
 
     public static void registerSensorGoal() {
         Map<EntityType<?>, Float> map = new IdentityHashMap<>(VillagerHostilesSensorAccessor.getAcceptableDistance());
-        map.put(ModRegistry.GUNSLINGER, 32.0F);
+        map.put(GUNSLINGER, 32.0F);
         VillagerHostilesSensorAccessor.setAcceptableDistance(ImmutableMap.copyOf(map));
     }
 

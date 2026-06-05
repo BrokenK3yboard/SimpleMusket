@@ -1,7 +1,7 @@
-// 1.21.1	2026-06-02T20:43:36.150875642	Recipes
-f6102817e98cd6242d972d037958a3901c84112f data/simplemusket/advancement/recipes/combat/cartridge.json
-e619d8210a5d26bf158dbb771fd78795bc07f93e data/simplemusket/advancement/recipes/combat/enchanted_cartridge.json
+// 1.21.1	2026-06-04T20:45:16.242239196	Recipes
+ba28531cd092df44c6276fa96b6517cf28a1d8a8 data/simplemusket/advancement/recipes/combat/cartridge.json
+7ce99fb8e90b83f8645cd064b28e8ae1085d740e data/simplemusket/advancement/recipes/combat/enchanted_cartridge.json
 2847c85140a536323b2557a584733accf16883be data/simplemusket/advancement/recipes/combat/musket.json
-a489d6c7a610e81b26291128b2744e7ff00ddfa5 data/simplemusket/recipe/cartridge.json
-4876f82c6143b0af80eb4b720308a460bc07d69e data/simplemusket/recipe/enchanted_cartridge.json
+61d95ac87d49d2459eaa4ca3aad05f31c30339d6 data/simplemusket/recipe/cartridge.json
+d099586cf890cc54cd4dada6fedcab3f9428c44a data/simplemusket/recipe/enchanted_cartridge.json
 fafeb58810d054686ad3a200b53c431cf04d20ae data/simplemusket/recipe/musket.json

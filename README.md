@@ -5,6 +5,10 @@ This mod adds a musket and a few unique ammo types to Minecraft.
 * Reloading takes 1.5 seconds, and aiming for 1.5 seconds is enough for perfectly accurate shots by default.
 * Firing produces a visible cloud of smoke and the shot can be heard from far away, giving away the user's position.
 
+Skeletons are capable of spawning with and using muskets.
+* The chance of this occurring is 5%.
+* Will attempt to retreat when approached instead of strafing.
+
 There are also unique **Gunslinger** enemies added to the game which are armed with muskets.
 * Spawns near outposts and will appear as part of raid waves with the same frequency as evokers.
 * Being expert shooters, they have an attack range of 24 and do not cause friendly fire damage.
@@ -27,6 +31,7 @@ This mod adds three musket enchantments. All enchantments are mutually exclusive
 * Base cartridge damage is configurable between 16-24 damage.
 * The damage multiplier of musket wielding mobs is configurable.
 * Enchantment parameters can be changed with datapacks.
+* The chance for a skeleton to spawn with a musket instead of a bow is configurable.
 
 ## Integration
 * If **Consecration** is installed, enchanted/hex cartridges remove undead protection. 1.20.1/1.21.1 Forge/Neoforge only.

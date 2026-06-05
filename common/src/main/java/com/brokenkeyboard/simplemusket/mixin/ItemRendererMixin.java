@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.mixin;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ItemRendererMixin {
 
     @Unique
-    private static final ModelResourceLocation MUSKET_MODEL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(ModRegistry.MOD_ID, "musket"));
+    private static final ModelResourceLocation MUSKET_MODEL = ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "musket"));
     @Shadow @Final
     private ItemModelShaper itemModelShaper;
 

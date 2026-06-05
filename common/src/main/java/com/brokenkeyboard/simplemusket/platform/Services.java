@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.platform;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 
@@ -21,7 +22,7 @@ public class Services {
     // example our file on Forge points to ForgePlatformHelper while Fabric points to FabricPlatformHelper.
     public static <T> T load(Class<T> clazz) {
         final T loadedService = ServiceLoader.load(clazz).findFirst().orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        ModRegistry.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        Constants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }

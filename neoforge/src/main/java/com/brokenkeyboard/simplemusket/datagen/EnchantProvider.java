@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -13,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class EnchantProvider extends EnchantmentTagsProvider {
 
     public EnchantProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, @Nullable ExistingFileHelper fileHelper) {
-        super(output, registries, ModRegistry.MOD_ID, fileHelper);
+        super(output, registries, Constants.MOD_ID, fileHelper);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class SimpleMusket implements ModInitializer {
     @Override
     public void onInitialize() {
 
-        NeoForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.COMMON, Config.SPEC);
+        NeoForgeConfigRegistry.INSTANCE.register(Constants.MOD_ID, ModConfig.Type.COMMON, Config.SPEC);
 
         ModRegistry.registerEntity(register(BuiltInRegistries.ENTITY_TYPE));
         ModRegistry.registerItems(register(BuiltInRegistries.ITEM));

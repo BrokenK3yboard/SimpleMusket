@@ -38,15 +38,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-@Mod(ModRegistry.MOD_ID)
+@Mod(Constants.MOD_ID)
 public class SimpleMusket {
 
-    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, ModRegistry.MOD_ID);
-    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ModRegistry.MOD_ID);
-    public static final DeferredRegister.DataComponents ENCHANTMENT_COMPONENTS = DeferredRegister.createDataComponents(Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, ModRegistry.MOD_ID);
-    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, ModRegistry.MOD_ID);
-    public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENCHANTMENT_ENTITY_COMPONENTS = DeferredRegister.create(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, ModRegistry.MOD_ID);
-    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, ModRegistry.MOD_ID);
+    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Constants.MOD_ID);
+    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Constants.MOD_ID);
+    public static final DeferredRegister.DataComponents ENCHANTMENT_COMPONENTS = DeferredRegister.createDataComponents(Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Constants.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Constants.MOD_ID);
+    public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENCHANTMENT_ENTITY_COMPONENTS = DeferredRegister.create(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Constants.MOD_ID);
+    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Constants.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PiglinBarter>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<SkeletonLoot>> SKELETON_LOOT = GLM.register("skeleton_loot", SkeletonLoot.CODEC);

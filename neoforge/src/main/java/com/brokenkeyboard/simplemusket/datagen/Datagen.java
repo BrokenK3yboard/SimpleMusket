@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -11,7 +12,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = ModRegistry.MOD_ID)
+@EventBusSubscriber(modid = Constants.MOD_ID)
 public class Datagen {
 
     @SubscribeEvent

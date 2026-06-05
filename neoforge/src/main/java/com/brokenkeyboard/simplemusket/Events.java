@@ -47,7 +47,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Events {
 
-    @EventBusSubscriber(modid = ModRegistry.MOD_ID)
+    @EventBusSubscriber(modid = Constants.MOD_ID)
     public static class RegistryEvents {
 
         @SubscribeEvent
@@ -86,7 +86,7 @@ public class Events {
         }
     }
 
-    @EventBusSubscriber(modid = ModRegistry.MOD_ID)
+    @EventBusSubscriber(modid = Constants.MOD_ID)
     public static class CommonEvents {
 
         @SubscribeEvent
@@ -106,7 +106,7 @@ public class Events {
         }
     }
 
-    @EventBusSubscriber(modid = ModRegistry.MOD_ID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
     public static class ClientEvents {
 
         @SubscribeEvent
@@ -146,7 +146,7 @@ public class Events {
         }
     }
 
-    @EventBusSubscriber(modid = ModRegistry.MOD_ID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
     public static class RegisterModels {
 
         @SubscribeEvent

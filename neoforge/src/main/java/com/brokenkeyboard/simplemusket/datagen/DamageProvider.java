@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -18,7 +19,7 @@ import static com.brokenkeyboard.simplemusket.ModRegistry.BULLET;
 public class DamageProvider extends TagsProvider<DamageType> {
 
     public DamageProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, @Nullable ExistingFileHelper fileHelper) {
-        super(output, Registries.DAMAGE_TYPE, registries, ModRegistry.MOD_ID, fileHelper);
+        super(output, Registries.DAMAGE_TYPE, registries, Constants.MOD_ID, fileHelper);
     }
 
     @Override

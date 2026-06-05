@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
+import com.brokenkeyboard.simplemusket.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
@@ -14,7 +15,7 @@ import static com.brokenkeyboard.simplemusket.ModRegistry.*;
 public class GLMProvider extends GlobalLootModifierProvider {
 
     public GLMProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, MOD_ID);
+        super(output, registries, Constants.MOD_ID);
     }
 
     @Override

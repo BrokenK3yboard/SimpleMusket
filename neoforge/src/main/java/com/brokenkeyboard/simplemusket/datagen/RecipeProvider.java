@@ -7,6 +7,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,26 +34,19 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.CARTRIDGE, 8)
-                .define('I', Items.IRON_INGOT)
-                .define('G', Items.GUNPOWDER)
-                .define('P', Items.PAPER)
-                .pattern(" I ")
-                .pattern(" G ")
-                .pattern(" P ")
-                .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
-                .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
-                .unlockedBy("has_paper", has(Items.PAPER))
-                .save(output);
+        cartridgeRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 8, output);
+        cartridgeRecipe(ModRegistry.ENCHANTED_CARTRIDGE, Items.GOLD_INGOT, 4, output);
+    }
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModRegistry.ENCHANTED_CARTRIDGE, 4)
-                .define('M', Items.GOLD_INGOT)
+    private void cartridgeRecipe(Item bulletItem, Item ingredient, int amount, RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, amount)
+                .define('C', ingredient)
                 .define('G', Items.GUNPOWDER)
                 .define('P', Items.PAPER)
-                .pattern(" M ")
+                .pattern(" C ")
                 .pattern(" G ")
                 .pattern(" P ")
-                .unlockedBy("has_gold_ingot", has(Items.GOLD_INGOT))
+                .unlockedBy("has_" + ingredient.toString().toLowerCase(), has(ingredient))
                 .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
                 .unlockedBy("has_paper", has(Items.PAPER))
                 .save(output);
