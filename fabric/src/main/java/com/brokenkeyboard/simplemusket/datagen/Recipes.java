@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
@@ -38,17 +37,13 @@ public class Recipes extends FabricRecipeProvider {
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
                 .save(consumer);
 
-        cartridgeRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, consumer, Constants.CRAFT_CARTRIDGE);
-        cartridgeRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, consumer, Constants.CRAFT_HELLFIRE);
-
-        SpecialRecipeBuilder.special(ModRegistry.ENCH_CARTRIDGE_CRAFTING)
-                .save(withConditions(consumer, Conditions.configBooleans(Constants.CRAFT_ENCHANTED, String.valueOf(Constants.CRAFT_ENCHANTED))),
-                        new ResourceLocation(Constants.MOD_ID, "enchanted_cartridge").toString());
+        cartridgeRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 8, consumer, Constants.CRAFT_CARTRIDGE);
+        cartridgeRecipe(ModRegistry.ENCHANTED_CARTRIDGE, Items.GOLD_INGOT, 4, consumer, Constants.CRAFT_ENCHANTED);
+        cartridgeRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, 8, consumer, Constants.CRAFT_HELLFIRE);
     }
 
-    private void cartridgeRecipe(Item bulletItem, Item ingredient, Consumer<FinishedRecipe> consumer, ResourceLocation location) {
-
-        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, 8)
+    private void cartridgeRecipe(Item bulletItem, Item ingredient, int amount, Consumer<FinishedRecipe> consumer, ResourceLocation location) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, amount)
                 .define('C', ingredient)
                 .define('G', Items.GUNPOWDER)
                 .define('P', Items.PAPER)

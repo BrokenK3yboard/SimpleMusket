@@ -6,7 +6,6 @@ import com.brokenkeyboard.simplemusket.enchantment.RepeatingEnchantment;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
-import com.brokenkeyboard.simplemusket.item.EnchCartridgeRecipe;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.mixin.VillagerHostilesSensorAccessor;
 import com.brokenkeyboard.simplemusket.platform.Services;
@@ -24,8 +23,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
@@ -56,9 +53,6 @@ public class ModRegistry {
     public static final Item HELLFIRE_CARTRIDGE = addItem(new ResourceLocation(Constants.MOD_ID, "hellfire_cartridge"), new BulletItem(6F));
     public static final Item ENCHANTED_CARTRIDGE = addItem(new ResourceLocation(Constants.MOD_ID, "enchanted_cartridge"), new BulletItem(7.5F));
     public static final Item GUNSLINGER_EGG = addItem(new ResourceLocation(Constants.MOD_ID, "musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
-
-    public static final RecipeSerializer<EnchCartridgeRecipe> ENCH_CARTRIDGE_CRAFTING = Services.PLATFORM.createRecipeSerializer("crafting_special_enchanted_cartidge",
-            new SimpleCraftingRecipeSerializer<>(EnchCartridgeRecipe::new));
 
     public static final EnchantmentCategory FIREARM = Services.PLATFORM.musketCategory();
     public static final Enchantment FIREPOWER = addEnchant(new ResourceLocation(Constants.MOD_ID, "firepower"), new FirepowerEnchantment(FIREARM, EquipmentSlot.MAINHAND));

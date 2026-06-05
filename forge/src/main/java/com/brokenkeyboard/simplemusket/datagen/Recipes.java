@@ -40,21 +40,16 @@ public class Recipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("has_flint_and_steel", has(Items.FLINT_AND_STEEL))
                 .save(consumer);
 
-        cartridgeRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, TRUE(), consumer);
-        cartridgeRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, new HellfireCondition(), consumer);
-
-        ConditionalRecipe.builder()
-                .addCondition(new EnchantedCondition())
-                .addRecipe(recipe -> SpecialRecipeBuilder.special(ModRegistry.ENCH_CARTRIDGE_CRAFTING)
-                        .save(recipe, "enchanted_catridge"))
-                .build(consumer, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "enchanted_cartridge"));
+        cartridgeRecipe(ModRegistry.CARTRIDGE, Items.IRON_INGOT, 8, TRUE(), consumer);
+        cartridgeRecipe(ModRegistry.ENCHANTED_CARTRIDGE, Items.GOLD_INGOT, 4, new EnchantedCondition(), consumer);
+        cartridgeRecipe(ModRegistry.HELLFIRE_CARTRIDGE, Items.NETHERITE_INGOT, 8, new HellfireCondition(), consumer);
     }
 
-    private void cartridgeRecipe(Item bulletItem, Item ingredient, ICondition condition, Consumer<FinishedRecipe> consumer) {
+    private void cartridgeRecipe(Item bulletItem, Item ingredient, int amount, ICondition condition, Consumer<FinishedRecipe> consumer) {
         ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, bulletItem.toString());
 
         ConditionalRecipe.builder().addCondition(condition).addRecipe(
-                ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, 8)
+                ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, bulletItem, amount)
                         .define('C', ingredient)
                         .define('G', Items.GUNPOWDER)
                         .define('P', Items.PAPER)
