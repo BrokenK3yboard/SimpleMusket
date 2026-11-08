@@ -63,7 +63,7 @@ public class MusketItem extends ProjectileWeaponItem {
         if (entity.isEyeInFluid(FluidTags.WATER) || entity.isEyeInFluid(FluidTags.LAVA)) return;
         if (isLoaded(stack)) {
             int aimTicks = getUseDuration(stack) - timeLeft;
-            float velocity = ((BulletItem) getLoadedAmmo(stack).getItem()).VELOCITY;
+            float velocity = ((BulletItem) getLoadedAmmo(stack).getItem()).velocity;
             float inaccuracy = 12 - Mth.clamp(aimTicks / Config.AIM_TIME.get(), 0, 1) * 12;
             fire(level, entity, entity.getUsedItemHand(), stack, velocity, inaccuracy, null, SoundSource.PLAYERS);
         } else if (getUseDuration(stack) - timeLeft >= Config.RELOAD_TIME.get()) {

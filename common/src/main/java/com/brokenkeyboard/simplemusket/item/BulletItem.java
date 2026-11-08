@@ -17,11 +17,11 @@ import net.minecraft.world.phys.Vec3;
 
 public class BulletItem extends Item {
 
-    public final float VELOCITY;
+    public final float velocity;
 
     public BulletItem(float speed) {
         super(new Item.Properties());
-        VELOCITY = speed;
+        velocity = speed;
         DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
     }
 
@@ -33,7 +33,7 @@ public class BulletItem extends Item {
             Position position = DispenserBlock.getDispensePosition(source);
             Vec3 initialPos = new Vec3(position.x(), position.y(), position.z());
             BulletEntity bullet = new BulletEntity(level, null, initialPos, stack, stack);
-            bullet.shoot(direction.getStepX(), direction.getStepY(), direction.getStepZ(), ((BulletItem)bullet.getBullet()).VELOCITY, 0.5F);
+            bullet.shoot(direction.getStepX(), direction.getStepY(), direction.getStepZ(), ((BulletItem)bullet.getBullet()).velocity, 0.5F);
             level.addFreshEntity(bullet);
             MusketItem.spawnParticles(level, initialPos, new Vec3(direction.getStepX(), direction.getStepY(), direction.getStepZ()));
             stack.shrink(1);

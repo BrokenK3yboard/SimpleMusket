@@ -22,6 +22,8 @@ dependencies {
     implementation project(":common")
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api_version}"
     modImplementation include("fuzs.extensibleenums:extensibleenums-fabric:${extensible_enums_version}")
+    implementation "io.github.llamalad7:mixinextras-fabric:0.5.5"
+    include "io.github.llamalad7:mixinextras-fabric:0.5.5"
 }
 
 loom {

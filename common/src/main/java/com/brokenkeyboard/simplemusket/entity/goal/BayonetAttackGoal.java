@@ -12,8 +12,8 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 public class BayonetAttackGoal extends MeleeAttackGoal {
 
-    private final float ATTACK_RANGE_SQR;
     private static final Multimap<Attribute, AttributeModifier> BAYONET_MELEE_MODIFIER = HashMultimap.create();
+    private final float attackRangeSqr;
 
     static {
         BAYONET_MELEE_MODIFIER.put(Attributes.ATTACK_DAMAGE, new AttributeModifier("bayonet_damage", 4F, AttributeModifier.Operation.ADDITION));
@@ -21,20 +21,20 @@ public class BayonetAttackGoal extends MeleeAttackGoal {
 
     public BayonetAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen, float attackRange) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
-        this.ATTACK_RANGE_SQR = attackRange * attackRange;
+        this.attackRangeSqr = attackRange * attackRange;
     }
 
     @Override
     public void start() {
         super.start();
-        Services.PLATFORM.setMobUsingBayonet(this.mob, true);
+        Services.PLATFORM.setMobUsingBayonet(mob, true);
         mob.getAttributes().addTransientAttributeModifiers(BAYONET_MELEE_MODIFIER);
     }
 
     @Override
     public void stop() {
         super.stop();
-        Services.PLATFORM.setMobUsingBayonet(this.mob, false);
+        Services.PLATFORM.setMobUsingBayonet(mob, false);
         mob.getAttributes().removeAttributeModifiers(BAYONET_MELEE_MODIFIER);
     }
 
@@ -50,11 +50,11 @@ public class BayonetAttackGoal extends MeleeAttackGoal {
 
     @Override
     protected double getAttackReachSqr(LivingEntity attackTarget) {
-        double bbWidth = this.mob.getBbWidth() + 0.5F;
-        return bbWidth * 2.0F * bbWidth * 2.0F + attackTarget.getBbWidth();
+        double bbWidth = mob.getBbWidth() + 0.5F;
+        return bbWidth * 2F * bbWidth * 2F + attackTarget.getBbWidth();
     }
 
     private boolean isValidTarget() {
-        return mob.getTarget() != null && mob.getTarget().distanceToSqr(mob) < ATTACK_RANGE_SQR;
+        return mob.getTarget() != null && mob.getTarget().distanceToSqr(mob) < attackRangeSqr;
     }
 }

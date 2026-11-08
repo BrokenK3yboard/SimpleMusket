@@ -24,8 +24,8 @@ repositories {
 dependencies {
     compileOnly "org.spongepowered:mixin:0.8.5"
     implementation "com.google.code.findbugs:jsr305:3.0.1"
-    compileOnly "io.github.llamalad7:mixinextras-common:0.5.4"
-    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.4"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.5"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.5.5"
     compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:${forge_config_api_version}"
 }
 

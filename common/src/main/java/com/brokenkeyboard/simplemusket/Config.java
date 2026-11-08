@@ -37,7 +37,7 @@ public class Config {
 
         MOB_DAMAGE_MULTIPLIER = builder
                 .comment("Damage multiplier applied to bullets fired by mobs.")
-                .defineInRange("Mob bullet damage multiplier", 0.45D, 0.45D, 1.0D);
+                .defineInRange("Mob bullet damage multiplier", 0.5D, 0.5D, 1D);
 
         SKELETON_MUSKET_SPAWN_CHANCE = builder
                 .comment("Chance for a skeleton to spawn with a musket instead of a bow.")
