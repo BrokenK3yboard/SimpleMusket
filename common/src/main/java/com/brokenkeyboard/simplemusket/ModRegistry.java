@@ -22,10 +22,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -144,22 +141,28 @@ public class ModRegistry {
 
     public static void registerItemProperties() {
         ItemProperties.register(MUSKET, location("loading"),
-                (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                        && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity != null && livingEntity.getUseItem() == itemStack && livingEntity.isUsingItem() && !MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
 
         ItemProperties.register(MUSKET, location("load_stage"),
-                (stack, world, living, id) -> (living == null || MusketItem.isLoaded(stack)) ? 0.0F :
-                        (float) (stack.getUseDuration(living) - living.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
+                (itemStack, clientLevel, livingEntity, i) ->
+                        (livingEntity == null || MusketItem.isLoaded(itemStack)) ? 0.0F : (float) (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
 
         ItemProperties.register(MUSKET, location("loaded"),
-                (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity != null && MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
 
         ItemProperties.register(MUSKET, location("aiming"),
-                (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                        && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity != null && livingEntity.getUseItem() == itemStack && livingEntity.isUsingItem() && MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
 
         ItemProperties.register(MUSKET, location("sawnoff"),
-                (stack, world, living, id) -> living instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
+
+        ItemProperties.register(MUSKET, location("bayonet"),
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity instanceof Mob mob && Services.PLATFORM.isMobUsingBayonet(mob) ? 1.0F : 0F);
     }
 
     public static void registerSensorGoal() {

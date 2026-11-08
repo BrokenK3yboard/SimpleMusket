@@ -1,6 +1,8 @@
 package com.brokenkeyboard.simplemusket.platform;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
+import com.brokenkeyboard.simplemusket.SimpleMusket;
+import com.brokenkeyboard.simplemusket.network.S2CBayonetPayload;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 import com.mojang.serialization.MapCodec;
@@ -17,14 +19,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.EnderDragonPart;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.function.UnaryOperator;
 
+@SuppressWarnings("UnstableApiUsage")
 public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
@@ -65,12 +67,22 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer) {
-        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ModRegistry.location(name), serializer);
+    public void disableVelocityUpdate(EntityType.Builder<?> builder) {
+        builder.alwaysUpdateVelocity(false);
     }
 
     @Override
-    public void disableVelocityUpdate(EntityType.Builder<?> builder) {
-        builder.alwaysUpdateVelocity(false);
+    public void setMobUsingBayonet(Mob mob, boolean isUsingBayonet) {
+        mob.setAttached(SimpleMusket.IS_USING_BAYONET, isUsingBayonet);
+        if (mob.level() instanceof ServerLevel) {
+            for (ServerPlayer serverPlayer : PlayerLookup.tracking(mob)) {
+                ServerPlayNetworking.send(serverPlayer, new S2CBayonetPayload(mob.getId(), isUsingBayonet));
+            }
+        }
+    }
+
+    @Override
+    public boolean isMobUsingBayonet(Mob mob) {
+        return mob.getAttachedOrElse(SimpleMusket.IS_USING_BAYONET, false);
     }
 }

@@ -54,13 +54,13 @@ public class MusketPillager extends AbstractIllager {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SawnOffGoal(this, 8.0F));
-        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 8.0F, 1.0F, 1.2F));
-        this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 8.0F));
-        this.goalSelector.addGoal(4, new MusketAttackGoal<>(this, 1.0F, 24.0F));
+        this.goalSelector.addGoal(1, new SawnOffGoal(this, 8F));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 8F, 1F, 1.2F));
+        this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 8F));
+        this.goalSelector.addGoal(4, new MusketAttackGoal<>(this, 1F, 24F, 8F));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 0.6D));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
-        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Mob.class, 15.0F));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 15F, 1F));
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Mob.class, 15F));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Raider.class).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));

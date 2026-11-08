@@ -1,7 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.Constants;
-import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;

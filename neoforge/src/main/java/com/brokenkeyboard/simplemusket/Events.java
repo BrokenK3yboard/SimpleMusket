@@ -7,6 +7,7 @@ import com.brokenkeyboard.simplemusket.entity.MusketPillagerRenderer;
 import com.brokenkeyboard.simplemusket.item.BulletDispenseBehavior;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.network.ClientPacketHandler;
+import com.brokenkeyboard.simplemusket.network.S2CBayonetPayload;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
@@ -78,10 +79,16 @@ public class Events {
         @SubscribeEvent
         public static void register(final RegisterPayloadHandlersEvent event) {
             final PayloadRegistrar registrar = event.registrar("1");
-            registrar.playToClient(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC, (data, context) -> {
-                String source = data.soundSource();
-                Vector3f pos = data.pos();
+            registrar.playToClient(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC, (payload, context) -> {
+                String source = payload.soundSource();
+                Vector3f pos = payload.pos();
                 context.enqueueWork(() -> ClientPacketHandler.playSound(source, pos));
+            });
+
+            registrar.playToClient(S2CBayonetPayload.TYPE, S2CBayonetPayload.STREAM_CODEC, (payload, context) -> {
+               int entityID = payload.entityID();
+               boolean isUsingBayonet = payload.isUsingBayonet();
+               context.enqueueWork(() -> ClientPacketHandler.setUsingBayonet(entityID, isUsingBayonet));
             });
         }
     }

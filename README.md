@@ -6,8 +6,8 @@ This mod adds a musket and a few unique ammo types to Minecraft.
 * Firing produces a visible cloud of smoke and the shot can be heard from far away, giving away the user's position.
 
 Skeletons are capable of spawning with and using muskets.
-* The chance of this occurring is 5%.
-* Will attempt to retreat when approached instead of strafing.
+* The chance of this occurring is 5% by default.
+* Uses a bayonet attack against nearby targets.
 
 There are also unique **Gunslinger** enemies added to the game which are armed with muskets.
 * Spawns near outposts and will appear as part of raid waves with the same frequency as evokers.

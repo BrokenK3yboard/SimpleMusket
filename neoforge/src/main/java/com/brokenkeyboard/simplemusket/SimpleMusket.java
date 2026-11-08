@@ -5,6 +5,7 @@ import com.brokenkeyboard.simplemusket.datagen.PiglinBarter;
 import com.brokenkeyboard.simplemusket.datagen.SkeletonLoot;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.platform.Services;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -24,6 +25,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -45,11 +47,13 @@ public class SimpleMusket {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Constants.MOD_ID);
     public static final DeferredRegister.DataComponents ENCHANTMENT_COMPONENTS = DeferredRegister.createDataComponents(Registries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Constants.MOD_ID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Constants.MOD_ID);
+    public static final DeferredRegister<AttachmentType<?>> DATA_ATTACHNMENTS = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Constants.MOD_ID);
     public static final DeferredRegister<MapCodec<? extends EnchantmentEntityEffect>> ENCHANTMENT_ENTITY_COMPONENTS = DeferredRegister.create(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Constants.MOD_ID);
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Constants.MOD_ID);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<BastionLoot>> BASTION_LOOT = GLM.register("bastion_loot", BastionLoot.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PiglinBarter>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<SkeletonLoot>> SKELETON_LOOT = GLM.register("skeleton_loot", SkeletonLoot.CODEC);
+    public static final Supplier<AttachmentType<Boolean>> USING_BAYONET = DATA_ATTACHNMENTS.register(Constants.MOD_ID, () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
     public SimpleMusket(ModContainer container, IEventBus bus) {
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -61,6 +65,7 @@ public class SimpleMusket {
         ENCHANTMENT_COMPONENTS.register(bus);
         ENCHANTMENT_ENTITY_COMPONENTS.register(bus);
         RECIPE_SERIALIZERS.register(bus);
+        DATA_ATTACHNMENTS.register(bus);
         bus.addListener((EntityAttributeCreationEvent event) -> ModRegistry.createEntityAttributes((type, builder) -> event.put(type, builder.build())));
         GLM.register(bus);
         bus.addListener(this::addCreative);

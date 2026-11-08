@@ -1,10 +1,13 @@
 package com.brokenkeyboard.simplemusket;
 
 import com.brokenkeyboard.simplemusket.item.BulletDispenseBehavior;
+import com.brokenkeyboard.simplemusket.network.S2CBayonetPayload;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import fuzs.extensibleenums.api.v2.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -34,7 +37,10 @@ import java.util.function.BiConsumer;
 
 import static com.brokenkeyboard.simplemusket.ModRegistry.*;
 
+@SuppressWarnings("UnstableApiUsage")
 public class SimpleMusket implements ModInitializer {
+
+    public static final AttachmentType<Boolean> IS_USING_BAYONET = AttachmentRegistry.create(ModRegistry.location(Constants.IS_USING_BAYONET));
 
     @Override
     public void onInitialize() {
@@ -61,6 +67,7 @@ public class SimpleMusket implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.SPAWN_EGGS).register(content -> content.accept(ModRegistry.GUNSLINGER_EGG));
 
         PayloadTypeRegistry.playS2C().register(S2CSoundPayload.TYPE, S2CSoundPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(S2CBayonetPayload.TYPE, S2CBayonetPayload.STREAM_CODEC);
 
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.WEAPONSMITH, 3, factories -> factories.add((entity, random) ->
                 new MerchantOffer(new ItemCost(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F)));

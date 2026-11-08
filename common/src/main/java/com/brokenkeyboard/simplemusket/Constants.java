@@ -9,5 +9,5 @@ public class Constants {
     public static final String MOD_NAME = "Simple Musket";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
-
+    public static final String IS_USING_BAYONET = "is_using_bayonet";
 }

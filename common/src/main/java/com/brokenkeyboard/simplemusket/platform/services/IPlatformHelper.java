@@ -8,8 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,6 +23,7 @@ public interface IPlatformHelper {
     <T> DataComponentType<T> createDataComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator);
     <T> DataComponentType<T> createEnchantmentComponent(String name, UnaryOperator<DataComponentType.Builder<T>> operator);
     <T extends EnchantmentEntityEffect> void createEntityEffectComponent(String name, MapCodec<T> codec);
-    <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer);
     void disableVelocityUpdate(EntityType.Builder<?> builder);
+    void setMobUsingBayonet(Mob mob, boolean isUsingBayonet);
+    boolean isMobUsingBayonet(Mob mob);
 }

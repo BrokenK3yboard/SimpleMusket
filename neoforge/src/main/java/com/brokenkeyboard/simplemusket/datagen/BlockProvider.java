@@ -1,7 +1,6 @@
 package com.brokenkeyboard.simplemusket.datagen;
 
 import com.brokenkeyboard.simplemusket.Constants;
-import com.brokenkeyboard.simplemusket.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;

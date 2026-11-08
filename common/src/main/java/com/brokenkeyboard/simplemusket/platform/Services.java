@@ -1,7 +1,6 @@
 package com.brokenkeyboard.simplemusket.platform;
 
 import com.brokenkeyboard.simplemusket.Constants;
-import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;

@@ -8,6 +8,7 @@
     "AbstractSkeletonMixin",
     "EnchantmentHelperMixin",
     "MobAccessor",
+    "MobMixin",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"
   ],

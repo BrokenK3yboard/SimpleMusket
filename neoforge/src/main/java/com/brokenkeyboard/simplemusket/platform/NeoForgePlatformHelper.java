@@ -1,5 +1,7 @@
 package com.brokenkeyboard.simplemusket.platform;
 
+import com.brokenkeyboard.simplemusket.SimpleMusket;
+import com.brokenkeyboard.simplemusket.network.S2CBayonetPayload;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPayload;
 import com.brokenkeyboard.simplemusket.platform.services.IPlatformHelper;
 import com.mojang.serialization.MapCodec;
@@ -10,8 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
@@ -64,13 +65,20 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer) {
-        RECIPE_SERIALIZERS.register(name, () -> serializer);
-        return serializer;
+    public void disableVelocityUpdate(EntityType.Builder<?> builder) {
+        builder.setShouldReceiveVelocityUpdates(false);
     }
 
     @Override
-    public void disableVelocityUpdate(EntityType.Builder<?> builder) {
-        builder.setShouldReceiveVelocityUpdates(false);
+    public void setMobUsingBayonet(Mob mob, boolean isUsingBayonet) {
+        mob.setData(SimpleMusket.USING_BAYONET, isUsingBayonet);
+        if (mob.level() instanceof ServerLevel) {
+            PacketDistributor.sendToPlayersTrackingEntity(mob, new S2CBayonetPayload(mob.getId(), isUsingBayonet));
+        }
+    }
+
+    @Override
+    public boolean isMobUsingBayonet(Mob mob) {
+        return mob.getData(USING_BAYONET);
     }
 }
