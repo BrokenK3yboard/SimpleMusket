@@ -19,7 +19,6 @@ public class ClientSetup implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
         EntityRendererRegistry.register(ModRegistry.BULLET_ENTITY, BulletEntityRenderer::new);
         EntityRendererRegistry.register(ModRegistry.GUNSLINGER, MusketPillagerRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "musket_pillager"), "overlay"), HatModel::createBodyLayer);
@@ -27,10 +26,16 @@ public class ClientSetup implements ClientModInitializer {
         ModRegistry.registerItemProperties();
 
         ClientPlayNetworking.registerGlobalReceiver(SimpleMusket.SOUND_TYPE.getId(), (client, handler, buf, responseSender) -> {
-                SoundEvent sound = SoundEvent.readFromNetwork(buf);
-                SoundSource source = buf.readEnum(SoundSource.class);
-                Vector3f location = buf.readVector3f();
-                client.execute(() -> ClientPacketHandler.playSound(sound, source, location)
-        );});
+            SoundEvent sound = SoundEvent.readFromNetwork(buf);
+            SoundSource source = buf.readEnum(SoundSource.class);
+            Vector3f location = buf.readVector3f();
+            client.execute(() -> ClientPacketHandler.playSound(sound, source, location));
+        });
+        
+        ClientPlayNetworking.registerGlobalReceiver(SimpleMusket.BAYONET_TYPE.getId(), (client, handler, buf, responseSender) -> {
+            int entityID = buf.readInt();
+            boolean isUsingBayonet = buf.readBoolean();
+            client.execute(() -> ClientPacketHandler.setUsingBayonet(entityID, isUsingBayonet));
+        });
     }
 }

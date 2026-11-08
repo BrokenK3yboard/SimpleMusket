@@ -22,15 +22,17 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
     private static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(1, 2);
     private final T MOB;
     private final float SPEED_MODIFIER;
-    private final float ATTACK_RANGE;
+    private final float ATTACK_RANGE_SQR;
+    private final float MINIMUM_DISTANCE_SQR;
     private int seeTime;
     private int attackDelay;
     private int updatePathDelay;
 
-    public MusketAttackGoal(T mob, float speedModifier, float attackRange) {
+    public MusketAttackGoal(T mob, float speedModifier, float attackRange, float minimumDistance) {
         this.MOB = mob;
         this.SPEED_MODIFIER = speedModifier;
-        this.ATTACK_RANGE = attackRange * attackRange;
+        this.ATTACK_RANGE_SQR = attackRange * attackRange;
+        this.MINIMUM_DISTANCE_SQR = minimumDistance * minimumDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
@@ -39,7 +41,8 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
     }
 
     protected boolean isValidTarget() {
-        return MOB.getTarget() != null && MOB.getTarget().isAlive();
+        LivingEntity target = MOB.getTarget();
+        return target != null && target.isAlive() && MOB.distanceToSqr(target) >= MINIMUM_DISTANCE_SQR;
     }
 
     @Override
@@ -91,7 +94,7 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
             seeTime = (hasLOS ? seeTime + 1 : seeTime - 1);
 
             double distance = MOB.distanceToSqr(target);
-            boolean moving = (distance > (double) ATTACK_RANGE || seeTime < 5) && attackDelay == 0;
+            boolean moving = (distance > (double) ATTACK_RANGE_SQR || seeTime < 5) && attackDelay == 0;
 
             if (moving) {
                 if (--updatePathDelay <= 0) {

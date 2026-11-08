@@ -121,24 +121,29 @@ public class ModRegistry {
     }
 
     public static void registerItemProperties() {
-
         ItemProperties.register(MUSKET, new ResourceLocation(Constants.MOD_ID, "loading"),
-                (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                        && !MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity != null && livingEntity.getUseItem() == itemStack && livingEntity.isUsingItem() && !MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
 
         ItemProperties.register(MUSKET, new ResourceLocation(Constants.MOD_ID, "load_stage"),
-                (stack, world, living, id) -> (living == null || MusketItem.hasAmmo(stack)) ? 0.0F :
-                        (float) (stack.getUseDuration() - living.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
+                (itemStack, clientLevel, livingEntity, i) ->
+                        (livingEntity == null || MusketItem.hasAmmo(itemStack)) ? 0.0F : (float) (itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
 
         ItemProperties.register(MUSKET, new ResourceLocation(Constants.MOD_ID, "loaded"),
-                (stack, world, living, id) -> living != null && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity != null && MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
 
         ItemProperties.register(MUSKET, new ResourceLocation(Constants.MOD_ID, "aiming"),
-                (stack, world, living, id) -> living != null && living.getUseItem() == stack && living.isUsingItem()
-                        && MusketItem.isLoaded(stack) ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity != null && livingEntity.getUseItem() == itemStack && livingEntity.isUsingItem() && MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
 
         ItemProperties.register(MUSKET, new ResourceLocation(Constants.MOD_ID, "sawnoff"),
-                (stack, world, living, id) -> living instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
+
+        ItemProperties.register(MUSKET, new ResourceLocation(Constants.MOD_ID, "bayonet"),
+                (itemStack, clientLevel, livingEntity, i) ->
+                        livingEntity instanceof Mob mob && Services.PLATFORM.isMobUsingBayonet(mob) ? 1.0F : 0F);
     }
 
     public static void registerSensorGoal() {

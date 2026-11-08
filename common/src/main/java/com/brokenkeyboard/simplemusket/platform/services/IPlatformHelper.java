@@ -6,8 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -20,5 +19,6 @@ public interface IPlatformHelper {
     EnchantmentCategory musketCategory();
     Entity getHitEntity(Entity entity);
     EntityType<? extends BulletEntity> createBulletEntity();
-    <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer);
+    void setMobUsingBayonet(Mob mob, boolean isUsingBayonet);
+    boolean isMobUsingBayonet(Mob mob);
 }

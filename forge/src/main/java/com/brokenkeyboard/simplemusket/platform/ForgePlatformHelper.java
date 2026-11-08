@@ -1,5 +1,7 @@
 package com.brokenkeyboard.simplemusket.platform;
 
+import com.brokenkeyboard.simplemusket.capability.IsUsingBayonetInterface;
+import com.brokenkeyboard.simplemusket.capability.IsUsingBayonetProvider;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.network.Network;
@@ -9,16 +11,16 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 
-import static com.brokenkeyboard.simplemusket.SimpleMusket.RECIPE_SERIALIZERS;
+import java.util.Optional;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -29,7 +31,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean bulletHitResult(BulletEntity bullet, HitResult result) {
-        return net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(bullet, result);
+        return ForgeEventFactory.onProjectileImpact(bullet, result);
     }
 
     @Override
@@ -55,8 +57,13 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer) {
-        RECIPE_SERIALIZERS.register(name, () -> serializer);
-        return serializer;
+    public void setMobUsingBayonet(Mob mob, boolean isUsingBayonet) {
+        Network.S2CBayonet(mob, isUsingBayonet);
+    }
+
+    @Override
+    public boolean isMobUsingBayonet(Mob mob) {
+        Optional<IsUsingBayonetInterface> capability = Optional.of(mob.getCapability(IsUsingBayonetProvider.IS_USING_BAYONET_CAPABILITY)).get().resolve();
+        return capability.map(IsUsingBayonetInterface::getUsingBayonet).orElse(false);
     }
 }

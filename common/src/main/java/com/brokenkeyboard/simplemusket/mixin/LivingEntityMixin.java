@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityForgeMixin {
+public class LivingEntityMixin {
 
     @WrapOperation(method = "getDamageAfterArmorAbsorb", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatRules;getDamageAfterAbsorb(FFF)F"))
     private float applyArmorPiercing(float damage, float totalArmor, float toughnessAttribute, Operation<Float> original, @Local(argsOnly = true) DamageSource source) {
-        return source.is(Constants.BULLET) ? BulletEntity.applyArmorPiercing(damage, totalArmor, toughnessAttribute, (BulletEntity)source.getDirectEntity()) : original.call(damage, totalArmor, toughnessAttribute);
+        return source.is(Constants.BULLET) ? BulletEntity.applyArmorPiercing(damage, totalArmor, toughnessAttribute, (BulletEntity) source.getDirectEntity()) : original.call(damage, totalArmor, toughnessAttribute);
     }
 }

@@ -2,12 +2,14 @@ package com.brokenkeyboard.simplemusket.mixin;
 
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
+import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.SkeletonModel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +24,7 @@ public class SkeletonModelMixin<T extends Mob & RangedAttackMob> {
     private void setArmAnimation(T entity, float limbSwing, float limbSwingAmount, float partialTick, CallbackInfo ci) {
         ItemStack stack = entity.getItemInHand(InteractionHand.MAIN_HAND);
         if (stack.is(ModRegistry.MUSKET) && entity.isAggressive()) {
-            if (MusketItem.isLoaded(stack)) {
+            if (MusketItem.isLoaded(stack) || (entity instanceof Skeleton skeleton && Services.PLATFORM.isMobUsingBayonet(skeleton))) {
                 if (entity.getMainArm() == HumanoidArm.RIGHT) {
                     ((SkeletonModel<?>) (Object) this).rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
                 } else {

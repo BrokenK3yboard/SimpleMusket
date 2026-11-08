@@ -5,7 +5,9 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractSkeletonMixin",
     "DamageSourcesInvoker",
+    "LivingEntityMixin",
     "MobAccessor",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"

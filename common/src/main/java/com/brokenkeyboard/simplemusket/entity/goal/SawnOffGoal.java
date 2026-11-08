@@ -17,12 +17,12 @@ import java.util.EnumSet;
 public class SawnOffGoal extends Goal {
 
     protected final MusketPillager MOB;
-    protected final float ATTACK_RANGE;
+    protected final float ATTACK_RANGE_SQR;
     protected int attackDelay;
 
     public SawnOffGoal(MusketPillager mob, float attackRange) {
         this.MOB = mob;
-        this.ATTACK_RANGE = attackRange * attackRange;
+        this.ATTACK_RANGE_SQR = attackRange * attackRange;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
@@ -35,7 +35,7 @@ public class SawnOffGoal extends Goal {
     @Override
     public boolean canUse() {
         LivingEntity target = MOB.getTarget();
-        return target != null && target.isAlive() && MOB.distanceToSqr(target) <= ATTACK_RANGE && MOB.isHolding(is -> is.getItem() instanceof MusketItem) && MOB.getSawnoffCD() <= 0;
+        return target != null && target.isAlive() && MOB.distanceToSqr(target) <= ATTACK_RANGE_SQR && MOB.isHolding(is -> is.getItem() instanceof MusketItem) && MOB.getSawnoffCD() <= 0;
     }
 
     @Override

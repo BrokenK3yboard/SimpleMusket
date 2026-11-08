@@ -1,5 +1,6 @@
 package com.brokenkeyboard.simplemusket;
 
+import com.brokenkeyboard.simplemusket.capability.IsUsingBayonetProvider;
 import com.brokenkeyboard.simplemusket.datagen.conditions.EnchantedCondition;
 import com.brokenkeyboard.simplemusket.datagen.conditions.HellfireCondition;
 import com.brokenkeyboard.simplemusket.entity.BulletEntityRenderer;
@@ -16,6 +17,8 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.PatrollingMonster;
@@ -34,6 +37,7 @@ import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
@@ -105,11 +109,20 @@ public class Events {
 
         @SubscribeEvent
         public static void addTrades(VillagerTradesEvent event) {
-            if(event.getType() != VillagerProfession.WEAPONSMITH) return;
+            if (event.getType() != VillagerProfession.WEAPONSMITH) return;
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 5), new ItemStack(ModRegistry.MUSKET), 3, 10, 0.05F));
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD), new ItemStack(ModRegistry.CARTRIDGE, 4), 16, 1, 0.05F));
             trades.get(3).add((trader, rand) -> new MerchantOffer(new ItemStack(Items.EMERALD, 3), new ItemStack(ModRegistry.ENCHANTED_CARTRIDGE, 4), 16, 1, 0.05F));
+        }
+
+        @SubscribeEvent
+        public static void onAttachCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
+            if (event.getObject() instanceof Mob) {
+                if (!event.getObject().getCapability(IsUsingBayonetProvider.IS_USING_BAYONET_CAPABILITY).isPresent()) {
+                    event.addCapability(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, Constants.IS_USING_BAYONET), new IsUsingBayonetProvider());
+                }
+            }
         }
     }
 

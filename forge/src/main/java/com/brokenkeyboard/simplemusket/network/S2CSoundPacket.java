@@ -3,8 +3,6 @@ package com.brokenkeyboard.simplemusket.network;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 import org.joml.Vector3f;
 
@@ -35,9 +33,8 @@ public class S2CSoundPacket {
     }
 
     public static void handleS2CSound(S2CSoundPacket packet, Supplier<NetworkEvent.Context> supplier) {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientPacketHandler.playSound(packet.SOUND, packet.SOURCE, packet.POS);
-        }
-        supplier.get().setPacketHandled(true);
+        NetworkEvent.Context context = supplier.get();
+        context.enqueueWork(() -> ClientPacketHandler.playSound(packet.SOUND, packet.SOURCE, packet.POS));
+        context.setPacketHandled(true);
     }
 }

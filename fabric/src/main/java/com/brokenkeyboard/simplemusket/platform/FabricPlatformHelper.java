@@ -1,6 +1,5 @@
 package com.brokenkeyboard.simplemusket.platform;
 
-import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.SimpleMusket;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
@@ -11,25 +10,18 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.boss.EnderDragonPart;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+@SuppressWarnings("UnstableApiUsage")
 public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
@@ -71,7 +63,20 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public <T extends CraftingRecipe> RecipeSerializer<T> createRecipeSerializer(String name, RecipeSerializer<T> serializer) {
-        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Constants.MOD_ID, name), serializer);
+    public void setMobUsingBayonet(Mob mob, boolean isUsingBayonet) {
+        mob.setAttached(SimpleMusket.IS_USING_BAYONET, isUsingBayonet);
+        if (mob.level() instanceof ServerLevel) {
+            for (ServerPlayer serverPlayer : PlayerLookup.tracking(mob)) {
+                FriendlyByteBuf buf = PacketByteBufs.create();
+                buf.writeInt(mob.getId());
+                buf.writeBoolean(isUsingBayonet);
+                ServerPlayNetworking.send(serverPlayer, SimpleMusket.BAYONET_TYPE.getId(), buf);
+            }
+        }
+    }
+
+    @Override
+    public boolean isMobUsingBayonet(Mob mob) {
+        return mob.getAttachedOrElse(SimpleMusket.IS_USING_BAYONET, false);
     }
 }

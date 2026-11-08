@@ -2,10 +2,13 @@ package com.brokenkeyboard.simplemusket;
 
 import com.brokenkeyboard.simplemusket.datagen.Conditions;
 import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.network.S2CBayonetPacket;
 import com.brokenkeyboard.simplemusket.network.S2CSoundPacket;
 import fuzs.extensibleenums.api.extensibleenums.v1.BuiltInEnumFactories;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
@@ -31,9 +34,12 @@ import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.function.BiConsumer;
 
+@SuppressWarnings("UnstableApiUsage")
 public class SimpleMusket implements ModInitializer {
 
     public static final PacketType<S2CSoundPacket> SOUND_TYPE = PacketType.create(new ResourceLocation(Constants.MOD_ID, "sound"), S2CSoundPacket::new);
+    public static final PacketType<S2CBayonetPacket> BAYONET_TYPE = PacketType.create(new ResourceLocation(Constants.MOD_ID, "bayonet"), S2CBayonetPacket::new);
+    public static final AttachmentType<Boolean> IS_USING_BAYONET = AttachmentRegistry.create(new ResourceLocation(Constants.MOD_ID, Constants.IS_USING_BAYONET));
 
     @Override
     public void onInitialize() {

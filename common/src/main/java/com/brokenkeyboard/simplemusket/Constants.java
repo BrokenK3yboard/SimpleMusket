@@ -26,4 +26,6 @@ public class Constants {
 
     public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MOD_ID, "bullet"));
     public static final DamageType BULLET_DAMAGE_TYPE = new DamageType("bullet", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.5F);
+
+    public static final String IS_USING_BAYONET = "is_using_bayonet";
 }

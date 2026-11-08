@@ -43,9 +43,9 @@ public class SimpleMusket {
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> PIGLIN_BARTER = GLM.register("piglin_barter", PiglinBarter.CODEC);
     public static final RegistryObject<Codec<? extends IGlobalLootModifier>> SKELETON_LOOT = GLM.register("skeleton_loot", SkeletonLoot.CODEC);
 
-    public SimpleMusket() {
-        FMLJavaModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+    public SimpleMusket(FMLJavaModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        IEventBus bus = context.getModEventBus();
         register(bus, Registries.ITEM, ModRegistry::registerItems);
         register(bus, Registries.ENTITY_TYPE, ModRegistry::registerEntity);
         register(bus, Registries.ENCHANTMENT, ModRegistry::registerEnchants);
