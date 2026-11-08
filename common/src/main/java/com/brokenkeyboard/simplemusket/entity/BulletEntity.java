@@ -151,7 +151,7 @@ public class BulletEntity extends Projectile {
         Entity owner = getOwner();
         return new ClientboundAddEntityPacket(getId(), getUUID(), position.x(), position.y(), position.z(),
                 entity.getLastSentXRot(), entity.getLastSentYRot(), getType(), owner != null ? owner.getId() : 0,
-                entity.getLastSentMovement().scale(3.9F / bullet.VELOCITY), 0);
+                entity.getLastSentMovement().scale(3.9F / bullet.velocity), 0);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class BulletEntity extends Projectile {
     public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
         super.onSyncedDataUpdated(accessor);
         if (!getDeltaMovement().equals(Vec3.ZERO) && level().isClientSide && !speedUpdated) {
-            setDeltaMovement(getDeltaMovement().scale(bullet.VELOCITY));
+            setDeltaMovement(getDeltaMovement().scale(bullet.velocity));
             speedUpdated = true;
         }
     }

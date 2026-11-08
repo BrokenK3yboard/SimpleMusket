@@ -66,7 +66,7 @@ public class SawnOffGoal extends Goal {
                         MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE, 1));
                     }
                     float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
-                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).VELOCITY;
+                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).velocity;
                     musket.fire(MOB.level(), MOB, hand, stack, velocity, deviation, MOB.getTarget(), SoundSource.HOSTILE);
                     MOB.setSawnoffCD(120);
                     MOB.setUsingSawnOff(false);

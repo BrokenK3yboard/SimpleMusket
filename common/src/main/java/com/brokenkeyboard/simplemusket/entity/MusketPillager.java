@@ -69,9 +69,9 @@ public class MusketPillager extends AbstractIllager {
 
     public static AttributeSupplier.Builder createAttributes() {
         return LivingEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 24.0)
-                .add(Attributes.ATTACK_DAMAGE, 5.0)
-                .add(Attributes.FOLLOW_RANGE, 32.0)
+                .add(Attributes.MAX_HEALTH, 24)
+                .add(Attributes.ATTACK_DAMAGE, 5)
+                .add(Attributes.FOLLOW_RANGE, 32)
                 .add(Attributes.MOVEMENT_SPEED, 0.35);
     }
 

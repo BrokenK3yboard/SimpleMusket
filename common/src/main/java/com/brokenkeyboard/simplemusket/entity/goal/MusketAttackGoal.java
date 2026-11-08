@@ -20,29 +20,29 @@ import java.util.EnumSet;
 public class MusketAttackGoal<T extends Mob> extends Goal {
 
     private static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(1, 2);
-    private final T MOB;
-    private final float SPEED_MODIFIER;
-    private final float ATTACK_RANGE_SQR;
-    private final float MINIMUM_DISTANCE_SQR;
+    private final T mob;
+    private final float speedModifier;
+    private final float attackRangeSqr;
+    private final float minimumDistanceSqr;
     private int seeTime;
     private int attackDelay;
     private int updatePathDelay;
 
     public MusketAttackGoal(T mob, float speedModifier, float attackRange, float minimumDistance) {
-        this.MOB = mob;
-        this.SPEED_MODIFIER = speedModifier;
-        this.ATTACK_RANGE_SQR = attackRange * attackRange;
-        this.MINIMUM_DISTANCE_SQR = minimumDistance * minimumDistance;
+        this.mob = mob;
+        this.speedModifier = speedModifier;
+        this.attackRangeSqr = attackRange * attackRange;
+        this.minimumDistanceSqr = minimumDistance * minimumDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     private boolean isHoldingMusket() {
-        return MOB.isHolding(stack -> stack.getItem() instanceof MusketItem);
+        return mob.isHolding(stack -> stack.getItem() instanceof MusketItem);
     }
 
     private boolean isValidTarget() {
-        LivingEntity target = MOB.getTarget();
-        return target != null && target.isAlive() && MOB.distanceToSqr(target) >= MINIMUM_DISTANCE_SQR;
+        LivingEntity target = mob.getTarget();
+        return target != null && target.isAlive() && mob.distanceToSqr(target) >= minimumDistanceSqr;
     }
 
     @Override
@@ -52,22 +52,22 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.isValidTarget() && (this.canUse() || !MOB.getNavigation().isDone()) && this.isHoldingMusket();
+        return this.isValidTarget() && (this.canUse() || !mob.getNavigation().isDone()) && this.isHoldingMusket();
     }
 
     public void start() {
         super.start();
-        MOB.setAggressive(true);
+        mob.setAggressive(true);
     }
 
     @Override
     public void stop() {
         super.stop();
-        MOB.setAggressive(false);
-        MOB.setTarget(null);
+        mob.setAggressive(false);
+        mob.setTarget(null);
         seeTime = 0;
-        if (MOB.isUsingItem()) {
-            MOB.stopUsingItem();
+        if (mob.isUsingItem()) {
+            mob.stopUsingItem();
         }
     }
 
@@ -78,12 +78,12 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
 
     @Override
     public void tick() {
-        LivingEntity target = this.MOB.getTarget();
-        InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(this.MOB, ModRegistry.MUSKET);
-        ItemStack stack = MOB.getItemInHand(hand);
+        LivingEntity target = mob.getTarget();
+        InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(mob, ModRegistry.MUSKET);
+        ItemStack stack = mob.getItemInHand(hand);
 
-        if (target != null && MOB.getItemInHand(hand).getItem() instanceof MusketItem musket) {
-            boolean hasLOS = MOB.getSensing().hasLineOfSight(target);
+        if (target != null && mob.getItemInHand(hand).getItem() instanceof MusketItem musket) {
+            boolean hasLOS = mob.getSensing().hasLineOfSight(target);
             boolean seeTarget = seeTime > 0;
 
             if (hasLOS != seeTarget) {
@@ -92,34 +92,34 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
 
             seeTime = (hasLOS ? seeTime + 1 : seeTime - 1);
 
-            double distance = MOB.distanceToSqr(target);
-            boolean moving = (distance > (double) ATTACK_RANGE_SQR || seeTime < 5) && attackDelay == 0;
+            double distance = mob.distanceToSqr(target);
+            boolean moving = (distance > (double) attackRangeSqr || seeTime < 5) && attackDelay == 0;
 
             if (moving) {
                 if (--updatePathDelay <= 0) {
-                    MOB.getNavigation().moveTo(target, SPEED_MODIFIER);
-                    updatePathDelay = PATHFINDING_DELAY_RANGE.sample(MOB.getRandom());
+                    mob.getNavigation().moveTo(target, speedModifier);
+                    updatePathDelay = PATHFINDING_DELAY_RANGE.sample(mob.getRandom());
                 }
             } else {
                 updatePathDelay = 0;
-                MOB.getNavigation().stop();
+                mob.getNavigation().stop();
             }
 
-            MOB.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 
-            if (!MusketItem.isLoaded(stack) && !MOB.isUsingItem()) {
-                MOB.startUsingItem(hand);
-            } else if (!MusketItem.isLoaded(stack) && MOB.isUsingItem() && MOB.getTicksUsingItem() > Config.RELOAD_TIME.get()) {
-                MOB.releaseUsingItem();
-                attackDelay = 50 + MOB.getRandom().nextInt(30);
+            if (!MusketItem.isLoaded(stack) && !mob.isUsingItem()) {
+                mob.startUsingItem(hand);
+            } else if (!MusketItem.isLoaded(stack) && mob.isUsingItem() && mob.getTicksUsingItem() > Config.RELOAD_TIME.get()) {
+                mob.releaseUsingItem();
+                attackDelay = 50 + mob.getRandom().nextInt(30);
             } else if (MusketItem.isLoaded(stack)) {
                 if (attackDelay > 0) {
                     --attackDelay;
                 } else if (hasLOS && seeTime > Config.AIM_TIME.get()) {
-                    MOB.level().registryAccess().registry(Registries.ENCHANTMENT);
-                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).VELOCITY;
-                    float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
-                    musket.fire(MOB.level(), MOB, hand, stack, velocity, deviation, MOB.getTarget(), SoundSource.HOSTILE);
+                    mob.level().registryAccess().registry(Registries.ENCHANTMENT);
+                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).velocity;
+                    float deviation = (float) (8 - mob.level().getDifficulty().getId() * 2);
+                    musket.fire(mob.level(), mob, hand, stack, velocity, deviation, mob.getTarget(), SoundSource.HOSTILE);
                 }
             }
         }

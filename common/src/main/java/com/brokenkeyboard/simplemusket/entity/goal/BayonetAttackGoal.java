@@ -13,8 +13,8 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 public class BayonetAttackGoal extends MeleeAttackGoal {
 
-    private final float ATTACK_RANGE_SQR;
     private static final Multimap<Holder<Attribute>, AttributeModifier> BAYONET_MELEE_MODIFIER = HashMultimap.create();
+    private final float attackRangeSqr;
 
     static {
         BAYONET_MELEE_MODIFIER.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ModRegistry.location("bayonet_damage"), 4F, AttributeModifier.Operation.ADD_VALUE));
@@ -22,7 +22,7 @@ public class BayonetAttackGoal extends MeleeAttackGoal {
 
     public BayonetAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen, float attackRange) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
-        this.ATTACK_RANGE_SQR = attackRange * attackRange;
+        this.attackRangeSqr = attackRange * attackRange;
     }
 
     @Override
@@ -50,6 +50,6 @@ public class BayonetAttackGoal extends MeleeAttackGoal {
     }
 
     private boolean isValidTarget() {
-        return mob.getTarget() != null && mob.getTarget().distanceToSqr(mob) < ATTACK_RANGE_SQR;
+        return mob.getTarget() != null && mob.getTarget().distanceToSqr(mob) < attackRangeSqr;
     }
 }

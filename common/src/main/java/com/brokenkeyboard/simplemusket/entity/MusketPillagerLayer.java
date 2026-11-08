@@ -15,11 +15,11 @@ import net.minecraft.resources.ResourceLocation;
 public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerModel<MusketPillager>> {
 
     public static final ResourceLocation TEXTURE = ModRegistry.location("textures/entity/gunslinger_layer.png");
-    private final HatModel<MusketPillager> MODEL;
+    private final HatModel<MusketPillager> model;
 
     public MusketPillagerLayer(LivingEntityRenderer<MusketPillager, IllagerModel<MusketPillager>> parent) {
         super(parent);
-        MODEL = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(ModRegistry.location("musket_pillager"), "overlay")));
+        model = new HatModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(new ModelLayerLocation(ModRegistry.location("musket_pillager"), "overlay")));
     }
 
     @Override
@@ -27,6 +27,6 @@ public class MusketPillagerLayer extends RenderLayer<MusketPillager, IllagerMode
         if (pillager.isInvisible()) return;
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         this.getParentModel().getHead().translateAndRotate(poseStack);
-        MODEL.renderToBuffer(poseStack, vertexConsumer, i, LivingEntityRenderer.getOverlayCoords(pillager, 0.0F), -1);
+        model.renderToBuffer(poseStack, vertexConsumer, i, LivingEntityRenderer.getOverlayCoords(pillager, 0.0F), -1);
     }
 }
