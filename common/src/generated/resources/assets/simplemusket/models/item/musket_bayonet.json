@@ -1,0 +1,42 @@
+{
+  "parent": "simplemusket:item/musket",
+  "display": {
+    "thirdperson_lefthand": {
+      "rotation": [
+        -80,
+        -280,
+        40
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        0.9
+      ],
+      "translation": [
+        -1,
+        0,
+        2.5
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        -80,
+        260,
+        -40
+      ],
+      "scale": [
+        1.8,
+        1.8,
+        0.9
+      ],
+      "translation": [
+        -1,
+        0,
+        2.5
+      ]
+    }
+  },
+  "textures": {
+    "layer0": "simplemusket:item/musket_bayonet"
+  }
+}

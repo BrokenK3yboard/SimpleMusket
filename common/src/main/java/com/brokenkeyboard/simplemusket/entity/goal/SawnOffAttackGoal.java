@@ -1,0 +1,79 @@
+package com.brokenkeyboard.simplemusket.entity.goal;
+
+import com.brokenkeyboard.simplemusket.Constants;
+import com.brokenkeyboard.simplemusket.ModRegistry;
+import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
+import com.brokenkeyboard.simplemusket.entity.Gunslinger;
+import com.brokenkeyboard.simplemusket.item.MusketItem;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.EnumSet;
+
+public class SawnOffAttackGoal extends Goal {
+
+    protected final Gunslinger MOB;
+    protected final float ATTACK_RANGE_SQR;
+    protected int attackDelay;
+
+    public SawnOffAttackGoal(Gunslinger mob, float attackRange) {
+        this.MOB = mob;
+        this.ATTACK_RANGE_SQR = attackRange * attackRange;
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        MOB.setUsingSawnOff(false);
+    }
+
+    @Override
+    public boolean canUse() {
+        LivingEntity target = MOB.getTarget();
+        return target != null && target.isAlive() && MOB.distanceToSqr(target) <= ATTACK_RANGE_SQR && MOB.isHolding(is -> is.getItem() instanceof MusketItem) && MOB.getSawnoffCD() <= 0;
+    }
+
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        LivingEntity target = MOB.getTarget();
+
+        if (target != null && MOB.getSawnoffCD() <= 0) {
+            InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(this.MOB, ModRegistry.MUSKET.value());
+            ItemStack stack = MOB.getItemInHand(hand);
+            boolean hasLOS = MOB.getSensing().hasLineOfSight(target);
+
+            this.MOB.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
+            if (!this.MOB.isUsingSawnOff()) {
+                MOB.setUsingSawnOff(true);
+                attackDelay = 30 + MOB.getRandom().nextInt(30);
+            } else {
+                if (this.attackDelay > 0) {
+                    --this.attackDelay;
+                } else if (hasLOS && stack.getItem() instanceof MusketItem musket) {
+                    if (!MusketItem.isLoaded(stack)) {
+                        MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE.value(), 1));
+                    }
+                    float deviation = (float) (8 - MOB.level().getDifficulty().getId() * 2);
+                    float velocity = Constants.BULLET_VELOCITY;
+                    musket.fire(MOB.level(), MOB, hand, stack, velocity, deviation, MOB.getTarget(), SoundSource.HOSTILE);
+                    MOB.setSawnoffCD(120);
+                    MOB.setUsingSawnOff(false);
+                    int amount = this.MOB.level() instanceof ServerLevel ? ModEnchantments.modifyAmmoCount(stack, 1) : 1;
+                    MusketItem.setAmmo(stack, new ItemStack(ModRegistry.CARTRIDGE.value(), amount));
+                }
+            }
+        }
+    }
+}

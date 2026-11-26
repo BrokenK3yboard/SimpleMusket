@@ -21,15 +21,15 @@ public class Config {
 
         RELOAD_TIME = builder
                 .comment("The number of ticks needed to reload a musket. 20 ticks = 1 second.")
-                .defineInRange("Musket reload time", 30, 20, 80);
+                .defineInRange("Musket reload time", 30, 30, 80);
 
         AIM_TIME = builder
                 .comment("The number of ticks needed to aim a musket. 20 ticks = 1 second.")
-                .defineInRange("Musket aim time", 30, 20, 80);
+                .defineInRange("Musket aim time", 30, 30, 80);
 
         BULLET_DAMAGE = builder
                 .comment("The amount of damage dealt by bullets.")
-                .defineInRange("Bullet damage", 16D, 16D, 24D);
+                .defineInRange("Bullet damage", 16, 16, 32D);
 
         MOB_DAMAGE_MULTIPLIER = builder
                 .comment("Damage multiplier applied to bullets fired by mobs.")

@@ -7,11 +7,11 @@
     "simplemusket:damage_distance": [
       {
         "effect": {
-          "base_damage_bonus": 0.15,
+          "base_damage_bonus": 0.25,
           "level_damage_multiplier": {
             "type": "minecraft:linear",
             "base": 1.0,
-            "per_level_above_first": 0.66
+            "per_level_above_first": 0.5
           }
         },
         "requirements": {

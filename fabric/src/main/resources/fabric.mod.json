@@ -1,40 +1,39 @@
 {
-    "schemaVersion": 1,
-    "id": "simplemusket",
-    "version": "${version}",
-    "name": "${mod_name}",
-    "description": "${description}",
-    "authors": [
-        "${mod_author}"
+  "schemaVersion": 1,
+  "id": "simplemusket",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "${license}",
+  "icon": "${mod_id}.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.brokenkeyboard.simplemusket.SimpleMusket"
     ],
-    "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
-    },
-    "license": "${license}",
-    "icon": "${mod_id}.png",
-    "environment": "*",
-    "entrypoints": {
-        "main": [
-            "com.brokenkeyboard.simplemusket.SimpleMusket"
-        ],
-        "client": [
-            "com.brokenkeyboard.simplemusket.ClientSetup"
-        ]
-    },
-    "mixins": [
-        "${mod_id}.mixins.json",
-        "${mod_id}.fabric.mixins.json"
-    ],
-    "accessWidener" : "simplemusket.accesswidener",
-    "depends": {
-        "fabricloader": ">=0.15",
-        "fabric": "*",
-        "minecraft": "1.21.1",
-        "java": ">=21",
-        "extensibleenums": "*"
-    },
-    "suggests": {
-        "another-mod": "*"
-    }
+    "client": [
+      "com.brokenkeyboard.simplemusket.ClientSetup"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "accessWidener": "simplemusket.classtweaker",
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": "${java_version}"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
 }

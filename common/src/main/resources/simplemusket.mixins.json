@@ -3,19 +3,17 @@
   "minVersion": "0.8",
   "package": "com.brokenkeyboard.simplemusket.mixin",
   "refmap": "${mod_id}.refmap.json",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "AbstractSkeletonMixin",
     "EnchantmentHelperMixin",
     "MobAccessor",
-    "MobMixin",
     "VillagerHostilesSensorAccessor",
     "WanderingTraderMixin"
   ],
   "client": [
-    "GuiMixin",
-    "ItemRendererMixin",
-    "SkeletonModelMixin"
+    "AbstractSkeletonRendererMixin",
+    "GuiMixin"
   ],
   "server": [
   ],

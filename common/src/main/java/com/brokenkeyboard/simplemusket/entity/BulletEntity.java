@@ -3,132 +3,113 @@ package com.brokenkeyboard.simplemusket.entity;
 import com.brokenkeyboard.simplemusket.Config;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.enchantment.ModEnchantments;
-import com.brokenkeyboard.simplemusket.item.BulletItem;
-import com.brokenkeyboard.simplemusket.item.MusketItem;
-import com.brokenkeyboard.simplemusket.platform.Services;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raider;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class BulletEntity extends Projectile {
 
-    private int ticksAlive = 0;
-    private BulletItem bullet = (BulletItem) ModRegistry.CARTRIDGE;
-    private float damage = Config.BULLET_DAMAGE.get().floatValue();
-    private float velocityPerc = 1F;
-    @Nullable
-    private ItemStack weapon;
-    private boolean speedUpdated = false;
+    private static final int MAX_LIFESPAN = 300;
+    private int life = 0;
+    private float velocityPercentage = 1;
+    private boolean isFullyAimed = false;
+    @Nullable private ItemStack firedFromWeapon;
 
-    public BulletEntity(EntityType<? extends BulletEntity> type, Level level) {
+    public BulletEntity(EntityType<BulletEntity> type, Level level) {
         super(type, level);
         this.setNoGravity(true);
     }
 
-    public BulletEntity(Level level, @Nullable Entity owner, Vec3 pos, ItemStack bullet, @Nullable ItemStack weapon) {
-        this(ModRegistry.BULLET_ENTITY, level);
+    public BulletEntity(Level level, @Nullable Entity owner, double x, double y, double z, @Nullable ItemStack weapon) {
+        this(ModRegistry.BULLET_ENTITY.value(), level);
         this.setOwner(owner);
-        this.setPos(pos);
-        if (MusketItem.BULLETS.test(bullet)) this.bullet = (BulletItem) bullet.getItem();
-        if (this.bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) damage *= 1.25F;
-        if (owner instanceof Mob) damage *= Config.MOB_DAMAGE_MULTIPLIER.get();
-        this.weapon = weapon != null && level instanceof ServerLevel ? weapon : null;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (ticksAlive > 300) this.discard();
-        ticksAlive++;
-        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-        Vec3 movement = getDeltaMovement();
-        float inertia = 1F;
-
-        if (hitresult.getType() != HitResult.Type.MISS) {
-            this.hitTargetOrDeflectSelf(hitresult);
-            this.hasImpulse = true;
-        }
-
-        if (isInWater()) {
-            inertia = 0.8F;
-            velocityPerc *= 0.8F;
-            for(int j = 0; j < 4; ++j) {
-                this.level().addParticle(ParticleTypes.BUBBLE, getX(), getY(), getZ(),
-                        movement.x * -0.2, movement.y * -0.2, movement.z * -0.2);
-            }
-        }
-
-        if (velocityPerc < 0.2F) {
-            this.discard();
-        } else if (velocityPerc < 0.5F) {
-            this.setNoGravity(false);
-        }
-
-        this.setDeltaMovement(movement.scale(inertia));
-        this.setPos(position().add(movement));
-        this.checkInsideBlocks();
+        this.setPos(x, y, z);
+        this.firedFromWeapon = weapon != null && level instanceof ServerLevel ? weapon.copy() : null;
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
-    protected void onHitEntity(EntityHitResult hitResult) {
-        Entity entity = hitResult.getEntity();
-        Entity target = Services.PLATFORM.getHitEntity(entity);
-        Entity owner = this.getOwner();
-        boolean raiderFF = owner instanceof Raider && target instanceof Raider && this.lastDeflectedBy == null;
-        boolean playerFF = owner instanceof Player player && target instanceof Player player1 && !player.canHarmPlayer(player1);
-        if (raiderFF || playerFF) return;
-        DamageSource source = damageSource(this, owner);
-        damage = damage * velocityPerc * (target instanceof IronGolem ? 0.25F : 1F);
+    public void shoot(double xd, double yd, double zd, float pow, float uncertainty) {
+        super.shoot(xd, yd, zd, pow, uncertainty);
+        this.life = 0;
+        if (this.firedFromWeapon != null && (uncertainty == 0 || this.getOwner() instanceof Mob)) {
+            this.isFullyAimed = true;
+        }
+    }
 
-        if (this.level() instanceof ServerLevel && weapon != null) {
-            damage = ModEnchantments.modifyDamageDistance(this.weapon, target, source, damage);
+    @Override
+    public void tick() {
+        applyInertia();
+        HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+        boolean hitObject = !this.noPhysics && hitResult.getType() != HitResult.Type.MISS;
+        Vec3 newPosition;
+        if (hitObject) {
+            newPosition = hitResult.getLocation();
+            this.needsSync = true;
+        } else {
+            newPosition = this.position().add(this.getDeltaMovement());
         }
 
-        if (entity.hurt(source, damage) && entity instanceof LivingEntity living) {
-            if (bullet.equals(ModRegistry.HELLFIRE_CARTRIDGE)) {
-                living.addEffect(new MobEffectInstance(ModRegistry.ARMOR_DECREASE_EFFECT, 600));
+        this.setPos(newPosition);
+        this.applyEffectsFromBlocks();
+        if (this.isAlive() && hitObject) {
+            this.hitTargetOrDeflectSelf(hitResult);
+        }
+
+        super.tick();
+        if (life++ > MAX_LIFESPAN) {
+            this.discard();
+        }
+    }
+
+    @Override
+    protected void onHitEntity(EntityHitResult hitResult) {
+        Entity victim = hitResult.getEntity();
+        Entity owner = this.getOwner();
+        DamageSource damageSource = damageSource(this, owner);
+        float damage = (float) (this.getOwner() instanceof Mob ? Config.BULLET_DAMAGE.get() * Config.MOB_DAMAGE_MULTIPLIER.get() : Config.BULLET_DAMAGE.get());
+
+        if (this.level() instanceof ServerLevel serverLevel) {
+            if (this.firedFromWeapon != null) {
+                damage = EnchantmentHelper.modifyDamage(serverLevel, this.firedFromWeapon, victim, damageSource, damage);
+                damage = ModEnchantments.modifyDamageDistance(this.firedFromWeapon, victim, damageSource, damage);
             }
 
-            if (level() instanceof ServerLevel serverLevel) {
-                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, living, source, this.getWeaponItem());
+            if (victim instanceof IronGolem) {
+                damage *= 0.5F;
+            }
+
+            if (owner instanceof LivingEntity livingOwner) {
+                livingOwner.setLastHurtMob(victim);
+            }
+
+            if (victim.hurtServer(serverLevel, damageSource, damage * this.velocityPercentage) && victim instanceof LivingEntity living) {
+                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, living, damageSource, this.getWeaponItem());
             }
         }
         this.discard();
-    }
-
-    @Nullable
-    @Override
-    public ItemStack getWeaponItem() {
-        return weapon;
     }
 
     @Override
@@ -137,36 +118,63 @@ public class BulletEntity extends Projectile {
         this.discard();
     }
 
-    public DamageSource damageSource(BulletEntity bullet, @Nullable Entity attacker) {
-        return level().damageSources().source(ModRegistry.BULLET, bullet, attacker);
-    }
-
-    public Item getBullet() {
-        return bullet;
+    @Nullable
+    @Override
+    public ItemStack getWeaponItem() {
+        return firedFromWeapon;
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
-        Vec3 position = entity.getPositionBase();
-        Entity owner = getOwner();
-        return new ClientboundAddEntityPacket(getId(), getUUID(), position.x(), position.y(), position.z(),
-                entity.getLastSentXRot(), entity.getLastSentYRot(), getType(), owner != null ? owner.getId() : 0,
-                entity.getLastSentMovement().scale(3.9F / bullet.velocity), 0);
-    }
-
-    @Override
-    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
-        super.recreateFromPacket(packet);
-        Vec3 velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
-        setDeltaMovement(velocity.scale(1.0 / 3.9));
-    }
-
-    @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
-        super.onSyncedDataUpdated(accessor);
-        if (!getDeltaMovement().equals(Vec3.ZERO) && level().isClientSide && !speedUpdated) {
-            setDeltaMovement(getDeltaMovement().scale(bullet.velocity));
-            speedUpdated = true;
+    protected boolean canHitEntity(Entity entity) {
+        Entity owner = this.getOwner();
+        if (owner instanceof Player player && entity instanceof Player target && !player.canHarmPlayer(target)) {
+            return false;
+        } else if (owner instanceof Raider && entity instanceof Raider && this.lastDeflectedBy == null) {
+            return false;
         }
+        return super.canHitEntity(entity);
+    }
+
+    @Override
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt("life", this.life);
+        output.putFloat("velocityPercentage", this.velocityPercentage);
+        output.putBoolean("isFullyAimed", this.isFullyAimed);
+        output.storeNullable("weapon", ItemStack.CODEC, this.firedFromWeapon);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.life = input.getIntOr("life", 0);
+        this.velocityPercentage = input.getFloatOr("velocityPercentage", 1);
+        this.isFullyAimed = input.getBooleanOr("isFullyAimed", false);
+        this.firedFromWeapon = input.read("weapon", ItemStack.CODEC).orElse(null);
+    }
+
+    private void applyInertia() {
+        if (this.isInWater()) {
+            Vec3 movement = this.getDeltaMovement();
+            for (int j = 0; j < 4; ++j) {
+                this.level().addParticle(ParticleTypes.BUBBLE, getX(), getY(), getZ(), movement.x * -0.25, movement.y * -0.25, movement.z * -0.25);
+            }
+
+            this.velocityPercentage *= 0.8F;
+            this.setDeltaMovement(movement.scale(0.8F));
+            if (velocityPercentage < 0.2F) {
+                this.discard();
+            } else if (velocityPercentage < 0.5F) {
+                this.setNoGravity(false);
+            }
+        }
+    }
+
+    private DamageSource damageSource(BulletEntity bullet, @Nullable Entity attacker) {
+        return this.level().damageSources().source(ModRegistry.BULLET, bullet, attacker);
+    }
+
+    public boolean isFullyAimed() {
+        return isFullyAimed;
     }
 }

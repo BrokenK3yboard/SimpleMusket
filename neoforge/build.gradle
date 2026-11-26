@@ -17,28 +17,32 @@ neoForge {
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
     runs {
         configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
+            systemProperty "neoforge.enabledGameTestNamespaces", "${mod_id}"
             ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
         }
         client {
             client()
+            gameDirectory.set(this.mkdir(this.file('runs/client')))
         }
         data {
-            data()
+            clientData()
+            gameDirectory.set(this.mkdir(this.file('runs/data')))
+            // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
         commonData {
-            data()
-            programArguments.addAll '--mod', mod_id, '--all', '--output', file('../common/src/generated/resources').getAbsolutePath(), '--existing', file('../common/src/generated/resources').getAbsolutePath(), '--input', 'commonData'
+            clientData()
+            gameDirectory.set(this.mkdir(this.file('runs/data')))
+            programArguments.addAll '--mod', mod_id, '--all', '--output', file('../common/src/generated/resources').getAbsolutePath(), '--existing', file('../common/src/generated/resources').getAbsolutePath()
+            (systemProperties["commonData"] = "true")
         }
         server {
             server()
+            this.file('runs/server').createParentDirectories()
+            gameDirectory.set(this.mkdir(this.file('runs/server')))
         }
     }
     mods {
@@ -55,4 +59,27 @@ sourceSets.main.resources {
 processResources {
     from project(":common").sourceSets.main.resources
     exclude '.cache'
+}
+
+tasks.withType(ProcessResources).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named(variant) {
+        attributes {
+            attribute(loaderAttribute, 'neoforge')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant ->
+        configurations.named(variant) {
+            attributes {
+                attribute(loaderAttribute, 'neoforge')
+            }
+        }
+    }
 }

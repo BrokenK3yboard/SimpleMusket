@@ -12,10 +12,10 @@
           "type": "minecraft:pillager",
           "maxCount": 1,
           "minCount": 1,
-          "weight": 5
+          "weight": 8
         },
         {
-          "type": "simplemusket:musket_pillager",
+          "type": "simplemusket:gunslinger",
           "maxCount": 1,
           "minCount": 1,
           "weight": 1

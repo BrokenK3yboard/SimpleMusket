@@ -3,47 +3,51 @@ package com.brokenkeyboard.simplemusket.entity;
 import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import org.joml.Matrix4f;
+import net.minecraft.resources.Identifier;
 
-public class BulletEntityRenderer extends EntityRenderer<BulletEntity> {
+public class BulletEntityRenderer extends EntityRenderer<BulletEntity, EntityRenderState> {
 
-    private static final ResourceLocation TEXTURE = ModRegistry.location("textures/entity/bullet.png");
-    private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE);
+    private static final Identifier TEXTURE = ModRegistry.location("textures/entity/bullet.png");
+    private static final RenderType RENDER_TYPE = RenderTypes.entityCutout(TEXTURE);
 
     public BulletEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
-    public void render(BulletEntity bulletEntity, float v, float v1, PoseStack poseStack, MultiBufferSource bufferSource, int i) {
+    @Override
+    public void submit(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.scale(0.15F, 0.15F, 0.15F);
-        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-        PoseStack.Pose pose = poseStack.last();
-        Matrix4f matrix4f = pose.pose();
-        VertexConsumer vertexconsumer = bufferSource.getBuffer(RENDER_TYPE);
-        vertex(vertexconsumer, matrix4f, pose, i, 0.0F, 0, 0, 1);
-        vertex(vertexconsumer, matrix4f, pose, i, 1.0F, 0, 1, 1);
-        vertex(vertexconsumer, matrix4f, pose, i, 1.0F, 1, 1, 0);
-        vertex(vertexconsumer, matrix4f, pose, i, 0.0F, 1, 0, 0);
+        poseStack.mulPose(camera.orientation);
+        submitNodeCollector.submitCustomGeometry(poseStack, RENDER_TYPE, (pose, buffer) -> {
+            vertex(buffer, pose, state.lightCoords, 0.0F, 0, 0, 1);
+            vertex(buffer, pose, state.lightCoords, 1.0F, 0, 1, 1);
+            vertex(buffer, pose, state.lightCoords, 1.0F, 1, 1, 0);
+            vertex(buffer, pose, state.lightCoords, 0.0F, 1, 0, 0);
+        });
         poseStack.popPose();
-        super.render(bulletEntity, v, v1, poseStack, bufferSource, i);
+        super.submit(state, poseStack, submitNodeCollector, camera);
     }
 
-    private static void vertex(VertexConsumer consumer, Matrix4f matrix4f, PoseStack.Pose pose, int i, float v, int i1, int i2, int i3) {
-        consumer.addVertex(matrix4f, v - 0.5F, (float)i1 - 0.25F, 0.0F).setColor(255, 255, 255, 255)
-                .setUv(i2, i3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(i).setNormal(pose, 0.0F, 1.0F, 0.0F);
+    private static void vertex(VertexConsumer builder, PoseStack.Pose pose, int lightCoords, float x, int y, int u, int v) {
+        builder.addVertex(pose, x - 0.5F, y - 0.25F, 0.0F)
+                .setColor(255, 255, 255, 255)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(lightCoords)
+                .setNormal(pose, 0.0F, 1.0F, 0.0F);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BulletEntity bulletEntity) {
-        return TEXTURE;
+    public EntityRenderState createRenderState() {
+        return new EntityRenderState();
     }
 }

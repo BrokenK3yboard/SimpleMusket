@@ -1,0 +1,8 @@
+classTweaker v2 official
+accessible method net/minecraft/world/entity/projectile/Projectile <init> (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V
+accessible method net/minecraft/world/damagesource/DamageSources source (Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/damagesource/DamageSource;
+accessible method net/minecraft/world/item/enchantment/EnchantmentHelper runIterationOnItem (Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;)V
+accessible class net/minecraft/client/renderer/ItemInHandRenderer$HandRenderSelection
+accessible class net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor
+accessible field net/minecraft/world/entity/projectile/Projectile lastDeflectedBy Lnet/minecraft/world/entity/Entity;
+accessible class net/minecraft/world/entity/raid/Raid$RaiderType

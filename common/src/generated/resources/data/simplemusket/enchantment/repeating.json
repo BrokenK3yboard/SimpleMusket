@@ -8,7 +8,8 @@
       {
         "affected": "victim",
         "effect": {
-          "type": "simplemusket:component_kill"
+          "type": "simplemusket:ammo_bonus",
+          "ammo_bonus": 2.0
         },
         "enchanted": "attacker"
       }
@@ -16,8 +17,7 @@
     "simplemusket:ammo_count": [
       {
         "effect": {
-          "base_increase": 1.0,
-          "bonus_increase": 1.0
+          "base_increase": 1.0
         }
       }
     ]

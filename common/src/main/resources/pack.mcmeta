@@ -1,6 +1,10 @@
 {
-    "pack": {
-        "description": "Simple Musket resources",
-        "pack_format": 15
-    }
+  "pack": {
+    "description": "Simple Musket resources",
+    "max_format": 101,
+    "min_format": [
+      101,
+      1
+    ]
+  }
 }

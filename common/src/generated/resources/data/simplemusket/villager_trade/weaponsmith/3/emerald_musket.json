@@ -1,0 +1,11 @@
+{
+  "gives": {
+    "id": "simplemusket:musket"
+  },
+  "reputation_discount": 0.05,
+  "wants": {
+    "count": 4.0,
+    "id": "minecraft:emerald"
+  },
+  "xp": 15.0
+}

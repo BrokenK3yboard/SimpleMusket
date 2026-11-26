@@ -1,10 +1,10 @@
 package com.brokenkeyboard.simplemusket.mixin;
 
-import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.entity.Gunslinger;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +20,6 @@ public abstract class WanderingTraderMixin extends AbstractVillager {
 
     @Inject(method = "registerGoals", at = @At("RETURN"))
     public void registerGoals(CallbackInfo ci) {
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, MusketPillager.class, 32.0F, 0.5, 0.5));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Gunslinger.class, 32.0F, 0.5, 0.5));
     }
 }

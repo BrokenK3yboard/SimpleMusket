@@ -1,0 +1,120 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "simplemusket:item/musket"
+        },
+        "when": [
+          "gui",
+          "ground",
+          "fixed",
+          "on_shelf"
+        ]
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:select",
+      "cases": [
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "simplemusket:item/musket"
+          },
+          "when": "none"
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "simplemusket:item/musket_loaded"
+          },
+          "when": "loaded"
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "simplemusket:item/musket_aiming"
+          },
+          "when": "aiming"
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "simplemusket:item/musket_sawnoff"
+          },
+          "when": "sawnoff"
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "simplemusket:item/musket_bayonet"
+          },
+          "when": "bayonet"
+        },
+        {
+          "model": {
+            "type": "minecraft:range_dispatch",
+            "entries": [
+              {
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "simplemusket:item/musket_loading_2"
+                },
+                "threshold": 0.12
+              },
+              {
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "simplemusket:item/musket_loading_3"
+                },
+                "threshold": 0.24
+              },
+              {
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "simplemusket:item/musket_loading_4"
+                },
+                "threshold": 0.6
+              },
+              {
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "simplemusket:item/musket_loading_5"
+                },
+                "threshold": 0.75
+              },
+              {
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "simplemusket:item/musket_loading_6"
+                },
+                "threshold": 0.9
+              },
+              {
+                "model": {
+                  "type": "minecraft:model",
+                  "model": "simplemusket:item/musket_loading_7"
+                },
+                "threshold": 1.0
+              }
+            ],
+            "fallback": {
+              "type": "minecraft:model",
+              "model": "simplemusket:item/musket_loading_1"
+            },
+            "property": "simplemusket:musket_loading"
+          },
+          "when": "loading"
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "simplemusket:item/musket"
+      },
+      "property": "simplemusket:musket_state"
+    },
+    "property": "minecraft:display_context"
+  }
+}

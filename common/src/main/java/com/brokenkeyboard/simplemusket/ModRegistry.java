@@ -1,39 +1,33 @@
 package com.brokenkeyboard.simplemusket;
 
+import com.brokenkeyboard.simplemusket.enchantment.AmmoBonusEffect;
 import com.brokenkeyboard.simplemusket.enchantment.AmmoCountEffect;
-import com.brokenkeyboard.simplemusket.enchantment.ComponentKillEffect;
 import com.brokenkeyboard.simplemusket.enchantment.DamageDistanceEffect;
+import com.brokenkeyboard.simplemusket.enchantment.FullyAimedPredicate;
 import com.brokenkeyboard.simplemusket.entity.BulletEntity;
-import com.brokenkeyboard.simplemusket.entity.MusketPillager;
+import com.brokenkeyboard.simplemusket.entity.Gunslinger;
 import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
 import com.brokenkeyboard.simplemusket.mixin.VillagerHostilesSensorAccessor;
 import com.brokenkeyboard.simplemusket.platform.Services;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,139 +36,60 @@ import java.util.function.Predicate;
 
 public class ModRegistry {
 
-    public static final Map<ResourceLocation, EntityType<?>> ENTITIES = new HashMap<>();
-    public static final Map<ResourceLocation, Item> ITEMS = new HashMap<>();
-    public static final Map<ResourceLocation, SoundEvent> SOUNDS = new HashMap<>();
-
-    public static final EntityType.Builder<BulletEntity> BULLET_BUILDER = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20);
-    static {
-        Services.PLATFORM.disableVelocityUpdate(BULLET_BUILDER);
-    }
-
-    public static final EntityType<? extends BulletEntity> BULLET_ENTITY = addEntity(location("bullet"), BULLET_BUILDER.build("bullet"));
-    public static final EntityType<? extends MusketPillager> GUNSLINGER = addEntity(location("musket_pillager"),
-            EntityType.Builder.of(MusketPillager::new, MobCategory.MONSTER).sized(0.6F, 1.95F).canSpawnFarFromPlayer().clientTrackingRange(8).build("musket_pillager"));
-
-    public static final Item MUSKET = addItem(location("musket"), new MusketItem(new Item.Properties().durability(256)));
-    public static final Item CARTRIDGE = addItem(location("cartridge"), new BulletItem(6F));
-    public static final Item HELLFIRE_CARTRIDGE = addItem(location("hellfire_cartridge"), new BulletItem(6F));
-    public static final Item ENCHANTED_CARTRIDGE = addItem(location("enchanted_cartridge"), new BulletItem(7.5F));
-    public static final Item GUNSLINGER_EGG = addItem(location("musket_pillager_spawn_egg"), new SpawnEggItem(GUNSLINGER, 9804699, 5258034, new Item.Properties()));
-
-    public static final TagKey<Item> MUSKET_ENCHANTABLE = TagKey.create(Registries.ITEM, location("enchantable/musket"));
-    public static final TagKey<Enchantment> MUSKET_EXCLUSIVE = TagKey.create(Registries.ENCHANTMENT, location("exclusive_set/musket"));
     public static final ResourceKey<DamageType> BULLET = ResourceKey.create(Registries.DAMAGE_TYPE, location("bullet"));
-    public static final ResourceKey<Enchantment> FIREPOWER = ResourceKey.create(Registries.ENCHANTMENT, location("firepower"));
-    public static final ResourceKey<Enchantment> LONGSHOT = ResourceKey.create(Registries.ENCHANTMENT, location("longshot"));
-    public static final ResourceKey<Enchantment> REPEATING = ResourceKey.create(Registries.ENCHANTMENT, location("repeating"));
     public static final ResourceKey<EnchantmentProvider> GUNSLINGER_SPAWN_MUSKET = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("gunslinger_spawn_musket"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_3 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_3"));
     public static final ResourceKey<EnchantmentProvider> RAID_GUNSLINGER_POST_WAVE_5 = ResourceKey.create(Registries.ENCHANTMENT_PROVIDER, location("raid/gunslinger_post_wave_5"));
 
+    public static final Holder<EntityType<Gunslinger>> GUNSLINGER = Services.PLATFORM.createEntity("gunslinger", () -> Gunslinger::new, MobCategory.MONSTER, builder -> builder
+            .sized(0.6F, 1.95F)
+            .canSpawnFarFromPlayer()
+            .clientTrackingRange(8)
+            .notInPeaceful());
+
+    public static final Holder<EntityType<BulletEntity>> BULLET_ENTITY = Services.PLATFORM.createEntity("bullet", () -> BulletEntity::new, MobCategory.MISC, builder -> builder
+            .sized(0.5F, 0.5F)
+            .clientTrackingRange(4)
+            .updateInterval(20));
+
+    public static final Holder<Item> MUSKET = Services.PLATFORM.createItem("musket", () -> MusketItem::new, properties -> properties.durability(384).enchantable(1));
+    public static final Holder<Item> CARTRIDGE = Services.PLATFORM.createItem("cartridge", () -> BulletItem::new, properties -> properties);
+    public static final Holder<Item> GUNSLINGER_EGG = Services.PLATFORM.createItem("gunslinger_spawn_egg", () -> SpawnEggItem::new, properties -> properties.spawnEgg(GUNSLINGER.value()));
+
+    public static final Holder<SoundEvent> MUSKET_LOAD_0 = Services.PLATFORM.createSound("musket_load0", () -> SoundEvent.createVariableRangeEvent(location("musket_load0")));
+    public static final Holder<SoundEvent> MUSKET_LOAD_1 = Services.PLATFORM.createSound("musket_load1", () -> SoundEvent.createVariableRangeEvent(location("musket_load1")));
+    public static final Holder<SoundEvent> MUSKET_READY = Services.PLATFORM.createSound("musket_ready", () -> SoundEvent.createVariableRangeEvent(location("musket_ready")));
+    public static final Holder<SoundEvent> MUSKET_FIRE = Services.PLATFORM.createSound("musket_fire", () -> SoundEvent.createVariableRangeEvent(location("musket_fire")));
+
+    public static final Holder<DataComponentType<Integer>> AMMO_BONUS = Services.PLATFORM.createDataComponent("ammo_bonus", builder -> builder.persistent(Codec.INT));
+
     static {
-        Services.PLATFORM.createEntityEffectComponent("component_kill", ComponentKillEffect.CODEC);
+        Services.PLATFORM.createEntitySubPredicate("fully_aimed", FullyAimedPredicate.CODEC);
+        Services.PLATFORM.createEntityEffectComponent("ammo_bonus", AmmoBonusEffect.CODEC);
     }
 
-    public static final DataComponentType<List<ConditionalEffect<DamageDistanceEffect>>> DAMAGE_DISTANCE = Services.PLATFORM.createEnchantmentComponent("damage_distance", builder ->
-            builder.persistent(ConditionalEffect.codec(DamageDistanceEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf()));
-    public static final DataComponentType<List<ConditionalEffect<AmmoCountEffect>>> AMMO_COUNT = Services.PLATFORM.createEnchantmentComponent("ammo_count", builder ->
-            builder.persistent(ConditionalEffect.codec(AmmoCountEffect.CODEC, LootContextParamSets.ENCHANTED_ENTITY).listOf()));
-    public static final DataComponentType<Integer> AMMO_BONUS = Services.PLATFORM.createDataComponent("ammo_bonus", builder -> builder.persistent(Codec.INT));
+    public static final Holder<DataComponentType<List<ConditionalEffect<DamageDistanceEffect>>>> DAMAGE_DISTANCE = Services.PLATFORM.createEnchantmentComponent("damage_distance", builder ->
+            builder.persistent(ConditionalEffect.codec(DamageDistanceEffect.CODEC).listOf()));
+    public static final Holder<DataComponentType<List<ConditionalEffect<AmmoCountEffect>>>> AMMO_COUNT = Services.PLATFORM.createEnchantmentComponent("ammo_count", builder ->
+            builder.persistent(ConditionalEffect.codec(AmmoCountEffect.CODEC).listOf()));
 
-    public static final Holder<MobEffect> ARMOR_DECREASE_EFFECT = Services.PLATFORM.createEffectHolder("armor_decrease", new ArmorDecreaseEffect(MobEffectCategory.HARMFUL, 4595487)
-            .addAttributeModifier(Attributes.ARMOR, location("effect.armor_decrease"), -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
-
-    public static final SoundEvent MUSKET_LOAD_0 = addSound(location("musket_load0"), SoundEvent.createVariableRangeEvent(location("musket_load0")));
-    public static final SoundEvent MUSKET_LOAD_1 = addSound(location("musket_load1"), SoundEvent.createVariableRangeEvent(location("musket_load1")));
-    public static final SoundEvent MUSKET_READY = addSound(location("musket_ready"), SoundEvent.createVariableRangeEvent(location("musket_ready")));
-    public static final SoundEvent MUSKET_FIRE = addSound(location("musket_fire"), SoundEvent.createVariableRangeEvent(location("musket_fire")));
-
-    public static final ResourceLocation BASTION_OTHER = ResourceLocation.withDefaultNamespace("chests/bastion_other");
-    public static final ResourceLocation BASTION_TREASURE = ResourceLocation.withDefaultNamespace("chests/bastion_treasure");
-    public static final ResourceLocation BASTION_BRIDGE = ResourceLocation.withDefaultNamespace("chests/bastion_bridge");
-    public static final ResourceLocation PIGLIN_BARTER = ResourceLocation.withDefaultNamespace("gameplay/piglin_bartering");
-    public static final ResourceLocation SKELETON_ID = ResourceLocation.withDefaultNamespace("entities/skeleton");
-
-    public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem())
-            && entity.getUseItem().getUseDuration(entity) - entity.getUseItemRemainingTicks() > Config.AIM_TIME.get();
-
-    public static <T extends Entity> EntityType<T> addEntity(ResourceLocation location, EntityType<T> type) {
-        ENTITIES.put(location, type);
-        return type;
-    }
-
-    public static Item addItem(ResourceLocation location, Item item) {
-        ITEMS.put(location, item);
-        return item;
-    }
-
-    public static SoundEvent addSound(ResourceLocation location, SoundEvent sound) {
-        SOUNDS.put(location, sound);
-        return sound;
-    }
-
-    public static void registerEntity(BiConsumer<ResourceLocation, EntityType<?>> consumer) {
-        for (Map.Entry<ResourceLocation, EntityType<?>> entry : ENTITIES.entrySet()) {
-            consumer.accept(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public static void registerItems(BiConsumer<ResourceLocation, Item> consumer) {
-        for (Map.Entry<ResourceLocation, Item> entry : ITEMS.entrySet()) {
-            consumer.accept(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public static void registerSounds(BiConsumer<ResourceLocation, SoundEvent> consumer) {
-        for (Map.Entry<ResourceLocation, SoundEvent> entry : SOUNDS.entrySet()) {
-            consumer.accept(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public static ResourceLocation location(String name) {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+    public static Identifier location(String name) {
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, name);
     }
 
     public static void createEntityAttributes(BiConsumer<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> consumer) {
-        consumer.accept(GUNSLINGER, MusketPillager.createAttributes());
-    }
-
-    public static void registerItemProperties() {
-        ItemProperties.register(MUSKET, location("loading"),
-                (itemStack, clientLevel, livingEntity, i) ->
-                        livingEntity != null && livingEntity.getUseItem() == itemStack && livingEntity.isUsingItem() && !MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
-
-        ItemProperties.register(MUSKET, location("load_stage"),
-                (itemStack, clientLevel, livingEntity, i) ->
-                        (livingEntity == null || MusketItem.isLoaded(itemStack)) ? 0.0F : (float) (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / Config.RELOAD_TIME.get());
-
-        ItemProperties.register(MUSKET, location("loaded"),
-                (itemStack, clientLevel, livingEntity, i) ->
-                        livingEntity != null && MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
-
-        ItemProperties.register(MUSKET, location("aiming"),
-                (itemStack, clientLevel, livingEntity, i) ->
-                        livingEntity != null && livingEntity.getUseItem() == itemStack && livingEntity.isUsingItem() && MusketItem.isLoaded(itemStack) ? 1.0F : 0.0F);
-
-        ItemProperties.register(MUSKET, location("sawnoff"),
-                (itemStack, clientLevel, livingEntity, i) ->
-                        livingEntity instanceof MusketPillager pillager && pillager.isUsingSawnOff() ? 1.0F : 0.0F);
-
-        ItemProperties.register(MUSKET, location("bayonet"),
-                (itemStack, clientLevel, livingEntity, i) ->
-                        livingEntity instanceof Mob mob && Services.PLATFORM.isMobUsingBayonet(mob) ? 1.0F : 0F);
+        consumer.accept(GUNSLINGER.value(), Gunslinger.createAttributes());
     }
 
     public static void registerSensorGoal() {
         Map<EntityType<?>, Float> map = new IdentityHashMap<>(VillagerHostilesSensorAccessor.getAcceptableDistance());
-        map.put(GUNSLINGER, 32.0F);
+        map.put(GUNSLINGER.value(), 32.0F);
         VillagerHostilesSensorAccessor.setAcceptableDistance(ImmutableMap.copyOf(map));
     }
 
-    public static class ArmorDecreaseEffect extends MobEffect {
+    public static final Predicate<LivingEntity> AIMING_MUSKET = (entity) -> MusketItem.isLoaded(entity.getUseItem())
+            && entity.getUseItem().getUseDuration(entity) - entity.getUseItemRemainingTicks() > Config.AIM_TIME.get();
 
-        public ArmorDecreaseEffect(MobEffectCategory category, int color) {
-            super(category, color);
-        }
-    }
+    @SuppressWarnings("EmptyMethod")
+    public static void bootstrap() {}
 }

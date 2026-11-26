@@ -6,9 +6,9 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public record S2CSoundPayload(String soundSource, Vector3f pos) implements CustomPacketPayload {
+public record S2CSoundPayload(String soundSource, Vector3fc pos) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<S2CSoundPayload> TYPE = new CustomPacketPayload.Type<>(ModRegistry.location("sound"));
 

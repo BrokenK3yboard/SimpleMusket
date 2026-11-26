@@ -1,10 +1,9 @@
 package com.brokenkeyboard.simplemusket.entity.goal;
 
 import com.brokenkeyboard.simplemusket.Config;
+import com.brokenkeyboard.simplemusket.Constants;
 import com.brokenkeyboard.simplemusket.ModRegistry;
-import com.brokenkeyboard.simplemusket.item.BulletItem;
 import com.brokenkeyboard.simplemusket.item.MusketItem;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -20,19 +19,17 @@ import java.util.EnumSet;
 public class MusketAttackGoal<T extends Mob> extends Goal {
 
     private static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(1, 2);
-    private final T mob;
+    protected final T mob;
     private final float speedModifier;
     private final float attackRangeSqr;
-    private final float minimumDistanceSqr;
     private int seeTime;
     private int attackDelay;
     private int updatePathDelay;
 
-    public MusketAttackGoal(T mob, float speedModifier, float attackRange, float minimumDistance) {
+    public MusketAttackGoal(T mob, float speedModifier, float attackRange) {
         this.mob = mob;
         this.speedModifier = speedModifier;
         this.attackRangeSqr = attackRange * attackRange;
-        this.minimumDistanceSqr = minimumDistance * minimumDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
@@ -40,9 +37,9 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
         return mob.isHolding(stack -> stack.getItem() instanceof MusketItem);
     }
 
-    private boolean isValidTarget() {
+    protected boolean isValidTarget() {
         LivingEntity target = mob.getTarget();
-        return target != null && target.isAlive() && mob.distanceToSqr(target) >= minimumDistanceSqr;
+        return target != null && target.isAlive();
     }
 
     @Override
@@ -79,7 +76,7 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
     @Override
     public void tick() {
         LivingEntity target = mob.getTarget();
-        InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(mob, ModRegistry.MUSKET);
+        InteractionHand hand = ProjectileUtil.getWeaponHoldingHand(mob, ModRegistry.MUSKET.value());
         ItemStack stack = mob.getItemInHand(hand);
 
         if (target != null && mob.getItemInHand(hand).getItem() instanceof MusketItem musket) {
@@ -111,13 +108,12 @@ public class MusketAttackGoal<T extends Mob> extends Goal {
                 mob.startUsingItem(hand);
             } else if (!MusketItem.isLoaded(stack) && mob.isUsingItem() && mob.getTicksUsingItem() > Config.RELOAD_TIME.get()) {
                 mob.releaseUsingItem();
-                attackDelay = 50 + mob.getRandom().nextInt(30);
+                attackDelay = 60 + mob.getRandom().nextInt(40);
             } else if (MusketItem.isLoaded(stack)) {
                 if (attackDelay > 0) {
                     --attackDelay;
                 } else if (hasLOS && seeTime > Config.AIM_TIME.get()) {
-                    mob.level().registryAccess().registry(Registries.ENCHANTMENT);
-                    float velocity = ((BulletItem) MusketItem.getLoadedAmmo(stack).getItem()).velocity;
+                    float velocity = Constants.BULLET_VELOCITY;
                     float deviation = (float) (8 - mob.level().getDifficulty().getId() * 2);
                     musket.fire(mob.level(), mob, hand, stack, velocity, deviation, mob.getTarget(), SoundSource.HOSTILE);
                 }

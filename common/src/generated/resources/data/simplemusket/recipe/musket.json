@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "F": {
-      "item": "minecraft:flint_and_steel"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    }
+    "F": "minecraft:flint_and_steel",
+    "I": "minecraft:iron_ingot",
+    "P": "#minecraft:planks"
   },
   "pattern": [
     "I  ",
@@ -18,7 +12,6 @@
     " PI"
   ],
   "result": {
-    "count": 1,
     "id": "simplemusket:musket"
   }
 }

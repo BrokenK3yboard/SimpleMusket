@@ -18,7 +18,32 @@
           "condition": "minecraft:entity_properties",
           "entity": "direct_attacker",
           "predicate": {
-            "type": "simplemusket:bullet"
+            "type": "simplemusket:bullet",
+            "type_specific": {
+              "type": "simplemusket:fully_aimed"
+            }
+          }
+        }
+      }
+    ],
+    "minecraft:damage": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 1.0,
+            "per_level_above_first": 1.0
+          }
+        },
+        "requirements": {
+          "condition": "minecraft:entity_properties",
+          "entity": "direct_attacker",
+          "predicate": {
+            "type": "simplemusket:bullet",
+            "type_specific": {
+              "type": "simplemusket:fully_aimed"
+            }
           }
         }
       }
@@ -29,7 +54,7 @@
     "base": 16,
     "per_level_above_first": 10
   },
-  "max_level": 5,
+  "max_level": 4,
   "min_cost": {
     "base": 1,
     "per_level_above_first": 10

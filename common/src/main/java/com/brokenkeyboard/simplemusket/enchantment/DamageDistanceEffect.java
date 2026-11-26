@@ -20,6 +20,6 @@ public record DamageDistanceEffect(float bonus, LevelBasedValue value) {
         double distance = Math.min(living.position().distanceTo(entity.position()), 48);
         if (distance < 16) return damage;
         double coef = Math.max(((0.1953125D * bonus * distance * distance) - (3.125D * bonus * distance) + (bonus * 100)) * value.calculate(level) / 100, 0);
-        return damage * (float) (ModEnchantments.isEnchantedBullet(source) ? 1 + coef * 1.2 : 1 + coef);
+        return damage * (float) (1 + coef);
     }
 }
